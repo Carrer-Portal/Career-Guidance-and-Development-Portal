@@ -5,7 +5,8 @@
 The university's Career Guidance Unit currently operates within a manual, paper-based system,posing critical challenges to effectively supporting undergraduate students in their careerdevelopment journey. These challenges include delayed service delivery due to manual processing, limited accessibility hindering support provision outside of standard hours or for remote students, outdated information provision impacting informed decision-making, and inefficient data management prone to errors.
 
 # Aim
-The aim of this project is to design and develop an AI enabled Recruitment Management System using a web environment. Objectives
+The aim of this project is to design and develop an AI enabled Recruitment Management System using a web environment. 
+# Objectives
 • To design and develop a sub system to manage appointments for career advisors.
 • To design and develop a sub system to generate well-crafted resume for undergraduates.
 • To design and develop chat assistant for interview preparation and face mock interview questions.

@@ -7,7 +7,7 @@ The university's Career Guidance Unit currently operates within a manual, paper-
 # Aim
 The aim of this project is to design and develop an AI enabled Recruitment Management System using a web environment. 
 # Objectives
-• To design and develop a sub system to manage appointments for career advisors.
-• To design and develop a sub system to generate well-crafted resume for undergraduates.
-• To design and develop chat assistant for interview preparation and face mock interview questions.
+• To design and develop a sub system to manage appointments for career advisors.<br/>
+• To design and develop a sub system to generate well-crafted resume for undergraduates.<br/>
+• To design and develop chat assistant for interview preparation and face mock interview questions.<br/>
 • To design and develop a subsystem for notifying upcoming career fairs and career workshops.

@@ -1,13 +1,15 @@
 import React from 'react';
-// import Login from './pages/loging'; 
-import SignUp from './pages/signup';
+import ProfilePage from './pages/UserProfile/userprofile';
+// import Login from './pages/LogingPages/loging'; 
+// import SignUp from './pages/SignUp/signup';
 
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      {/* <Login /> */}
-      <SignUp/>
+      {/* <Login />
+      <SignUp/> */}
+      <ProfilePage/>
     </div>
   );
 }

@@ -1,42 +1,69 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import './signup.style.css';
-import registerImage from '../image/Hired.svg';
-import Link from '@mui/material/Link';
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import "./signup.style.css";
+import registerImage from "../../image/Hired.svg";
+import LinkMUI from "@mui/material/Link";
+import axios from "axios";
+import { Link,useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="#S">
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <LinkMUI color="inherit" href="#S">
         Your Website
-      </Link>{' '}
+      </LinkMUI>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    contactNumber: '',
-    password: '',
-    confirmPassword: '',
-    mcNumber: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    contactNumber: "",
+    password: "",
+    confirmPassword: "",
+    mcNumber: "",
+    faculty : "",
+    department : "",
   });
+  const navigate = useNavigate();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('SignUp Submitted', formData);
+    const data = {
+      userName: formData.email,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      contactNumber: formData.contactNumber,
+      regNumber: formData.mcNumber,
+      faculty : formData.faculty,
+      department : formData.department,
+      password: formData.confirmPassword,
+    };
+    axios.post('http://localhost:8070/signup',data)
+    .then(function(response){
+      console.log(response)
+      navigate("/", { state: { successMessage: "User created successfully!" } });
+    })
+    .catch(function(error){
+      console.log(error)
+    })
   };
 
   return (
@@ -48,14 +75,14 @@ const SignUp: React.FC = () => {
         <Typography component="h2" variant="h4">
           Register
         </Typography>
-        <Typography component="h4" variant="h6" sx={{ mt: -0.3, mb: 5, }}>
+        <Typography component="h4" variant="h6" sx={{ mt: -0.3, mb: 5 }}>
           Career Guidance and Development Portal
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box className="form-group">
-            <Box className='content1'>
-              <Box className='firstName'>
-                <label >First Name</label>
+            <Box className="content1">
+              <Box className="firstName">
+                <label>First Name</label>
                 <input
                   type="text"
                   id="firstName"
@@ -65,7 +92,7 @@ const SignUp: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </Box>
-              <Box className='lastame'>
+              <Box className="lastame">
                 <label htmlFor="lastName">Last Name</label>
                 <input
                   type="text"
@@ -77,8 +104,35 @@ const SignUp: React.FC = () => {
                 />
               </Box>
             </Box>
-            <Box className='content1'>
-              <Box className='mcNumber'>
+            <Box>
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="example@flexui.com"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            </Box>
+            <Box className="content1">
+              <Box className="faculty">
+                <label htmlFor="faculty">Select Faculty</label>
+                <select  name="faculty" id="faculty" value={formData.faculty}  onChange={handleInputChange}>
+                  <option value="" >  ---  </option>
+                  <option value="Faculty of Management Studies and Commerce">Faculty of Management Studies and Commerce</option>
+                </select>
+              </Box>
+              <Box className="department">
+                <label htmlFor="department">Select Department</label>
+                <select  name="department" id="department" value={formData.department}  onChange={handleInputChange}>
+                  <option value="" >  --  </option>
+                  <option value="Departmen of IT">Departmen of IT</option>
+                </select>
+              </Box>
+            </Box>
+            <Box className="content1">
+              <Box className="mcNumber">
                 <label htmlFor="mcNumber">MC Number</label>
                 <input
                   type="text"
@@ -89,7 +143,7 @@ const SignUp: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </Box>
-              <Box className='contactNumber'>
+              <Box className="contactNumber">
                 <label htmlFor="contactNumber">Contact No:</label>
                 <input
                   type="text"
@@ -101,15 +155,6 @@ const SignUp: React.FC = () => {
                 />
               </Box>
             </Box>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="example@flexui.com"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -131,13 +176,15 @@ const SignUp: React.FC = () => {
           </Box>
           <Box className="terms">
             <input type="checkbox" id="terms" name="terms" />
-            <label htmlFor="terms">By creating an account, you agree to our Terms & Conditions</label>
+            <label htmlFor="terms">
+              By creating an account, you agree to our Terms & Conditions
+            </label>
           </Box>
           <button type="submit">Register</button>
         </form>
-      <Box className="copyright">
+        <Box className="copyright">
           <Copyright sx={{ mt: 4 }} />
-      </Box>
+        </Box>
       </Box>
     </Box>
   );

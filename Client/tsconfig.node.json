@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
+    "target": "ES2020",
     "strict": true
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.mts",
+    "src/**/*.ts", // Include all TypeScript files in the 'src' folder
+    "types/**/*.d.ts" // If you have custom type declarations
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

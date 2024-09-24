@@ -1,30 +1,44 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import LinkMUI from '@mui/material/Link';
 import './loging.style.css';
-import hiredImage from '../image/Hired.svg'; 
+import hiredImage from '../../image/Hired.svg'; 
+import axios from "axios";
+import { Link,useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="#S">
+      <LinkMUI color="inherit" href="#S">
         Your Website
-      </Link>{' '}
+      </LinkMUI>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
 }
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
+const LoginPage: React.FC = () => {
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Login Submitted', { email, password });
+    const data = {
+      userName: userName,
+      password: password
+    };
+    axios.post('http://localhost:8070/login',data)
+    .then(function(response){
+      console.log(response)
+      navigate("/MyProfile", { state: { successMessage: "User Logged successfully!" } });
+    })
+    .catch(function(error){
+      console.log(error)
+    })
   };
 
   const handleForgotPasswordClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -52,8 +66,8 @@ const Login: React.FC = () => {
               id="email"
               placeholder="Ex: nimalperera@gmail.com"
               required
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
             />
             <label htmlFor="password">Password</label>
             <input
@@ -80,4 +94,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

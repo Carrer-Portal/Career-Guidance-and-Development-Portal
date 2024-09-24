@@ -50,6 +50,11 @@ html, body {
   margin-right: 20px;
 }
 
+.faculty,.department{
+  width: 50%;
+  margin-right: 20px;
+}
+
 .contactNumber{
   width: 50%;
 }
@@ -85,6 +90,16 @@ html, body {
   border: 1px solid #ccc;
   box-sizing: border-box; 
 }
+
+.form-group select{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 20px 0; 
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; 
+}
+
 
 button {
   width: 100%;

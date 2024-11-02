@@ -4,6 +4,7 @@ import db from "../controllers/index.js";
 
 const { validateLogin, validateCreateUser } = validations;
 const undergraduate = db.undergraduates;
+const department = db.department;
 
     const undergraduatelogin = async(req, res) =>
     {
@@ -79,7 +80,29 @@ const undergraduate = db.undergraduates;
         }
     }
 
+    const whoAmI = async (req, res) => {
+        try {
+            const user = await undergraduate.findOne(
+                { include: [{
+                    model: department,
+                    as: 'department'
+                }] }
+                ,{ where: {undergraduateId: req.body.undergraduateId} }
+            );
+            console.log(user);
+            res.status(200).json({ 
+                message: "User fetched successfully",
+                user: user });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ error: true, message: "Internal Server Error" });
+        }
+    };
+
 export {
     undergraduatelogin,
-    undergraduateRegister
+    undergraduateRegister,
+    whoAmI
 };

@@ -1,25 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Lato', sans-serif;
-  background-color: #f4f7fa;
-}
-
 .container {
   display: flex;
+  flex-direction: column;
+  height: 90%;
+  padding: 48px 0;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: row;
+  height: 85%;
+}
+.intro-content {
+  display: flex;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
-  height: 100vh;
+}
+
+.intro-content h3 {
+  font-weight: 800;
+}
+
+.intro-content h6 {
+  line-height: 1.2;
+  font-size: 16px;
+}
+
+.cgp-logo {
+  width: 150px;
+  height: 50px;
 }
 
 .login-image {
-  width: 50%; 
+  width: 700px;
   display: flex;
   justify-content: flex-start;
-  padding-right: 100px; 
 }
 
 .login-image img {
@@ -27,10 +41,16 @@ html, body {
   height: auto;
 }
 
+.loginbody-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .login-form {
-  width: 500px;
-  height: 550px; 
-  padding: 40px 70px 0 40px ;
+  width: 400px;
+  height: auto;
+  padding: 40px;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -39,10 +59,11 @@ html, body {
 }
 
 .login-form h1 {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 800;
   color: #333;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .input-field {
@@ -52,44 +73,44 @@ html, body {
 .input-field label {
   display: block;
   margin: 8px 0;
-  font-size: 18px;
+  font-size: 16px;
   color: #333;
 }
 
 .input-field input {
-  width: 100%;
+  width: 90%;
   padding: 16px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 16px;
-  outline: none; 
-  transition: border-color 0.3s; 
+  outline: none;
+  transition: border-color 0.3s;
 }
 
 .input-field input:focus {
-  border-color: #9E77ED; 
+  border-color: #9e77ed;
 }
 
 .input-field a {
   margin-bottom: 50px;
   justify-content: flex-start;
   right: 0;
-  font-size: 16px;
-  color: #6200ea;
+  font-size: 14px;
+  color: #383241;
   text-decoration: none;
 }
 
 .login-form button {
-  width: 530px;
-  padding: 16px;
-  margin-top: 16px;
+  padding: 14px;
+  margin: 16px 0;
   background-color: #6200ea;
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .login-form button:hover {
@@ -98,7 +119,7 @@ html, body {
 
 .create-account {
   text-align: center;
-  margin-top: 32px;
+  margin-top: 16px;
   font-size: 14px;
 }
 
@@ -109,25 +130,24 @@ html, body {
 .create-account a {
   color: #6200ea;
   text-decoration: none;
-  font-weight: bold;
 }
 
-.copyright{
+.copyright {
   margin-top: -10px;
 }
 
 @media (max-width: 768px) {
   .login-image {
-    width: 100%; 
+    width: 100%;
     padding-right: 0;
   }
 
   .login-form {
-    width: 90%; 
-    margin-top: 20px; 
+    width: 90%;
+    margin-top: 20px;
   }
 
   .container {
-    flex-direction: column; 
+    flex-direction: column;
   }
 }

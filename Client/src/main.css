@@ -1,11 +1,13 @@
 .body {
   margin-left: 1rem;
   margin-right: 1rem;
+  height: auto;
 }
 
 @media (min-width: 640px) {
   .body {
     margin-left: 10%;
     margin-right: 10%;
+    height: 88%;
   }
 }

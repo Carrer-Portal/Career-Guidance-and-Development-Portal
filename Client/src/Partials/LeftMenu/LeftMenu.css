@@ -1,0 +1,36 @@
+.left-menu {
+  width: 250px;
+  height: 100vh;
+  background-color: #2d165c;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: width 0.3s ease-in-out;
+}
+
+.left-menu.collapsed {
+  width: 70px;
+}
+
+.left-menu .menu-icon {
+  font-size: 20px;
+}
+
+.nested {
+  padding-left: 30px;
+}
+
+.collapse-btn {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.left-menu .MuiListItemIcon-root {
+  min-width: 40px;
+}
+
+.left-menu.collapsed .MuiListItemText-root {
+  display: none;
+}

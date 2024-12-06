@@ -1,0 +1,70 @@
+.booking-container {
+  padding: 24px;
+  height: 100%;
+}
+
+.left-section,
+.right-section {
+  padding: 16px;
+}
+
+.section-title {
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.date-picker {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.time-slots {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.timezone {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.profile-box {
+  text-align: center;
+}
+
+.profile-name {
+  margin-top: 8px;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  margin-bottom: 8px;
+}
+
+.form-description {
+  margin-bottom: 16px;
+}

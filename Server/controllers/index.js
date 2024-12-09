@@ -12,7 +12,6 @@ import userActivityModel from '../models/userActivityModel.js';
 import chatHistoryModel from '../models/chatHistoryModel.js';
 
 
-console.log("index executed");
 const sequelize = new Sequelize(
     dbConfig.DB,
     dbConfig.USER,

@@ -1,5 +1,5 @@
 import express from 'express';
-import {undergraduateRegister,undergraduatelogin,whoAmI} from '../controllers/userController.js';
+import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword} from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -10,6 +10,7 @@ router.post('/register',undergraduateRegister);
 router.post('/login',undergraduatelogin);
 //wami
 router.get('/wami',whoAmI);
-console.log("router");
+
+router.post('/forgetPassword', forgetPassword)
 
 export default router;

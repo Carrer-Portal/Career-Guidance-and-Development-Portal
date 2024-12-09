@@ -18,11 +18,20 @@ const department = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      facultyId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'faculty', 
+          key: 'facultyId', 
+        }
+      },
     },
     {
       tableName: "department",
     }
   );
+
   
   return Department;
 };

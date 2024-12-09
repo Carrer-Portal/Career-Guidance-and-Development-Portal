@@ -33,9 +33,13 @@ const validateCreateUser = (data) => {
             "string": "Please provide a valid Registration Number.",
             "string.empty":"The Registration Number field is required."
         }),
-        departmentId : Joi.string().required().label("departmentId").messages({
+        departmentId : Joi.number().integer().label("departmentId").messages({
             "string": "Please provide a valid department name.",
             "string.empty":"The department field is required."
+        }),
+        facultyId : Joi.number().integer().label("departmentId").messages({
+            "string": "Please provide a valid faculty name.",
+            "string.empty":"The faculty field is required."
         }),
         password : passwordComplexity().required().label("password")
     });

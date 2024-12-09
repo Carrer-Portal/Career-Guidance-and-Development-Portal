@@ -10,6 +10,7 @@ import resumeModel from '../models/resumeModel.js';
 import reviewResumeModel from '../models/reviewResumeModel.js';
 import userActivityModel from '../models/userActivityModel.js';
 import chatHistoryModel from '../models/chatHistoryModel.js';
+import facultyModel from '../models/facultyModel.js';
 
 
 const sequelize = new Sequelize(
@@ -52,6 +53,7 @@ db.resume = resumeModel(sequelize, Sequelize.DataTypes);
 db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
 db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
 db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
+db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -69,6 +71,15 @@ db.sequelize.sync({ force: false })
     db.undergraduates.belongsTo(db.department, {
         foreignKey: "departmentId",
         as:'department'
+    });
+    db.faculty.hasMany(db.department, {
+        foreignKey: "facultyId",
+        as:'department'
+    });
+
+    db.department.belongsTo(db.faculty, {
+        foreignKey: "facultyId",
+        as:'faculty'
     });
 
 export default db;

@@ -16,6 +16,10 @@ const undergraduate = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      facultyId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       regNo: {
         type: DataTypes.STRING,
         allowNull: false,

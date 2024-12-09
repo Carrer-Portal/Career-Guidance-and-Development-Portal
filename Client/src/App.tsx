@@ -10,6 +10,7 @@ import Header from "./Partials/Header/Header";
 import Footer from "./Partials/Footer/Footer";
 import Box from "@mui/material/Box";
 import LeftMenu from "./Partials/LeftMenu/LeftMenu";
+import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -23,7 +24,8 @@ const App: React.FC = () => {
         {showLayout && <Header />}
         <Box className="body">
           <Routes>
-            <Route path="/" element={<BookingPage />} />
+            <Route path="/" element={<AdvisorPreview />} />
+            <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<ProfilePage />} />

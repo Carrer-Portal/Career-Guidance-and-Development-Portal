@@ -1,126 +1,93 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Lato', sans-serif;
-  background-color: #f4f7fa;
-}
-
 .signup-container {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 100vh;
-  padding: 0 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 48px 0 10px 0;
+}
+
+.register-image-content,
+.signup-form {
+  width: 48%;
+}
+
+.register-image-content {
+  display: flex;
+  align-items: flex-start;
+}
+
+.register-image {
+  width: 600px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .signup-form {
-  width: 600px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 40px;
   background: #fff;
   border-radius: 8px;
-  margin-top: 50px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1)
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-group input:focus {
-    border-color: #9E77ED; 
-    outline: none; 
-}
-
-.content1{
-  display: flex;
-  justify-content:space-between;
-  margin: 0;
-}
-
-.firstName{
-  width: 50%;
-  margin-right: 20px;
-} 
-
-.lastame{
-  width: 50%;
-} 
-
-.mcNumber{
-  width: 50%;
-  margin-right: 20px;
-}
-
-.faculty,.department{
-  width: 50%;
-  margin-right: 20px;
-}
-
-.contactNumber{
-  width: 50%;
-}
-
-.signup-form h1 {
-  font-size: 24px;
+.signup-form h2 {
+  font-size: 28px;
+  font-weight: 800;
   color: #333;
-  margin-bottom: 10px; 
+  margin-bottom: 24px;
+  text-align: center;
 }
-
-.instruction {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 30px; 
-}
-
 .form-group {
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 .form-group label {
-  display: block; 
+  display: block;
+  margin: 6px 0;
+  font-size: 16px;
   color: #333;
-  margin-bottom: 5px;
-  font-size: 18px; 
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 15px;
-  margin: 5px 0 20px 0; 
+  margin: 5px 0 20px 0;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
-.form-group select{
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 20px 0; 
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box; 
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #9e77ed;
+  outline: none;
 }
 
-
-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #6200ea;
-  color: white;
-  font-weight: bold; 
-  cursor: pointer;
-  margin-top: 10px; 
+.content1 {
+  display: flex;
+  gap: 20px;
 }
 
-button:hover {
-  background-color: #5700d2;
+.firstName,
+.lastame,
+.mcNumber,
+.contactNumber,
+.faculty,
+.department {
+  flex: 1;
+}
+
+.register-btn{
+  margin-top: 10px;
+  width: 400px;
 }
 
 .terms {
   display: flex;
   align-items: center;
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .terms label {
@@ -128,31 +95,21 @@ button:hover {
   font-size: 14px;
 }
 
-.register-image {
-  width: 50%; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.register-image img {
-  max-width: 100%;
-  height: auto;
-}
-
 @media (max-width: 1024px) {
   .signup-container {
     flex-direction: column;
     padding: 50px 0;
+    height: auto;
   }
 
   .signup-form,
-  .register-image {
+  .register-image-content {
     width: 80%;
     margin-bottom: 30px;
   }
 
-  .register-image {
-    order: -1; 
+  .register-image-content {
+    order: -1;
+    justify-content: center;
   }
 }

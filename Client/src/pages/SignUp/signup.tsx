@@ -6,7 +6,7 @@ import "./signup.style.css";
 import registerImage from "../../image/Hired.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import logo from "../../image/cgplogo.png";
 
 const SignUp: React.FC = () => {
@@ -185,7 +185,11 @@ const SignUp: React.FC = () => {
               By creating an account, you agree to our Terms & Conditions
             </label>
           </Box>
-          <Button type="submit" variant="contained" className="register-btn">Register</Button>
+          <Box className="btn-box">
+            <Button type="submit" variant="contained" color='secondary' className="register-btn">
+              Register
+            </Button>
+          </Box>
         </form>
       </Box>
     </Box>

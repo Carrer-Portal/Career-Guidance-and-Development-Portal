@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import "./loging.style.css";
+import { Box, Typography, Button, Link} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import hiredImage from "../../image/Hired.svg";
 import logo from "../../image/cgplogo.png";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import "./loging.style.css";
 
 const LoginPage: React.FC = () => {
   const [userName, setUserName] = useState("");
@@ -45,7 +44,7 @@ const LoginPage: React.FC = () => {
           <img src={logo} className="cgp-logo" alt="logo" />
           <Typography variant="h3">Welcome</Typography>
           <Typography variant="h6" className="subtitle">
-            Get Started your Career with Career Guidance Portal{" "}
+            Get Started your Career with Career Guidance Portal
           </Typography>
         </Box>
       </Box>
@@ -59,37 +58,72 @@ const LoginPage: React.FC = () => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box className="input-field">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Ex: nimalperera@gmail.com"
-                required
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-              />
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Enter Password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <a href="#forgot-password" onClick={handleForgotPasswordClick}>
+              <Box className="form-inputs">
+                <Typography variant="body2" className="custom-label">
+                  Email
+                </Typography>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Ex: nimalperera@gmail.com"
+                  required
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  className="custom-input"
+                />
+                <Typography variant="body2" className="custom-label">
+                  Password
+                </Typography>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Enter Password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="custom-input"
+                />
+              </Box>
+              <Link
+                href="#forgot-password"
+                onClick={handleForgotPasswordClick}
+                className="forgot-password"
+                fontSize={12}
+                mb={2}
+                color='#9e77ed'
+              >
                 Forgot Password?
-              </a>
-              <button type="submit">Login</button>
+              </Link>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                className="login-button"
+                color="secondary"
+              >
+                Login
+              </Button>
             </Box>
           </form>
           <Box className="create-account">
-            <span>Don’t Have an Account?</span>
-            <a href="/SignUp"> Create Account</a>
+            <Typography variant="body2">
+              Don’t Have an Account?{" "}
+              <Link href="/SignUp" color="primary" underline="hover">
+                Create Account
+              </Link>
+            </Typography>
           </Box>
           <Box className="create-account">
-            <span>More details at</span>
-            <a href="/https://www.sjp.ac.lk/career/"> CGU USJ</a>
+            <Typography variant="body2">
+              More details at{" "}
+              <Link
+                href="https://www.sjp.ac.lk/career/"
+                color="primary"
+                underline="hover"
+              >
+                CGU USJ
+              </Link>
+            </Typography>
           </Box>
         </Box>
       </Box>

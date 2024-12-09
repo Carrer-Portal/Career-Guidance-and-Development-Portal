@@ -35,7 +35,7 @@
   font-size: 28px;
   font-weight: 800;
   color: #333;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   text-align: center;
 }
 .form-group {
@@ -45,7 +45,7 @@
 .form-group label {
   display: block;
   margin: 6px 0;
-  font-size: 16px;
+  font-size: 14px;
   color: #333;
 }
 
@@ -53,7 +53,7 @@
 .form-group select {
   width: 100%;
   padding: 15px;
-  margin: 5px 0 20px 0;
+  margin: 5px 0 16px 0;
   border-radius: 5px;
   border: 1px solid #ccc;
   box-sizing: border-box;
@@ -80,19 +80,24 @@
 }
 
 .register-btn{
-  margin-top: 10px;
-  width: 400px;
+  width: 500px;
 }
 
 .terms {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-bottom: 12px;
 }
 
 .terms label {
   color: #666;
   font-size: 14px;
+}
+
+.btn-box{
+  display: flex;
+  justify-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 1024px) {

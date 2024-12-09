@@ -10,6 +10,7 @@
   flex-direction: row;
   height: 85%;
 }
+
 .intro-content {
   display: flex;
   flex-direction: column;
@@ -30,6 +31,13 @@
   height: 50px;
 }
 
+.loginbody-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .login-image {
   width: 700px;
   display: flex;
@@ -41,12 +49,6 @@
   height: auto;
 }
 
-.loginbody-content {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 .login-form {
   width: 400px;
   height: auto;
@@ -56,6 +58,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  justify-items: center;
 }
 
 .login-form h1 {
@@ -68,19 +71,25 @@
 
 .input-field {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.input-field label {
-  display: block;
-  margin: 8px 0;
-  font-size: 16px;
+.custom-label {
+  margin-bottom: 20px;
+  font-size: 14px;
   color: #333;
 }
 
-.input-field input {
-  width: 90%;
-  padding: 16px;
-  margin-bottom: 15px;
+.form-inputs{
+  max-width: 370px;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 16px;
@@ -88,32 +97,31 @@
   transition: border-color 0.3s;
 }
 
-.input-field input:focus {
+.custom-input:focus {
   border-color: #9e77ed;
 }
 
-.input-field a {
-  margin-bottom: 50px;
-  justify-content: flex-start;
-  right: 0;
-  font-size: 14px;
-  color: #383241;
+.forgot-password {
+  font-size: 10px;
+  color: #9e77ed;
   text-decoration: none;
+  margin-bottom: 16px;
 }
 
-.login-form button {
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-button {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
   padding: 14px;
   margin: 16px 0;
-  background-color: #6200ea;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: 500;
+  text-transform: none;
 }
 
-.login-form button:hover {
+.login-button:hover {
   background-color: #5700d2;
 }
 
@@ -132,10 +140,11 @@
   text-decoration: none;
 }
 
-.copyright {
-  margin-top: -10px;
+.create-account a:hover {
+  text-decoration: underline;
 }
 
+/* Responsive design */
 @media (max-width: 768px) {
   .login-image {
     width: 100%;

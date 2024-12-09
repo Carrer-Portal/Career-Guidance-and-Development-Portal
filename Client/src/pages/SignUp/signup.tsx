@@ -6,8 +6,8 @@ import "./signup.style.css";
 import registerImage from "../../image/Hired.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 import logo from "../../image/cgplogo.png";
+import Button from "../../Components/Button/Button";
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -186,7 +186,7 @@ const SignUp: React.FC = () => {
             </label>
           </Box>
           <Box className="btn-box">
-            <Button type="submit" variant="contained" color='secondary' className="register-btn">
+            <Button type="submit" variant="contained" className="register-btn">
               Register
             </Button>
           </Box>

@@ -11,7 +11,7 @@ const { validateLogin, validateCreateUser } = validations;
 const undergraduate = db.undergraduates;
 const department = db.department;
 const faculty = db.faculty;
-const Admin = db.admin;
+const CarrerAdviosr = db.careerAdviosr;
 
 
 
@@ -309,7 +309,8 @@ const createAdminAccount = async (req, res) => {
   const { firstName, lastName, roleType, contactNumber, email, password } = req.body;
   const filePath = req.file ? req.file.path : null;
   try {
-    const existingAdmin = await Admin.findOne({ where: { email } });
+    console.log(req.body);
+    const existingAdmin = await CarrerAdviosr.findOne({ where: { email } });
     if (existingAdmin) {
       return res.status(400).json({ error: true, message: "Admin already exists" });
     }
@@ -317,7 +318,7 @@ const createAdminAccount = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newAdmin = await Admin.create({
+    const newAdmin = await CarrerAdviosr.create({
       firstName,
       lastName,
       roleType,
@@ -340,7 +341,7 @@ const adminLogin = async (req, res) => {
   const{email,password} = req.body;
 
   try {
-    const admin = await Admin.findOne({ where: { email } });
+    const admin = await CarrerAdviosr.findOne({ where: { email } });
     if (!admin) {
       return res.status(400).json({ error: true, message: "Invalid email or password" });
     }
@@ -365,7 +366,7 @@ const updateAdmin = async (req, res) => {
   const { firstName, lastName, roleType, contactNumber, email } = req.body;
 
   try {
-    const admin = await Admin.findByPk(adminId);
+    const admin = await CarrerAdviosr.findByPk(adminId);
     if (!admin) {
       return res.status(404).json({ error: true, message: "Admin not found" });
     }
@@ -388,7 +389,7 @@ const findAdminById = async (req, res) => {
   const { adminId } = req.params;
 
   try {
-    const admin = await Admin.findByPk(adminId);
+    const admin = await CarrerAdviosr.findByPk(adminId);
     if (!admin) {
       return res.status(404).json({ error: true, message: "Admin not found" });
     }
@@ -403,7 +404,7 @@ const findAdminById = async (req, res) => {
 const getAllCareerAdvisors = async (req, res) => {
 
   try {
-    const advisors = await Admin.findAll({
+    const advisors = await CarrerAdviosr.findAll({
       where: {
         roleType: {
           [Op.or]: ["Career Advisor", "Senior Career Advisor"]

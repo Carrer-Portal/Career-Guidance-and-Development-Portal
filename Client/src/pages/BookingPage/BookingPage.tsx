@@ -18,7 +18,7 @@ import Cookies from "js-cookie";
 import Joi from 'joi';
 
 interface Advisor {
-  adminId: number;
+  careerAdvisorId: number;
   firstName: string;
   lastName: string;
   roleType: string;
@@ -125,10 +125,10 @@ const BookingPage = () => {
     console.log(`Selected Time: ${slot}`);
   };
 
-  const handleAdvisorSelect = (advisorId: number, advisorName: string) => {
+  const handleAdvisorSelect = (careerAdvisorId: number, advisorName: string) => {
     setSelectedAdvisor(advisorName);
-    setSelectedAdvisorId(advisorId);
-    console.log(`Selected Advisor: ${advisorName}, ID: ${advisorId}`);
+    setSelectedAdvisorId(careerAdvisorId);
+    console.log(`Selected Advisor: ${advisorName}, ID: ${careerAdvisorId}`);
   };
 
   const handleCloseSnackbar = () => {
@@ -256,7 +256,7 @@ const BookingPage = () => {
               <Box
                 key={index}
                 className={`profile-box ${selectedAdvisor === profile.firstName + " " + profile.lastName ? "selected" : ""}`}
-                onClick={() => handleAdvisorSelect(profile.adminId, profile.firstName + " " + profile.lastName)}
+                onClick={() => handleAdvisorSelect(profile.careerAdvisorId, profile.firstName + " " + profile.lastName)}
               >
                 <Box className="profile-content">
                   <Avatar

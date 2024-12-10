@@ -1,14 +1,92 @@
-import { Typography, Box, Grid, Card, CardContent } from "@mui/material";
+import { Typography, Box, Grid, Card, CardContent,Snackbar,
+  Alert, } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./UserDashboard.css";
 import Button from "../../Components/Button/Button";
 import Chathu from "../../image/Chathu.jpeg";
 import appointment from "../../image/appointment.png";
 import cvVector from "../../image/forms.svg";
 import chatbot from "../../image/chatbot.png";
+import axios from "axios";
+import Cookies from "js-cookie";
 
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: string;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  password: string;
+  departmentName: string;
+  facultyName: string;
+}
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const [undergraduate, setUndergraduate] = useState<Undergraduate | null>(null);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+  
+  useEffect(() => {
+    const fetchedLoggedUser = async () => {
+      const userRole = Cookies.get("userType");
+      if (userRole === "Student") {
+        try {
+          const response = await axios.get("http://localhost:8070/api/user/wami", {
+            headers: {
+              Authorization: `Bearer ${Cookies.get('studentToken')}`
+            }
+          });
+          setUndergraduate(response.data.user);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'An error occurred', severity: 'error' });
+            console.log(error.response.data);
+          }
+        }
+      } else if (userRole === "Advisor") {
+        // Handle Advisor role
+      }
+    };
+
+    fetchedLoggedUser();
+  }, []);
+  
+
+  const fetchAppoinments = () => {
+
+    try {
+      axios
+        .post("http://localhost:8070/api/appoinment/findByUserId")
+        .then(function (response) {
+          console.log(response);
+          if(response.status === 201) {
+            setSnackbar({ open: true, message: 'Booking Successfully Created', severity: 'success' });
+            navigate("/userDashboard");
+          }
+          else{
+            console.log(response.data.message);
+            setSnackbar({ open: true, message: response.data.message, severity: 'error' });
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+          setSnackbar({ open: true, message: error.response.data.message, severity: 'error' });
+        });
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Internal server error', severity: 'error' });
+    }
+  };
+
+  useEffect(() => {
+    
+  },[]);
 
   const profile = {
     advisor: {
@@ -234,6 +312,11 @@ const UserDashboard = () => {
           </Box>
         </Box>
       </Box>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

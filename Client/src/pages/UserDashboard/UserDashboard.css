@@ -1,0 +1,141 @@
+.dashboard-container {
+  padding: 24px;
+  height: 100%;
+}
+
+.dashboard-title-container {
+  margin-bottom: 24px;
+  max-width: 600px;
+}
+.dashboard-subtitle {
+  color: rgb(143, 141, 138);
+  font-size: medium;
+}
+
+.appointment-status-section {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.appointment-adivisory-info {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 46.5%;
+}
+.appointment-create-box {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 46.5%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-section {
+  margin-bottom: 30px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.btn-primary {
+  width: 300px;
+  height: 100px;
+}
+
+.btn-secondary {
+  color: #1976d2;
+  border-color: #1976d2;
+  text-transform: none;
+}
+
+.event-card {
+  background: #f0f8ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event-card h6 {
+  font-weight: 600;
+}
+
+.advisor-info {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.advisor-details {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding-left: 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.advisor-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 10%;
+  border: 1px solid #634897;
+}
+
+.advisor-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.appointment-status {
+  font-weight: bold;
+  color: #4caf50; /* Green for Approved, change as needed */
+}
+
+.countdown-timer {
+  font-weight: bold;
+  color: #ff5722; /* Orange for countdown */
+}
+
+.advisor-details-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.advisor-details-status {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+.advisor-details-text {
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+}
+
+.appointment-image {
+  width: 150px;
+  height: 150px;
+}
+.appointment-image-box{
+    display: flex;
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+}
+

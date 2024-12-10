@@ -5,9 +5,11 @@
 
 .booking-Title {
   margin-bottom: 24px;
+  max-width: 600px;
 }
 .sub-Title {
   color: rgb(143, 141, 138);
+  font-size: medium;
 }
 .left-section,
 .right-section {
@@ -49,7 +51,7 @@
   font-style: italic;
 }
 
-.action-buttons {
+.book-action-buttons {
   display: flex;
   margin-top: 16px;
   gap: 10px;

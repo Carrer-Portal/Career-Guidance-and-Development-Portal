@@ -280,7 +280,7 @@ const SignUp: React.FC = () => {
             </label>
           </Box>
           <Box className="btn-box">
-            <Button type="submit" variant="contained" color='secondary' className="register-btn">
+            <Button type="submit" variant="contained" className="register-btn">
               Register
             </Button>
           </Box>

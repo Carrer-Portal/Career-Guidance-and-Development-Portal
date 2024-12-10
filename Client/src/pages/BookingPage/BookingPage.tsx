@@ -8,9 +8,6 @@ import {
   TextField,
   Box,
   Avatar,
-  Stepper,
-  Step,
-  StepLabel,
 } from "@mui/material";
 import "./BookingPage.css";
 import Chathu from "../../image/Chathu.jpeg";

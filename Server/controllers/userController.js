@@ -10,6 +10,9 @@ const { validateLogin, validateCreateUser } = validations;
 const undergraduate = db.undergraduates;
 const department = db.department;
 const faculty = db.faculty;
+const Admin = db.admin;
+
+
 
 const undergraduatelogin = async (req, res) => {
   try {
@@ -25,7 +28,6 @@ const undergraduatelogin = async (req, res) => {
     const user = await undergraduate.findOne({
       where: { universityEmail: req.body.userName },
     });
-    console.log("coming body",user);
     if (!user) {
       return res
         .status(400)
@@ -75,7 +77,6 @@ const undergraduateRegister = async (req, res) => {
 
     const salt = await genSalt(Number(process.env.SALT));
     const hashPassword = await hash(req.body.password, salt);
-    // const lowerUserName =(req.body.universityEmail).toLowerCase();
 
     await undergraduate.create({ ...req.body, password: hashPassword });
     res.status(201).json({
@@ -285,8 +286,25 @@ const updateUndegratuatePassword = async (req, res) => {
   }
 };
 
+const adminCreateSchema = Joi.object({
+  firstName: Joi.string().min(3).max(30).required(),
+  lastName: Joi.string().min(3).max(30).required(),
+  roleType: Joi.string().min(3).max(30).required(),
+  contactNumber: Joi.string().min(10).max(15).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
+
+const adminLoginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
+
+
 
 const createAdminAccount = async (req, res) => {
+  const { error } = adminCreateSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: true, message: error.details[0].message });
   const { firstName, lastName, roleType, contactNumber, email, password } = req.body;
 
   try {
@@ -307,15 +325,16 @@ const createAdminAccount = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = newAdmin.generateAuthToken();
-    res.status(201).json({ message: "Admin created successfully", token });
+    res.status(201).json({ message: "Admin created successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
+    res.status(500).json({ error: true,  message: error.message|| "Internal Server Error" });
   }
 };
 
 const adminLogin = async (req, res) => {
+  const { error } = adminLoginSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: true, message: error.details[0].message });
   const { email, password } = req.body;
 
   try {
@@ -333,7 +352,7 @@ const adminLogin = async (req, res) => {
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
+    res.status(500).json({ error: true, message: error.message|| "Internal Server Error" });
   }
 };
 
@@ -357,7 +376,7 @@ const updateAdmin = async (req, res) => {
     res.status(200).json({ message: "Admin updated successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
+    res.status(500).json({ error: true, message: error.message|| "Internal Server Error" });
   }
 };
 
@@ -373,7 +392,7 @@ const findAdminById = async (req, res) => {
     res.status(200).json(admin);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
+    res.status(500).json({ error: true, message: error.message|| "Internal Server Error" });
   }
 };
 

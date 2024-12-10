@@ -87,6 +87,7 @@ const SignUp: React.FC = () => {
           console.log(error);
         }
       });
+      
   };
   const fetchDepartments = async () => {
     axios

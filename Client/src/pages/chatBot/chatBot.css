@@ -1,0 +1,13 @@
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.messages .user-message {
+  align-self: flex-end;
+}
+
+.messages .bot-message {
+  align-self: flex-start;
+}

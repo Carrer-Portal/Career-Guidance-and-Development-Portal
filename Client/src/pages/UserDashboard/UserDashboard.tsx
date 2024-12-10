@@ -1,4 +1,4 @@
-import { Typography, Box, Grid, Card, CardContent,Snackbar,
+import { Typography, Box, Grid, Card, CardContent,Snackbar,Drawer,
   Alert, } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -10,6 +10,17 @@ import cvVector from "../../image/forms.svg";
 import chatbot from "../../image/chatbot.png";
 import axios from "axios";
 import Cookies from "js-cookie";
+import sampleimg1 from "../../image/sampleimg1.jpg";
+import sampleimg2 from "../../image/sampleimg2.jpg";
+import CloseIcon from "@mui/icons-material/Close";
+
+interface Event {
+  image: string | undefined;
+  title: string;
+  date: string;
+  time: string;
+  description: string;
+}
 
 interface Undergraduate {
   undergraduateId: number;
@@ -87,6 +98,18 @@ const UserDashboard = () => {
   useEffect(() => {
     
   },[]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  const handleCardClick = (event: Event) => {
+    setSelectedEvent(event);
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setSelectedEvent(null);
+  };
 
   const profile = {
     advisor: {
@@ -117,16 +140,22 @@ const UserDashboard = () => {
     },
   ];
 
-  const events = [
+  const events: Event[] = [
     {
       title: "Resume Writing Workshop",
       date: "2024-12-15",
       time: "10:00 AM",
+      description:
+        "Crafting a professional resume is the first step toward making a strong impression in the job market. In this hands-on workshop, you'll learn how to create a compelling resume that highlights your skills, achievements, and experience effectively. Led by industry experts, this session will cover essential elements like formatting, tailoring your resume for specific roles, and showcasing your unique value to potential employers. Whether you're a recent graduate or a seasoned professional, this workshop will equip you with the tools and strategies to stand out in the competitive job market.",
+      image: sampleimg2,
     },
     {
       title: "Career Fair 2024",
       date: "2024-12-20",
       time: "9:00 AM - 5:00 PM",
+      description:
+        "Step into a world of opportunities at Career Fair 2024, where the brightest minds meet top employers. This annual event serves as a dynamic platform to connect job seekers, students, and professionals with recruiters from leading companies across various industries. Explore diverse career paths, engage in meaningful conversations, and discover roles tailored to your skills and aspirations. From entry-level positions to mid-career opportunities, this fair caters to all stages of professional growth. Attend workshops, panel discussions, and networking sessions designed to enhance your job search strategies and provide valuable insights into the latest industry trends.",
+      image: sampleimg1,
     },
   ];
 
@@ -180,7 +209,7 @@ const UserDashboard = () => {
                 >
                   Status: {profile.appointment.status}
                 </Typography>
-                <Typography style={{ fontSize: "14px", marginTop: "8px" }}>
+                <Typography style={{ fontSize: "14px", marginTop: "4px" }}>
                   Time Remaining:{" "}
                   <span className="countdown-timer">
                     {profile.appointment.timeRemaining}
@@ -227,9 +256,20 @@ const UserDashboard = () => {
         <Grid container spacing={2}>
           {events.map((event, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card className="event-card">
-                <CardContent>
-                  <Typography variant="h6" style={{ color: "#634897" }}>{event.title}</Typography>
+              <Card
+                onClick={() => handleCardClick(event)}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  padding: "12px",
+                }}
+              >
+                <CardContent style={{ flex: 1, padding: 1.5 }}>
+                  <Typography variant="h6" style={{ color: "#634897" }}>
+                    {event.title}
+                  </Typography>
                   <Typography style={{ fontSize: "14px" }}>
                     Date: {event.date}
                   </Typography>
@@ -237,11 +277,72 @@ const UserDashboard = () => {
                     Time: {event.time}
                   </Typography>
                 </CardContent>
+                <Box>
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      borderRadius: "4px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
               </Card>
             </Grid>
           ))}
         </Grid>
       </Box>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        PaperProps={{
+          style: { width: "400px", padding: "16px" },
+        }}
+      >
+        {selectedEvent && (
+          <Box style={{ position: "relative" }}>
+            <Button
+              onClick={handleDrawerClose}
+              style={{
+                minWidth: "auto",
+                padding: "4px",
+                marginBottom: "12px",
+                background: "transparent",
+                width: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
+              <CloseIcon style={{ fontSize: "20px", color: "#634897" }} />
+            </Button>
+            <Box
+              style={{
+                width: "100%",
+                height: "400px",
+                background: `url(${selectedEvent?.image}) no-repeat center center`,
+                backgroundSize: "cover",
+                borderRadius: "8px",
+              }}
+            />
+            <Box style={{ padding: "16px" }}>
+              <Typography variant="h6" style={{ color: "#634897" }}>
+                {selectedEvent?.title}
+              </Typography>
+              <Typography style={{ fontSize: "14px" }}>
+                Date: {selectedEvent?.date}
+              </Typography>
+              <Typography style={{ fontSize: "14px" }}>
+                Time: {selectedEvent?.time}
+              </Typography>
+              <Typography style={{ fontSize: "14px", marginTop: "16px" }}>
+                {selectedEvent?.description}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Drawer>
       <Box className="appointment-status-section">
         <Box className="cvmanage-section">
           <Box>
@@ -308,7 +409,7 @@ const UserDashboard = () => {
               Prepare for your next big opportunity with personalized feedback
               and practice.
             </Typography>
-            <Button variant="contained">Create Your New CV</Button>
+            <Button variant="contained" onClick={() => navigate("/aiChatBot")}>Do Mock Interview With Bot</Button>
           </Box>
         </Box>
       </Box>

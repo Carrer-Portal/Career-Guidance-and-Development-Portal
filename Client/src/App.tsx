@@ -15,6 +15,7 @@ import UserDashboard from "./pages/UserDashboard/UserDashboard";
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
 import ResumeCreation from "./pages/ResumeCreation/ResumeCreation";
 import Cookies from 'js-cookie';
+import ChatBot from "./pages/chatBot/chatBot";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={studentToken ? <ProfilePage /> : <Navigate to="/login" />} />
             <Route path="/userDashboard" element={studentToken ? <UserDashboard /> : <Navigate to="/login" />} />
             <Route path="/resume-creation" element={studentToken ? <ResumeCreation /> : <Navigate to="/login" />} />
+            <Route path="/aiChatBot" element={<ChatBot />} />
           </Routes>
         </Box>
         {showLayout && <Footer />}

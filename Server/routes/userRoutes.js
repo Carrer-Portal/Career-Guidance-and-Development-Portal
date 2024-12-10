@@ -1,6 +1,7 @@
 import express from 'express';
 import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword, updateUndegratuatePassword,updateUndegratuateUser} from '../controllers/userController.js';
 import { createAdminAccount, adminLogin, updateAdmin, findAdminById } from "../controllers/userController.js";
+import upload from "../utils/uploadHelper.js";
 const router = express.Router();
 
 //register route undergraduate
@@ -16,7 +17,7 @@ router.post('/forgetPassword', forgetPassword)
 router.put('/update/:id', updateUndegratuateUser);
 router.put('/update/password/:id', updateUndegratuatePassword);
 
-router.post("/admin/create", createAdminAccount);
+router.post("/admin/create",upload.single('file'), createAdminAccount);
 router.post("/admin/login", adminLogin);
 router.put("/admin/update/:adminId", updateAdmin);
 router.get("/admin/:adminId", findAdminById);

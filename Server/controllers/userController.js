@@ -306,7 +306,7 @@ const createAdminAccount = async (req, res) => {
   const { error } = adminCreateSchema.validate(req.body);
   if (error) return res.status(400).json({ error: true, message: error.details[0].message });
   const { firstName, lastName, roleType, contactNumber, email, password } = req.body;
-
+  const filePath = req.file ? req.file.path : null;
   try {
     const existingAdmin = await Admin.findOne({ where: { email } });
     if (existingAdmin) {
@@ -323,6 +323,7 @@ const createAdminAccount = async (req, res) => {
       contactNumber,
       email,
       password: hashedPassword,
+      filePath,
     });
 
     res.status(201).json({ message: "Admin created successfully" });
@@ -335,7 +336,7 @@ const createAdminAccount = async (req, res) => {
 const adminLogin = async (req, res) => {
   const { error } = adminLoginSchema.validate(req.body);
   if (error) return res.status(400).json({ error: true, message: error.details[0].message });
-  const { email, password } = req.body;
+  const{email,password} = req.body;
 
   try {
     const admin = await Admin.findOne({ where: { email } });
@@ -349,7 +350,9 @@ const adminLogin = async (req, res) => {
     }
 
     const token = admin.generateAuthToken();
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({ message: "Login successful", 
+      userType: "Advisor",
+      adviosrToken : token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: true, message: error.message|| "Internal Server Error" });
@@ -395,6 +398,8 @@ const findAdminById = async (req, res) => {
     res.status(500).json({ error: true, message: error.message|| "Internal Server Error" });
   }
 };
+
+
 
 
 export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword,

@@ -36,6 +36,10 @@ const admin = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      filePath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       timestamps: true,

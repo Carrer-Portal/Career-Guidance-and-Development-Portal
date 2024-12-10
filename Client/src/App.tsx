@@ -12,11 +12,12 @@ import LeftMenu from "./Partials/LeftMenu/LeftMenu";
 import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
+import AdminLogin from "./pages/AdminLogin/AdminLogin";
 
 const App: React.FC = () => {
   const location = useLocation();
 
-  const showLayout = !["/login", "/SignUp", "/passwordReset"].includes(
+  const showLayout = !["/login", "/SignUp", "/passwordReset","/admin-login"].includes(
     location.pathname
   );
 
@@ -27,13 +28,17 @@ const App: React.FC = () => {
         {showLayout && <Header />}
         <Box className="body">
           <Routes>
-            <Route path="/advisorOveview" element={<AdvisorPreview />} />
+            <Route path="/" element={<Login />} />
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/passwordReset" element={<PasswordReset />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
+
+            {/* Advisor Views */}
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/advisorOveview" element={<AdvisorPreview />} />
           </Routes>
         </Box>
         {showLayout && <Footer />}

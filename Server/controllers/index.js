@@ -11,6 +11,7 @@ import reviewResumeModel from '../models/reviewResumeModel.js';
 import userActivityModel from '../models/userActivityModel.js';
 import chatHistoryModel from '../models/chatHistoryModel.js';
 import facultyModel from '../models/facultyModel.js';
+import adminModel from '../models/adminModel.js';
 
 
 const sequelize = new Sequelize(
@@ -54,6 +55,7 @@ db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
 db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
 db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
+db.admin = adminModel(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {

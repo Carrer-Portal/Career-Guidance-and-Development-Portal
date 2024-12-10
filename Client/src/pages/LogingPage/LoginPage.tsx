@@ -21,6 +21,7 @@ const LoginPage: React.FC = () => {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
+  const roleType = Cookies.get('userType');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

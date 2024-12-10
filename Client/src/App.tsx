@@ -13,6 +13,7 @@ import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
+import ResumeCreation from "./pages/ResumeCreation/ResumeCreation";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/passwordReset" element={<PasswordReset />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
+            <Route path="/resume-creation" element={<ResumeCreation />} />
 
             {/* Advisor Views */}
             <Route path="/admin-login" element={<AdminLogin />} />

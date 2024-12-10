@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8070;
 
+app.use('/files', express.static('files'));
+
 app.use("/api/user", userRoutes);
 app.use("/api/appoinment", appoinmentRoutes);
 app.use("/api/chat", chatRoutes);

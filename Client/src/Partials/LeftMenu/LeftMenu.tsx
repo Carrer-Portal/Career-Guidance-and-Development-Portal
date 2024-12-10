@@ -45,12 +45,12 @@ const menuItems = [
     ],
   },
   {
-    path: "/chatAssistant",
+    path: "/aiChatBot",
     icon: <MarkUnreadChatAltIcon />,
     label: "Chat Assistant",
   },
   {
-    path: "/settings",
+    path: "/profile",
     icon: <Settings />,
     label: "Settings",
   },
@@ -102,7 +102,7 @@ const LeftMenu: React.FC = () => {
                     )
                   }
                 >
-                  {openSubmenu === item.path ? <ExpandLess /> : <ExpandMore />}
+                  {openSubmenu === item.path ? <ExpandLess sx={{ color: "#FFFFFF" }}/> : <ExpandMore sx={{ color: "#FFFFFF" }}/>}
                 </IconButton>
               )}
             </ListItem>

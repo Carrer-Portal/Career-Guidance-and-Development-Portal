@@ -339,7 +339,7 @@ const UserDashboard = () => {
               Prepare for your next big opportunity with personalized feedback
               and practice.
             </Typography>
-            <Button variant="contained">Create Your New CV</Button>
+            <Button variant="contained" onClick={() => navigate("/aiChatBot")}>Do Mock Interview With Bot</Button>
           </Box>
         </Box>
       </Box>

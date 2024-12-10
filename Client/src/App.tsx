@@ -12,6 +12,7 @@ import LeftMenu from "./Partials/LeftMenu/LeftMenu";
 import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
+import ChatBot from "./pages/chatBot/chatBot";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -34,6 +35,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/passwordReset" element={<PasswordReset />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
+            <Route path="/aiChatBot" element={<ChatBot />} />
           </Routes>
         </Box>
         {showLayout && <Footer />}

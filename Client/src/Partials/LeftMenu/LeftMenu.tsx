@@ -16,6 +16,12 @@ import {
   ChevronRight,
 } from "@mui/icons-material";
 import "./LeftMenu.css";
+import WidgetsIcon from "@mui/icons-material/Widgets";
+import GroupsIcon from "@mui/icons-material/Groups";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import DesignServicesIcon from "@mui/icons-material/DesignServices";
+import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 
 const LeftMenu: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -31,69 +37,53 @@ const LeftMenu: React.FC = () => {
       <List component="nav" sx={{ paddingTop: "50px" }}>
         <ListItem>
           <ListItemIcon>
-            <span className="menu-icon">🏠</span>
+            <ListItemIcon>
+              <WidgetsIcon sx={{ color: "#d2c6e6" }} />
+            </ListItemIcon>
           </ListItemIcon>
           {!isCollapsed && <ListItemText primary="Overview" />}
         </ListItem>
 
         <ListItem onClick={() => setOpenDevelop(!openDevelop)}>
           <ListItemIcon>
-            <span className="menu-icon">🛠️</span>
+            <GroupsIcon sx={{ color: "#d2c6e6" }} />
           </ListItemIcon>
-          {!isCollapsed && <ListItemText primary="Develop" />}
-          {!isCollapsed && (openDevelop ? <ExpandLess /> : <ExpandMore />)}
+          {!isCollapsed && <ListItemText primary="Appointment" />}
         </ListItem>
-        <Collapse in={openDevelop} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem className="nested">
-              <ListItemIcon>
-                <span className="menu-icon">⚙️</span>
-              </ListItemIcon>
-              {!isCollapsed && <ListItemText primary="API Proxy" />}
-            </ListItem>
-            <ListItem className="nested">
-              <ListItemIcon>
-                <span className="menu-icon">📄</span>
-              </ListItemIcon>
-              {!isCollapsed && <ListItemText primary="Documents" />}
-            </ListItem>
-          </List>
-        </Collapse>
-
         <ListItem onClick={() => setOpenDeploy(!openDeploy)}>
           <ListItemIcon>
-            <span className="menu-icon">🚀</span>
+            <TextSnippetIcon sx={{ color: "#d2c6e6" }} />
           </ListItemIcon>
-          {!isCollapsed && <ListItemText primary="Deploy" />}
+          {!isCollapsed && <ListItemText primary="Resume Manage" />}
           {!isCollapsed && (openDeploy ? <ExpandLess /> : <ExpandMore />)}
         </ListItem>
         <Collapse in={openDeploy} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItem className="nested">
               <ListItemIcon>
-                <span className="menu-icon">🌍</span>
+                <EditNoteIcon sx={{ color: "#d2c6e6" }} />
               </ListItemIcon>
-              {!isCollapsed && <ListItemText primary="Environments" />}
+              {!isCollapsed && <ListItemText primary="Create CV" />}
             </ListItem>
             <ListItem className="nested">
               <ListItemIcon>
-                <span className="menu-icon">🔧</span>
+                <DesignServicesIcon sx={{ color: "#d2c6e6" }} />
               </ListItemIcon>
-              {!isCollapsed && <ListItemText primary="ENV Configs" />}
+              {!isCollapsed && <ListItemText primary="Manage CV" />}
             </ListItem>
           </List>
         </Collapse>
 
         <ListItem>
           <ListItemIcon>
-            <span className="menu-icon">⚗️</span>
+            <MarkUnreadChatAltIcon sx={{ color: "#d2c6e6" }} />
           </ListItemIcon>
-          {!isCollapsed && <ListItemText primary="Test" />}
+          {!isCollapsed && <ListItemText primary="Chat Assistant" />}
         </ListItem>
 
         <ListItem>
           <ListItemIcon>
-            <Settings />
+            <Settings sx={{ color: "#d2c6e6" }} />
           </ListItemIcon>
           {!isCollapsed && <ListItemText primary="Settings" />}
         </ListItem>

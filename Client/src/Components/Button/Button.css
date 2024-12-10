@@ -12,17 +12,20 @@
 .custom-button.small {
   padding: 4px 8px;
   font-size: 12px;
+  text-transform: capitalize;
 }
 
 .custom-button.medium {
   padding: 8px 16px;
   font-size: 14px;
   margin-top: 10px;
+  text-transform: capitalize;
 }
 
 .custom-button.large {
   padding: 12px 24px;
   font-size: 16px;
+  text-transform: capitalize;
 }
 
 .custom-button.disabled {

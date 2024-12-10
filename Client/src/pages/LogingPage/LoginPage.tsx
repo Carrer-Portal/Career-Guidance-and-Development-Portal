@@ -41,7 +41,6 @@ const LoginPage: React.FC = () => {
     }
     // change correct data - TO DO ---- ***********
     const data = { userName, password };
-
     axios
       .post("http://localhost:8070/api/user/login", data)
       .then(function (response) {

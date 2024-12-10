@@ -47,19 +47,33 @@ const validateCreateUser = (data) => {
 };
 
 const validateCreateAppointment = (data) => {
+    console.log(data);
     const schema = Joi.object({
-        date: Joi.date().iso().required().messages({
+        appointmentDate: Joi.date().iso().required().messages({
             'date.base': 'Date must be a valid date',
             'date.format': 'Date must be in ISO8601 format',
             'any.required': 'Date is required'
         }),
-        time: Joi.string().required().messages({
+        appointmentTime: Joi.string().required().messages({
             'string.base': 'Time must be a string',
             'any.required': 'Time is required'
         }),
-        description: Joi.string().required().messages({
+        appointmentDescription: Joi.string().optional().allow('').messages({
             'string.base': 'Description must be a string',
             'any.required': 'Description is required'
+        }),
+        undergraduateId: Joi.number().required().messages({
+            'number.base': 'Undergraduate ID must be a number',
+            'any.required': 'Undergraduate ID is required'
+        }),
+        careerAdvisorId: Joi.number().required().messages({
+            'number.base': 'Career Advisor ID must be a number',
+            'any.required': 'Career Advisor ID is required'
+        }),
+        appointmentStatus: Joi.string().valid('Pending', 'Confirmed', 'Cancelled').required().messages({
+            'string.base': 'Status must be a string',
+            'any.only': 'Status must be one of Pending, Confirmed, or Cancelled',
+            'any.required': 'Status is required'
         })
     });
     return schema.validate(data);
@@ -118,7 +132,7 @@ const validateCreateWorkshop = (data) => {
             'string.base': 'Description must be a string',
             'any.required': 'Description is required'
         }),
-        date: Joi.date().iso().required().messages({
+        appointmentDate: Joi.date().required().messages({
             'date.base': 'Date must be a valid date',
             'date.format': 'Date must be in ISO8601 format',
             'any.required': 'Date is required'
@@ -135,7 +149,7 @@ const validateUpdateWorkshop = (data) => {
         description: Joi.string().optional().messages({
             'string.base': 'Description must be a string'
         }),
-        date: Joi.date().iso().optional().messages({
+        date: Joi.date().optional().messages({
             'date.base': 'Date must be a valid date',
             'date.format': 'Date must be in ISO8601 format'
         })

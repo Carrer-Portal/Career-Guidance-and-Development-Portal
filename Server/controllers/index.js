@@ -12,6 +12,7 @@ import userActivityModel from '../models/userActivityModel.js';
 import chatHistoryModel from '../models/chatHistoryModel.js';
 import facultyModel from '../models/facultyModel.js';
 import adminModel from '../models/adminModel.js';
+import advisorAvailabilityMap from '../models/advisorAvailabilityMap.js';
 
 
 const sequelize = new Sequelize(
@@ -56,6 +57,7 @@ db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
 db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
 db.admin = adminModel(sequelize, Sequelize.DataTypes);
+db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -82,6 +84,16 @@ db.sequelize.sync({ force: false })
     db.department.belongsTo(db.faculty, {
         foreignKey: "facultyId",
         as:'faculty'
+    });
+
+    db.appointmentModel.hasOne(db.undergraduates, {
+        foreignKey: "undergraduateId",
+        as:'undergraduate'
+    });
+
+    db.appointmentModel.hasOne(db.admin, {
+        foreignKey: "adminId",
+        as:'admin'
     });
 
 export default db;

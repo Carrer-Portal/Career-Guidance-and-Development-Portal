@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import sendEmail from "../utils/emailHelper.js";
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import { Op } from "sequelize";
 
 const { validateLogin, validateCreateUser } = validations;
 const undergraduate = db.undergraduates;
@@ -399,9 +400,27 @@ const findAdminById = async (req, res) => {
   }
 };
 
+const getAllCareerAdvisors = async (req, res) => {
+
+  try {
+    const advisors = await Admin.findAll({
+      where: {
+        roleType: {
+          [Op.or]: ["Career Advisor", "Senior Career Advisor"]
+        }
+      }
+    });
+
+    res.status(200).json(advisors);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+};
+
 
 
 
 export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword,
-  adminLogin, createAdminAccount, updateAdmin, findAdminById
+  adminLogin, createAdminAccount, updateAdmin, findAdminById,getAllCareerAdvisors
  };

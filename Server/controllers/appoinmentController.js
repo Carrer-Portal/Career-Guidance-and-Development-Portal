@@ -1,8 +1,9 @@
 import db from "../controllers/index.js";
 import validations from '../utils/validations.js';
+import { Op } from 'sequelize';
 
 const { validateCreateAppointment, validateUpdateAppointment } = validations;
-const Appointment = db.appointments;
+const Appointment = db.appointmentModel;
 
 const createAppointment = async (req, res) => {
     try {
@@ -16,6 +17,36 @@ const createAppointment = async (req, res) => {
                     message: error.details[0].message 
                 });
         }
+        const currentDate = new Date();
+        const currentAppoinemnt =  await Appointment.findOne({
+            where: {
+                undergraduateId: req.body.undergraduateId,
+                appointmentStatus: {
+                    [Op.ne]: 'Closed'
+                },
+                [Op.or]: [
+                    {
+                        appointmentDate: {
+                            [Op.gt]: currentDate
+                        }
+                    },
+                    {
+                        appointmentDate: currentDate,
+                        appointmentTime: {
+                            [Op.gt]: currentDate.toTimeString().split(' ')[0]
+                        }
+                    }
+                ]
+            }
+        })
+        if(currentAppoinemnt){
+            return res
+            .status(400)
+            .json({ 
+                error: true, 
+                message: 'You have an open appointment. Please attend it before add new one.' 
+            });
+        }
 
         const appointment = await Appointment.create(req.body);
         res.status(201).json({ 
@@ -26,7 +57,7 @@ const createAppointment = async (req, res) => {
         console.log(error);
         return res
             .status(500)
-            .json({ error: true, message: "Internal Server Error" });
+            .json({ error: true, message: error.message|| "Internal Server Error" });
     }
 };
 

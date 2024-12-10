@@ -5,6 +5,7 @@ import axios from "axios";
 import hiredImage from "../../image/Hired.svg";
 import logo from "../../image/cgplogo.png";
 import "./loging.style.css";
+import Cookies from "js-cookie";
 
 const LoginPage: React.FC = () => {
   const [userName, setUserName] = useState("");
@@ -27,9 +28,20 @@ const LoginPage: React.FC = () => {
       .post("http://localhost:8070/api/user/login", data)
       .then(function (response) {
         console.log(response);
-        navigate("/MyProfile", {
-          state: { successMessage: "User Logged successfully!" },
-        });
+        
+        Cookies.set('userType',response.data.userType)
+        if(response.data.userType=="Student"){
+          Cookies.set('studentToken', response.data.accessToken);
+          navigate("/profile", {
+            state: { successMessage: "User Logged successfully!" },
+          });
+        }
+        else{
+          Cookies.set('advisorToken', response.data.accessToken);
+          navigate("/", {
+            state: { successMessage: "Advisor Logged successfully!" },
+          });
+        }
       })
       .catch(function (error) {
         if (error.response) {
@@ -43,6 +55,9 @@ const LoginPage: React.FC = () => {
             severity = 'info';
           }
           setErrorSeverity(severity);
+          if(error.response.data.message=="Invalid password"){
+            error.response.data.message = "Your login credentials wrong please check again";
+          }
           setErrorMessage(error.response.data.message || 'An error occurred');
           setOpenSnackbar(true);
           console.log(error.response.data);

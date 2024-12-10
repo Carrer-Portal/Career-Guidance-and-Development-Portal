@@ -1,5 +1,5 @@
 import express from 'express';
-import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword} from '../controllers/userController.js';
+import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword, updateUndegratuatePassword,updateUndegratuateUser} from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -12,5 +12,8 @@ router.post('/login',undergraduatelogin);
 router.get('/wami',whoAmI);
 
 router.post('/forgetPassword', forgetPassword)
+
+router.put('/update/:id', updateUndegratuateUser);
+router.put('/update/password/:id', updateUndegratuatePassword);
 
 export default router;

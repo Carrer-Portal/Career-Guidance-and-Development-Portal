@@ -328,7 +328,7 @@ const createAdminAccount = async (req, res) => {
       filePath,
     });
 
-    res.status(201).json({ message: "Admin created successfully" });
+    res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: true,  message: error.message|| "Internal Server Error" });

@@ -4,6 +4,8 @@ import "./UserDashboard.css";
 import Button from "../../Components/Button/Button";
 import Chathu from "../../image/Chathu.jpeg";
 import appointment from "../../image/appointment.png";
+import cvVector from "../../image/forms.svg";
+import chatbot from "../../image/chatbot.png";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -21,6 +23,34 @@ const UserDashboard = () => {
       timeRemaining: "2 days 4 hours",
     },
   };
+
+  const fileDetails = [
+    {
+      name: "Resume 01",
+      status: "Approved",
+    },
+    // {
+    //   name: "Resume 02",
+    //   status: "In Progress",
+    // },
+    {
+      name: "Resume 03",
+      status: "Not Approved",
+    },
+  ];
+
+  const events = [
+    {
+      title: "Resume Writing Workshop",
+      date: "2024-12-15",
+      time: "10:00 AM",
+    },
+    {
+      title: "Career Fair 2024",
+      date: "2024-12-20",
+      time: "9:00 AM - 5:00 PM",
+    },
+  ];
 
   return (
     <Box className="dashboard-container">
@@ -90,66 +120,119 @@ const UserDashboard = () => {
               className="appointment-image"
             />
           </Box>
-          <Button
-            className="btn-primary"
-            variant="outline"
-            style={{ margin: 0, marginRight: "35px" }}
-            onClick={() => navigate("/booking")}
-          >
-            + Create New Appointment
-          </Button>
+          <Box className="appointment-content-box">
+            <Typography variant="h5" className="appointment-title">
+              Plan Your Career with Expert Guidance
+            </Typography>
+            <Typography
+              variant="body1"
+              className="appointment-subtitle"
+              style={{ fontSize: "14px" }}
+            >
+              Get personalized advice from a professional career advisor to
+              achieve your goals and make informed decisions.
+            </Typography>
+            <Button variant="contained" onClick={() => navigate("/booking")}>
+              Create New Appointment
+            </Button>
+          </Box>
         </Box>
       </Box>
+
       <Box className="dashboard-section">
-        <Typography fontWeight={600} style={{ fontSize: "16px" }}>
-          Manage Your CV
+        <Typography
+          fontWeight={600}
+          style={{ fontSize: "16px", marginBottom: "12px" }}
+        >
+          Upcoming Workshops and Events
         </Typography>
-        <Box className="uploadcv-section"></Box>
         <Grid container spacing={2}>
-          <Grid item>
-            <Button className="btn-secondary" variant="contained">
-              Update CV
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button className="btn-secondary" variant="contained">
-              Create New CV
-            </Button>
-          </Grid>
+          {events.map((event, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card className="event-card">
+                <CardContent>
+                  <Typography variant="h6" style={{ color: "#634897" }}>{event.title}</Typography>
+                  <Typography style={{ fontSize: "14px" }}>
+                    Date: {event.date}
+                  </Typography>
+                  <Typography style={{ fontSize: "14px" }}>
+                    Time: {event.time}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
-      <Box className="dashboard-section">
-        <Typography fontWeight={600} style={{ fontSize: "16px" }}>
-        Upcoming Workshops and Events
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className="event-card">
-              <CardContent>
-                <Typography variant="h6">Resume Writing Workshop</Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Date: 2024-12-15
-                </Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Time: 10:00 AM
-                </Typography>
-              </CardContent>
-            </Card>
+      <Box className="appointment-status-section">
+        <Box className="cvmanage-section">
+          <Box>
+            <Typography fontWeight={600} style={{ fontSize: "16px" }}>
+              Manage Your CV
+            </Typography>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={12}>
+              <Box className="uploadcv-section">
+                <Grid container spacing={2}>
+                  {fileDetails.map((file, index) => (
+                    <Grid item xs={12} sm={4} md={4} key={index}>
+                      <Box className="file-card">
+                        <Box className="file-icon">
+                          <img
+                            src={cvVector}
+                            alt="File Icon"
+                            className="file-vector"
+                          />
+                        </Box>
+                        <Box className="file-details">
+                          <Typography>{file.name}</Typography>
+                          <Typography
+                            variant="body1"
+                            style={{ fontSize: "12px" }}
+                            className={`file-status ${
+                              file.status === "Approved"
+                                ? "status-approved"
+                                : file.status === "In Progress"
+                                ? "status-in-progress"
+                                : "status-not-approved"
+                            }`}
+                          >
+                            {file.status}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid item mt={1}>
+                  <Button variant="outline" style={{ width: "100%" }}>
+                    Create Your New CV
+                  </Button>
+                </Grid>
+              </Box>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className="event-card">
-              <CardContent>
-                <Typography variant="h6">Career Fair 2024</Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Date: 2024-12-20
-                </Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Time: 9:00 AM - 5:00 PM
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        </Box>
+        <Box className="appointment-create-box">
+          <Box className="appointment-image-box">
+            <img src={chatbot} alt="Advisor" className="appointment-image" />
+          </Box>
+          <Box className="appointment-content-box">
+            <Typography variant="h5" className="appointment-title">
+              Mock Interview with AI Chatbot
+            </Typography>
+            <Typography
+              variant="body1"
+              className="appointment-subtitle"
+              style={{ fontSize: "14px" }}
+            >
+              Prepare for your next big opportunity with personalized feedback
+              and practice.
+            </Typography>
+            <Button variant="contained">Create Your New CV</Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

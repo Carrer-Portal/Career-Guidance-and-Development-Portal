@@ -13,9 +13,11 @@ import "./BookingPage.css";
 import Chathu from "../../image/Chathu.jpeg";
 import Niroshani from "../../image/Niroshani.png";
 import madhuwanthi from "../../image/madhuwanthi.png";
+import { useNavigate } from "react-router-dom";
 
 const BookingPage = () => {
   const [date, setDate] = useState(new Date());
+  const navigate = useNavigate(); 
   const [timeSlot, setTimeSlot] = useState("");
   const [selectedAdvisor, setSelectedAdvisor] = useState("");
   const timeSlots = ["9:30", "10:30", "11:30", "12:30", "1:30", "2:30", "3:30"];
@@ -33,10 +35,15 @@ const BookingPage = () => {
   return (
     <Box className="booking-container">
       <Box className="booking-Title">
-        <Typography variant="h5">Select Your Time and Book Them</Typography>
-        <Typography variant="body1" className="sub-Title">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry.
+        <Typography fontWeight={600} style={{ fontSize: "28px" }}>
+          Schedule Your Career Guidance Session
+        </Typography>
+        <Typography
+          style={{ fontSize: "14px" }}
+          className="sub-Title"
+        >
+          Choose a date and time, select your advisor, and share your details to
+          receive personalized career guidance.
         </Typography>
       </Box>
       <Grid container spacing={4} md={12} lg={12}>
@@ -158,8 +165,10 @@ const BookingPage = () => {
           </Box>
         </Grid>
       </Grid>
-      <Box className="action-buttons">
-        <Button variant="outlined" color="secondary">Back</Button>
+      <Box className="book-action-buttons">
+        <Button variant="outlined" color="secondary" onClick={() => navigate("/userDashboard")}>
+          Back
+        </Button>
         <Button variant="contained" color="secondary">
           Continue
         </Button>

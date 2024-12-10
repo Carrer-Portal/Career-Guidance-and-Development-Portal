@@ -62,11 +62,11 @@ const undergraduateRegister = async (req, res) => {
         message: error.details[0].message,
       });
     }
-    console.log(req.body);
+
     const user = await undergraduate.findOne({
       where: { universityEmail: req.body.universityEmail },
     });
-    console.log(user);
+
     if (user) {
       return res
         .status(400)
@@ -82,7 +82,7 @@ const undergraduateRegister = async (req, res) => {
       message: "User created successfully",
     });
   } catch (error) {
-    console.log(error);
+
     return res
       .status(500)
       .json({ error: true, message: "Internal Server Error" });
@@ -99,9 +99,9 @@ const whoAmI = async (req, res) => {
 
     const decoded = jwt.verify(token, "CarrerHubGetInToSeceretZone");
     const undergraduateId = decoded.undergraduateId;
-    console.log(undergraduateId);
+
     const user = await undergraduate.findOne(
-      {
+      { where: { undergraduateId: undergraduateId } ,
         include: [
           {
             model: department,
@@ -114,10 +114,10 @@ const whoAmI = async (req, res) => {
             ]
           },
         ],
-      },
-      { where: { undergraduateId: undergraduateId } }
+      }
+      
     );
-    console.log(user);
+
     const userDto = {
       undergraduateId:user.undergraduateId,
       departmentId:user.department.departmentId,
@@ -135,15 +135,16 @@ const whoAmI = async (req, res) => {
       user: userDto,
     });
   } catch (error) {
-    console.log(error);
+
     return res
       .status(500)
-      .json({ error: true, message: "Internal Server Error" });
+      .json({ error: true,  message: error.message || 'Internal Server Error'});
   }
 };
 
 const forgetPassword = async (req, res) => {
   try {
+    console.log(req.body.userName);
     const user = await undergraduate.findOne({
       where: { universityEmail: req.body.userName },
     });
@@ -161,25 +162,34 @@ const forgetPassword = async (req, res) => {
     const options = {
       email: user.universityEmail,
       subject: "Reset Password",
-      body: `<div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                <h2 style="color: #333;">Password Reset Request</h2>
-                <p style="color: #555;">
-                    You have requested to reset your password. Please click on the link below to reset your password. This link will expire in 5 minutes.
-                </p>
-                <a 
-                    href="http://localhost:8070/api/v1/resetpassword/${token}" 
-                    style="display: inline-block; padding: 10px 20px; margin: 10px 0; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;"
-                >
-                    Reset Password
-                </a>
-                <p style="color: #555;">
-                    If you did not request this, please ignore this email.
-                </p>
-                <p style="color: #555;">
-                    Thank you,<br>
-                    CGD | USJ
-                </p>
-            </div>
+      body: `<div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+    <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
+        <h1 style="margin: 0;">CGD | USJ</h1>
+    </div>
+    <div style="padding: 20px;">
+        <h2 style="color: #333;">Password Reset Request</h2>
+        <p style="color: #555;">
+            You have requested to reset your password. Please click on the link below to reset your password. This link will expire in 5 minutes.
+        </p>
+        <a 
+            href="http://localhost:8070/api/v1/resetpassword/${token}" 
+            style="display: inline-block; padding: 10px 20px; margin: 10px 0; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;"
+        >
+            Reset Password
+        </a>
+        <p style="color: #555;">
+            If you did not request this, please ignore this email.
+        </p>
+        <p style="color: #555;">
+            Thank you,<br>
+            CGD | USJ Team
+        </p>
+    </div>
+    <div style="background-color: #f7f7f7; color: #555; padding: 10px 20px; text-align: center;">
+        <p style="margin: 0;">&copy; 2023 CGD | USJ. All rights reserved.</p>
+        <p style="margin: 0;">Nugegoda, Sri Lanka</p>
+    </div>
+</div>
             `
     };
     const emailSent = await sendEmail(options);
@@ -187,6 +197,7 @@ const forgetPassword = async (req, res) => {
     if(emailSent){
         res.status(200).json({
             message: "Reset Link sent successfully",
+            passwordToken: token,
             status: true,
           });
     }
@@ -275,5 +286,98 @@ const updateUndegratuatePassword = async (req, res) => {
 };
 
 
+const createAdminAccount = async (req, res) => {
+  const { firstName, lastName, roleType, contactNumber, email, password } = req.body;
 
-export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword };
+  try {
+    const existingAdmin = await Admin.findOne({ where: { email } });
+    if (existingAdmin) {
+      return res.status(400).json({ error: true, message: "Admin already exists" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newAdmin = await Admin.create({
+      firstName,
+      lastName,
+      roleType,
+      contactNumber,
+      email,
+      password: hashedPassword,
+    });
+
+    const token = newAdmin.generateAuthToken();
+    res.status(201).json({ message: "Admin created successfully", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+};
+
+const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ where: { email } });
+    if (!admin) {
+      return res.status(400).json({ error: true, message: "Invalid email or password" });
+    }
+
+    const validPassword = await bcrypt.compare(password, admin.password);
+    if (!validPassword) {
+      return res.status(400).json({ error: true, message: "Invalid email or password" });
+    }
+
+    const token = admin.generateAuthToken();
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+};
+
+const updateAdmin = async (req, res) => {
+  const { adminId } = req.params;
+  const { firstName, lastName, roleType, contactNumber, email } = req.body;
+
+  try {
+    const admin = await Admin.findByPk(adminId);
+    if (!admin) {
+      return res.status(404).json({ error: true, message: "Admin not found" });
+    }
+
+    admin.firstName = firstName || admin.firstName;
+    admin.lastName = lastName || admin.lastName;
+    admin.roleType = roleType || admin.roleType;
+    admin.contactNumber = contactNumber || admin.contactNumber;
+    admin.email = email || admin.email;
+
+    await admin.save();
+    res.status(200).json({ message: "Admin updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+};
+
+const findAdminById = async (req, res) => {
+  const { adminId } = req.params;
+
+  try {
+    const admin = await Admin.findByPk(adminId);
+    if (!admin) {
+      return res.status(404).json({ error: true, message: "Admin not found" });
+    }
+
+    res.status(200).json(admin);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+};
+
+
+export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword,
+  adminLogin, createAdminAccount, updateAdmin, findAdminById
+ };

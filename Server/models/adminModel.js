@@ -42,6 +42,18 @@ const admin = (sequelize, DataTypes) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
       tableName: "admin",
+      hooks: {
+        beforeSync: async (options) => {
+          try {
+            const result = await sequelize.query("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'your_database_name' AND TABLE_NAME = 'admin'");
+            if (result && result[0] && result[0][0] && result[0][0].AUTO_INCREMENT < 100) {
+              await sequelize.query("ALTER TABLE admin AUTO_INCREMENT = 100");
+            }
+          } catch (error) {
+            console.error("Error setting AUTO_INCREMENT value:", error);
+          }
+        },
+      },
     }
   );
 

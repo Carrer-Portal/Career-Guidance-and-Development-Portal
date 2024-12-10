@@ -8,6 +8,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "../../../Components/Button/Button";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface EmailValidationProps {
   open: boolean;
@@ -20,20 +22,21 @@ const EmailValidation: React.FC<EmailValidationProps> = ({ open, onClose }) => {
     message: string;
   } | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
-// change correct validation - TO DO ---- ***********
-    if (email === "success@example.com") {
+    try {
+      const response = await axios.post("http://localhost:8070/api/user/forgetPassword", { userName: email });
+      Cookies.set('passwordResetSuccess',response.data.passwordToken)
       setAlert({
         type: "success",
-        message: "Password reset email sent successfully!",
+        message: response.data.message,
       });
-    } else {
+    } catch (error:any) {
       setAlert({
         type: "warning",
-        message: "Failed to send reset email. Please try again.",
+        message: error.response?.data?.message || "Failed to send reset email. Please try again.",
       });
     }
     onClose();

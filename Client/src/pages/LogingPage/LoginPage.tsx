@@ -1,15 +1,22 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, Link} from "@mui/material";
+import { Box, Typography, Button, Link,Snackbar,Alert} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import hiredImage from "../../image/Hired.svg";
 import logo from "../../image/cgplogo.png";
 import "./loging.style.css";
+import Cookies from "js-cookie";
 
 const LoginPage: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorSeverity, setErrorSeverity] = useState<'error' | 'warning' | 'info' | 'success'>('error');
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,15 +25,43 @@ const LoginPage: React.FC = () => {
       password: password,
     };
     axios
-      .post("http://localhost:8070/login", data)
+      .post("http://localhost:8070/api/user/login", data)
       .then(function (response) {
         console.log(response);
-        navigate("/MyProfile", {
-          state: { successMessage: "User Logged successfully!" },
-        });
+        
+        Cookies.set('userType',response.data.userType)
+        if(response.data.userType=="Student"){
+          Cookies.set('studentToken', response.data.accessToken);
+          navigate("/profile", {
+            state: { successMessage: "User Logged successfully!" },
+          });
+        }
+        else{
+          Cookies.set('advisorToken', response.data.accessToken);
+          navigate("/", {
+            state: { successMessage: "Advisor Logged successfully!" },
+          });
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        if (error.response) {
+          const status = error.response.status;
+          let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+          if (status === 400) {
+            severity = 'error';
+          } else if (status === 401) {
+            severity = 'warning';
+          } else if (status === 404) {
+            severity = 'info';
+          }
+          setErrorSeverity(severity);
+          if(error.response.data.message=="Invalid password"){
+            error.response.data.message = "Your login credentials wrong please check again";
+          }
+          setErrorMessage(error.response.data.message || 'An error occurred');
+          setOpenSnackbar(true);
+          console.log(error.response.data);
+        }
       });
   };
 
@@ -38,7 +73,13 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+    
     <Box className="container">
+      <Snackbar className="snackBar" open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={errorSeverity} sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
       <Box className="header-content">
         <Box className="intro-content">
           <img src={logo} className="cgp-logo" alt="logo" />

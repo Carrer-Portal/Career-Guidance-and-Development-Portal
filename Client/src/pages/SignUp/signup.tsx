@@ -1,15 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import "./signup.style.css";
 import registerImage from "../../image/Hired.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 import logo from "../../image/cgplogo.png";
+import { Snackbar, Alert, TextField, Button } from '@mui/material';
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+}
+
+interface Department {
+  facultyId: number;
+  facultyName: string;
+  departmentId: number;
+}
 
 const SignUp: React.FC = () => {
+  const appHost = "http://localhost:8070";
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -22,6 +34,15 @@ const SignUp: React.FC = () => {
     department: "",
   });
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorSeverity, setErrorSeverity] = useState<'error' | 'warning' | 'info' | 'success'>('error');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [departments, setDepartments] =  useState<Department[]>([]);
+  const [faculties, setFaculties] =  useState<Department[]>([]);
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -31,27 +52,94 @@ const SignUp: React.FC = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = {
-      userName: formData.email,
+      universityEmail: formData.email,
       firstName: formData.firstName,
       lastName: formData.lastName,
       contactNumber: formData.contactNumber,
-      regNumber: formData.mcNumber,
-      faculty: formData.faculty,
-      department: formData.department,
+      regNo: formData.mcNumber,
+      facultyId: formData.faculty,
+      departmentId: formData.department,
       password: formData.confirmPassword,
     };
     axios
-      .post("http://localhost:8070/signup", data)
+      .post(`${appHost}/api/user/register`, data)
       .then(function (response) {
         console.log(response);
-        navigate("/", {
+        navigate("/login", {
           state: { successMessage: "User created successfully!" },
         });
       })
       .catch(function (error) {
-        console.log(error);
+        if (error.response) {
+          const status = error.response.status;
+          let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+          if (status === 400) {
+            severity = 'error';
+          } else if (status === 401) {
+            severity = 'warning';
+          } else if (status === 404) {
+            severity = 'info';
+          }
+          setErrorSeverity(severity);
+          setErrorMessage(error.response.data.message || 'An error occurred');
+          setOpenSnackbar(true);
+        } else {
+          console.log(error);
+        }
       });
   };
+  const fetchDepartments = async () => {
+    axios
+      .get(`${appHost}/api/data/getAlldepartments`)
+      .then(function (response) {
+        setDepartments(response.data);
+      })
+      .catch(function (error) {
+          const status = error.response.status;
+          let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+          if (status === 400) {
+            severity = 'error';
+          } else if (status === 401) {
+            severity = 'warning';
+          } else if (status === 404) {
+            severity = 'info';
+          }
+          setErrorSeverity(severity);
+          setErrorMessage(error.response.data.message || 'An error occurred');
+          setOpenSnackbar(true);
+      })
+    };
+    const fetchFaculties = async () => {
+      axios
+        .get(`${appHost}/api/data/getAllfaculties`)
+        .then(function (response) {
+          setFaculties(response.data);
+          console.log(response.data);
+        })
+        .catch(function (error) {
+            const status = error.response.status;
+            let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+            if (status === 400) {
+              severity = 'error';
+            } else if (status === 401) {
+              severity = 'warning';
+            } else if (status === 404) {
+              severity = 'info';
+            }
+            setErrorSeverity(severity);
+            setErrorMessage(error.response.data.message || 'An error occurred');
+            setOpenSnackbar(true);
+        })
+    };
+
+    useEffect(() => {
+      fetchDepartments();
+      fetchFaculties();
+    }, []);
+
+    const relevantDepartments = departments.filter(dept => dept.facultyId === parseInt(formData.faculty));
+
+
 
   return (
     <Box className="signup-container">
@@ -117,12 +205,14 @@ const SignUp: React.FC = () => {
                   value={formData.faculty}
                   onChange={handleInputChange}
                 >
-                  <option value=""> --- </option>
-                  <option value="Faculty of Management Studies and Commerce">
-                    Faculty of Management Studies and Commerce
+                  {faculties.map((faculty) => (
+                  <option key={faculty.facultyId} value={faculty.facultyId}>
+                    {faculty.facultyName}
                   </option>
+                ))}
                 </select>
               </Box>
+
               <Box className="department">
                 <label htmlFor="department">Select Department</label>
                 <select
@@ -131,8 +221,11 @@ const SignUp: React.FC = () => {
                   value={formData.department}
                   onChange={handleInputChange}
                 >
-                  <option value=""> -- </option>
-                  <option value="Departmen of IT">Departmen of IT</option>
+                {relevantDepartments.map((department) => (
+                  <option key={department.departmentId} value={department.departmentId}>
+                    {department.departmentName}
+                  </option>
+                ))}
                 </select>
               </Box>
             </Box>
@@ -192,6 +285,11 @@ const SignUp: React.FC = () => {
           </Box>
         </form>
       </Box>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={errorSeverity} sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

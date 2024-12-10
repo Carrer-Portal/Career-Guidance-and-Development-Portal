@@ -8,6 +8,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../../image/cgplogo.png";
 import { Snackbar, Alert, TextField, Button } from '@mui/material';
+import Joi from 'joi';
 
 interface Department {
   departmentId: number;
@@ -43,6 +44,19 @@ const SignUp: React.FC = () => {
     setOpenSnackbar(false);
   };
 
+  const schema = Joi.object({
+    firstName: Joi.string().required().label('First Name'),
+    lastName: Joi.string().required().label('Last Name'),
+    email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
+    contactNumber: Joi.string().required().label('Contact Number'),
+    password: Joi.string().required().label('Password'),
+    confirmPassword: Joi.string().valid(Joi.ref('password')).required().label('Confirm Password').messages({
+      'any.only': 'Confirm Password must match Password'
+    }),
+    mcNumber: Joi.string().required().label('MC Number'),
+    faculty: Joi.string().required().label('Faculty'),
+    department: Joi.string().required().label('Department'),
+  });
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -51,6 +65,14 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const { error } = schema.validate(formData, { abortEarly: false });
+    if (error) {
+      setErrorMessage(error.details.map(detail => detail.message).join(', '));
+      setErrorSeverity('error');
+      setOpenSnackbar(true);
+      return;
+    }
+
     const data = {
       universityEmail: formData.email,
       firstName: formData.firstName,
@@ -59,7 +81,7 @@ const SignUp: React.FC = () => {
       regNo: formData.mcNumber,
       facultyId: formData.faculty,
       departmentId: formData.department,
-      password: formData.confirmPassword,
+      password: formData.password,
     };
     axios
       .post(`${appHost}/api/user/register`, data)
@@ -88,6 +110,7 @@ const SignUp: React.FC = () => {
         }
       });
   };
+
   const fetchDepartments = async () => {
     axios
       .get(`${appHost}/api/data/getAlldepartments`)
@@ -95,51 +118,50 @@ const SignUp: React.FC = () => {
         setDepartments(response.data);
       })
       .catch(function (error) {
-          const status = error.response.status;
-          let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
-          if (status === 400) {
-            severity = 'error';
-          } else if (status === 401) {
-            severity = 'warning';
-          } else if (status === 404) {
-            severity = 'info';
-          }
-          setErrorSeverity(severity);
-          setErrorMessage(error.response.data.message || 'An error occurred');
-          setOpenSnackbar(true);
+        const status = error.response.status;
+        let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+        if (status === 400) {
+          severity = 'error';
+        } else if (status === 401) {
+          severity = 'warning';
+        } else if (status === 404) {
+          severity = 'info';
+        }
+        setErrorSeverity(severity);
+        setErrorMessage(error.response.data.message || 'An error occurred');
+        setOpenSnackbar(true);
+      });
+  };
+
+  const fetchFaculties = async () => {
+    axios
+      .get(`${appHost}/api/data/getAllfaculties`)
+      .then(function (response) {
+        setFaculties(response.data);
+        console.log(response.data);
       })
-    };
-    const fetchFaculties = async () => {
-      axios
-        .get(`${appHost}/api/data/getAllfaculties`)
-        .then(function (response) {
-          setFaculties(response.data);
-          console.log(response.data);
-        })
-        .catch(function (error) {
-            const status = error.response.status;
-            let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
-            if (status === 400) {
-              severity = 'error';
-            } else if (status === 401) {
-              severity = 'warning';
-            } else if (status === 404) {
-              severity = 'info';
-            }
-            setErrorSeverity(severity);
-            setErrorMessage(error.response.data.message || 'An error occurred');
-            setOpenSnackbar(true);
-        })
-    };
+      .catch(function (error) {
+        const status = error.response.status;
+        let severity: 'error' | 'warning' | 'info' | 'success' = 'error';
+        if (status === 400) {
+          severity = 'error';
+        } else if (status === 401) {
+          severity = 'warning';
+        } else if (status === 404) {
+          severity = 'info';
+        }
+        setErrorSeverity(severity);
+        setErrorMessage(error.response.data.message || 'An error occurred');
+        setOpenSnackbar(true);
+      });
+  };
 
-    useEffect(() => {
-      fetchDepartments();
-      fetchFaculties();
-    }, []);
+  useEffect(() => {
+    fetchDepartments();
+    fetchFaculties();
+  }, []);
 
-    const relevantDepartments = departments.filter(dept => dept.facultyId === parseInt(formData.faculty));
-
-
+  const relevantDepartments = departments.filter(dept => dept.facultyId === parseInt(formData.faculty));
 
   return (
     <Box className="signup-container">
@@ -279,7 +301,7 @@ const SignUp: React.FC = () => {
             </label>
           </Box>
           <Box className="btn-box">
-            <Button type="submit" variant="contained" color='secondary' className="register-btn">
+            <Button type="submit" variant="contained" className="register-btn">
               Register
             </Button>
           </Box>

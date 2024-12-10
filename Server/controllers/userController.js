@@ -21,10 +21,11 @@ const undergraduatelogin = async (req, res) => {
         message: error.details[0].message,
       });
     }
-
+    
     const user = await undergraduate.findOne({
       where: { universityEmail: req.body.userName },
     });
+    console.log("coming body",user);
     if (!user) {
       return res
         .status(400)
@@ -116,7 +117,7 @@ const whoAmI = async (req, res) => {
       },
       { where: { undergraduateId: undergraduateId } }
     );
-
+    console.log(user);
     const userDto = {
       undergraduateId:user.undergraduateId,
       departmentId:user.department.departmentId,

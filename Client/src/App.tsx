@@ -11,11 +11,14 @@ import Footer from "./Partials/Footer/Footer";
 import Box from "@mui/material/Box";
 import LeftMenu from "./Partials/LeftMenu/LeftMenu";
 import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
+import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 
 const App: React.FC = () => {
   const location = useLocation();
 
-  const showLayout = ["/", "/profile"].includes(location.pathname);
+  const showLayout = !["/login", "/SignUp", "/passwordReset"].includes(
+    location.pathname
+  );
 
   return (
     <Box display="flex">
@@ -24,11 +27,12 @@ const App: React.FC = () => {
         {showLayout && <Header />}
         <Box className="body">
           <Routes>
-            <Route path="/" element={<AdvisorPreview />} />
+            <Route path="/advisorOveview" element={<AdvisorPreview />} />
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/SignUp" element={<SignUp />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/passwordReset" element={<PasswordReset />} />
           </Routes>
         </Box>
         {showLayout && <Footer />}

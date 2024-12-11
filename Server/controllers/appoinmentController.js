@@ -177,7 +177,13 @@ const findAppointmentsByCareerAdvisorId = async (req, res) => {
     try {
         const { careerAdvisorId } = req.params;
         const appointments = await Appointment.findAll({
-            where: { careerAdvisorId: careerAdvisorId }
+            where: { careerAdvisorId: careerAdvisorId },
+            include: [
+                {
+                    model: Undergraduate,
+                    as: 'undergraduate'
+                }
+            ]
         });
         if (appointments.length > 0) {
             res.status(200).json({
@@ -197,12 +203,60 @@ const findAppointmentsByCareerAdvisorId = async (req, res) => {
 
 
 
+const acceptAppointment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        const appointment = await Appointment.findOne({ where: { appointmentId: id } });
+        if (!appointment) {
+            return res.status(404).json({ error: true, message: 'Appointment not found' });
+        }
+        if(appointment.appointmentStatus === 'Accepted'){
+            return res.status(400).json({ error: true, message: 'Appointment already accepted' });
+        }
+
+        await Appointment.update(
+            { appointmentStatus: 'Accepted' },
+            { where: { appointmentId: id } }
+        );
+
+        res.status(200).json({ message: 'Appointment accepted successfully', appointment });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: true, message: 'Internal Server Error' });
+    }
+};
+
+const declineAppointment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const appointment = await Appointment.findOne({ where: { appointmentId: id } });
+        if (!appointment) {
+            return res.status(404).json({ error: true, message: 'Appointment not found' });
+        }
+
+        appointment.appointmentStatus = 'Declined';
+        await Appointment.update(
+            { appointmentStatus: 'Declined' },
+            { where: { appointmentId: id } }
+        );
+
+        res.status(200).json({ message: 'Appointment declined successfully', appointment });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: true, message: 'Internal Server Error' });
+    }
+};
+
+
 export {
     createAppointment,
     updateAppointment,
     deleteAppointment,
     findAppointmentById,
     findAppointmentsByUndergraduateId,
-    findAppointmentsByCareerAdvisorId
+    findAppointmentsByCareerAdvisorId,
+    acceptAppointment,
+    declineAppointment
 
 };

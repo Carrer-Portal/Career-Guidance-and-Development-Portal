@@ -1,11 +1,11 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import {
   Box,
   Typography,
   Card,
   CardContent,
   Avatar,
-  Grid,
+  Grid,Snackbar,Alert
 } from "@mui/material";
 import "./AdvisorOverview.css";
 import Chathu from "../../image/Chathu.jpeg";
@@ -13,6 +13,73 @@ import Button from "../../Components/Button/Button";
 import cvVector from "../../image/forms.svg";
 import sampleimg1 from "../../image/sampleimg1.jpg";
 import sampleimg2 from "../../image/sampleimg2.jpg";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+interface CareerAdvisor {
+  careerAdvisorId: number;
+  firstName: string;
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: number;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+}
+
+interface Appointment {
+  appointmentId: string;
+  careerAdvisorId: number;
+  undergraduateId: number;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentStatus: string;
+  appointmentDescription: string;
+  undergraduate: Undergraduate;
+}
+
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  facultyId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Workshop {
+  workshopId: string;
+  careerAdvisorId: number;
+  workshopName: string;
+  workshopDescription: string;
+  workshopDate: string;
+  workshopTime: string;
+  workshopBannerFile: string;
+  facultyId: number;
+  departmentId: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  faculty: Faculty;
+  department: Department;
+}
+
 
 interface Event {
   image: string | undefined;
@@ -35,26 +102,7 @@ const statsData = [
   { title: "Scheduled Workshops", value: "06", isPositive: false },
 ];
 
-const bookingsData = [
-  {
-    name: "Anura Kumara",
-    faculty: "FMSC",
-    date: "15 Dec 2024",
-    time: "10:00 - 11:00",
-  },
-  {
-    name: "Mahinda Perera",
-    faculty: "FOT",
-    date: "20 Jan 2025",
-    time: "14:00 - 15:00",
-  },
-  {
-    name: "Nimal Perera",
-    faculty: "FOE",
-    date: "10 Mar 2025",
-    time: "09:00 - 10:00",
-  },
-];
+
 
 const fileDetails = [
   {
@@ -74,26 +122,126 @@ const fileDetails = [
   },
 ];
 
-const events: Event[] = [
-  {
-    title: "Resume Writing Workshop",
-    date: "2024-12-15",
-    time: "10:00 AM",
-    description:
-      "Crafting a professional resume is the first step toward making a strong impression in the job market. In this hands-on workshop, you'll learn how to create a compelling resume that highlights your skills, achievements, and experience effectively. Led by industry experts, this session will cover essential elements like formatting, tailoring your resume for specific roles, and showcasing your unique value to potential employers. Whether you're a recent graduate or a seasoned professional, this workshop will equip you with the tools and strategies to stand out in the competitive job market.",
-    image: sampleimg2,
-  },
-  {
-    title: "Career Fair 2024",
-    date: "2024-12-20",
-    time: "9:00 AM - 5:00 PM",
-    description:
-      "Step into a world of opportunities at Career Fair 2024, where the brightest minds meet top employers. This annual event serves as a dynamic platform to connect job seekers, students, and professionals with recruiters from leading companies across various industries. Explore diverse career paths, engage in meaningful conversations, and discover roles tailored to your skills and aspirations. From entry-level positions to mid-career opportunities, this fair caters to all stages of professional growth. Attend workshops, panel discussions, and networking sessions designed to enhance your job search strategies and provide valuable insights into the latest industry trends.",
-    image: sampleimg1,
-  },
-];
+
 
 const AdvisorPreview = () => {
+  const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  useEffect(() => {
+    const fetchAdvisorInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/user/admin", {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+          }
+        });
+        setAdvisor(response.data.user);
+      } catch (error: any) {
+        if (error.response) {
+          setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch advisor info', severity: 'error' });
+        } else {
+          setSnackbar({ open: true, message: 'Failed to fetch advisor info', severity: 'error' });
+        }
+      }
+    };
+
+    fetchAdvisorInfo();
+  }, []);
+  const [events,setEvents] = useState<Workshop[]>([]);
+
+  const fetchWorkshops = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8070/api/workshop/findBy/careerAdvisor/${advisor?.careerAdvisorId}`, {
+      });
+      setEvents(response.data.workshops);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch workshop for advisor', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch workshop for advisor', severity: 'error' });
+      }
+    }
+  };
+  useEffect(() => {
+    fetchWorkshops();
+  } ,[advisor] );
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (advisor) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/appoinment/findByCareerAdvisor/${advisor.careerAdvisorId}`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+            }
+          });
+          setAppointments(response.data.appointments);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch appointments', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch appointments', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchAppointments();
+  }, [advisor]);
+
+  const handleAccept = async (appointmentId: string) => {
+    try {
+      const response = await axios.put(`http://localhost:8070/api/appoinment/accept/${appointmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setSnackbar({ open: true, message: response.data.message, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === appointmentId ? { ...appointment, appointmentStatus: 'Accepted' } : appointment
+      ));
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to accept appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to accept appointment', severity: 'error' });
+      }
+    }
+  };
+
+  const handleDecline = async (appointmentId: string) => {
+    try {
+      const response = await axios.put(`http://localhost:8070/api/appoinment/decline/${appointmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setSnackbar({ open: true, message: response.data.message, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === appointmentId ? { ...appointment, appointmentStatus: 'Declined' } : appointment
+      ));
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to decline appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to decline appointment', severity: 'error' });
+      }
+    }
+  };
+
+  const getFullImageUrl = (filePath: string) => {
+    const fileName = filePath.split('\\').pop();
+    return `http://localhost:8070/files/${fileName}`;
+  };
+
+
+
   return (
     <Box className="advisor-preview">
       <Grid container spacing={2}>
@@ -128,19 +276,23 @@ const AdvisorPreview = () => {
                 borderRadius: "10px",
               }}
             >
-              <Avatar
-                src={profileData.image}
+             {advisor &&(
+              <>
+                <Avatar
+                src= {getFullImageUrl(advisor.filePath)}
                 className="profile-avatar"
                 sx={{ width: 80, height: 80, marginRight: 5 }}
               />
               <Box>
                 <Typography variant="h6" fontWeight={600}>
-                  Hello, {profileData.name}
+                  Hello, {advisor.firstName} {advisor.lastName}
                 </Typography>
                 <Typography className="bio-link">
-                  {profileData.email}
+                  {advisor.email}
                 </Typography>
               </Box>
+              </>
+              )}
             </Box>
 
             <Box sx={{ width: "70%" }}>
@@ -203,7 +355,8 @@ const AdvisorPreview = () => {
                   Appointment Summary
                 </Typography>
               </Grid>
-              {bookingsData.map((booking, index) => (
+              {appointments.map((booking, index) => (
+                booking.appointmentStatus === "Pending" && (
                 <Grid item key={index}>
                   <Card
                     className="booking-card"
@@ -220,16 +373,16 @@ const AdvisorPreview = () => {
                             variant="h6"
                             sx={{ fontSize: 16, fontWeight: 600 }}
                           >
-                            {booking.name}
+                            {booking.undergraduate.firstName} {booking.undergraduate.lastName}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Faculty: {booking.faculty}
+                            Description: {booking.appointmentDescription}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Date: {booking.date}
+                            Date: {new Date(booking.appointmentDate).toLocaleDateString()}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Time: {booking.time}
+                            Time: {booking.appointmentTime}
                           </Typography>
                         </Box>
                         <Box
@@ -239,13 +392,14 @@ const AdvisorPreview = () => {
                           gap={1}
                           alignItems="center"
                         >
-                          <Button variant="outline">Decline</Button>
-                          <Button variant="contained">Accept</Button>
+                          <Button variant="outline" onClick={() => handleDecline(booking.appointmentId)}>Decline</Button>
+                          <Button variant="contained" onClick={() => handleAccept(booking.appointmentId)}>Accept</Button>
                         </Box>
                       </Box>
                     </CardContent>
                   </Card>
                 </Grid>
+                )
               ))}
               <Grid item>
                 <Box
@@ -364,19 +518,19 @@ const AdvisorPreview = () => {
                     >
                       <CardContent style={{ flex: 1, padding: 1.5 }}>
                         <Typography variant="h6" style={{ color: "#634897" }}>
-                          {event.title}
+                          {event.workshopName}
                         </Typography>
                         <Typography style={{ fontSize: "14px" }}>
-                          Date: {event.date}
+                          Date: {new Date (event.workshopDate).toLocaleDateString()}
                         </Typography>
                         <Typography style={{ fontSize: "14px" }}>
-                          Time: {event.time}
+                          Time: {new Date(`1970-01-01T${event.workshopTime}Z`).toLocaleTimeString()}
                         </Typography>
                       </CardContent>
                       <Box>
                         <img
-                          src={event.image}
-                          alt={event.title}
+                          src={getFullImageUrl(event.workshopBannerFile)}
+                          alt={event.workshopName}
                           style={{
                             width: "80px",
                             height: "80px",
@@ -406,6 +560,11 @@ const AdvisorPreview = () => {
           </Grid>
         </Grid>
       </Grid>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

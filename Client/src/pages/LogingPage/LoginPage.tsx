@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
         Cookies.set('userType',response.data.userType)
         if(response.data.userType=="Student"){
           Cookies.set('studentToken', response.data.accessToken);
-          navigate("/profile", {
+          navigate("/userDashboard", {
             state: { successMessage: "User Logged successfully!" },
           });
         }

@@ -56,7 +56,7 @@ db.workshop = workshopModel(sequelize, Sequelize.DataTypes);
 // db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
 db.careerAdviosr = careerAdviosrModel(sequelize, Sequelize.DataTypes);
-// db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
+db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -102,6 +102,23 @@ db.sequelize.sync({ force: false })
     db.appointmentModel.belongsTo(db.careerAdviosr, {
         foreignKey: "careerAdvisorId",
         as: 'careerAdviosr'
+    });
+
+    db.faculty.hasMany(db.workshop, {
+        foreignKey: "facultyId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.faculty, {
+        foreignKey: "facultyId",
+        as: 'faculty'
+    });
+    db.department.hasMany(db.workshop, {
+        foreignKey: "departmentId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.department, {
+        foreignKey: "departmentId",
+        as: 'department'
     });
 
 export default db;

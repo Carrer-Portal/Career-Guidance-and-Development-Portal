@@ -13,9 +13,12 @@ const advisorAvailabilityMap = (sequelize, DataTypes) => {
             },
             careerAdvisorId:{
                 type: DataTypes.INTEGER,
-                allowNull: false,
             }
             ,
+            undergraduateId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             appointmentDate: {
                 type: DataTypes.DATE,
                 allowNull: false,

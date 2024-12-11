@@ -48,7 +48,7 @@ const AdminLogin: React.FC = () => {
         
         Cookies.set('userType',response.data.userType)
         if(response.data.userType=="Advisor"){
-          Cookies.set('adviosrToken', response.data.accessToken);
+          Cookies.set('adviosrToken', response.data.adviosrToken);
           navigate("/advisorOveview", {
             state: { successMessage: "User Logged successfully!" },
           });

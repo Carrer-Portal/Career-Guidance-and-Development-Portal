@@ -104,4 +104,21 @@ db.sequelize.sync({ force: false })
         as: 'careerAdviosr'
     });
 
+    db.faculty.hasMany(db.workshop, {
+        foreignKey: "facultyId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.faculty, {
+        foreignKey: "facultyId",
+        as: 'faculty'
+    });
+    db.department.hasMany(db.workshop, {
+        foreignKey: "departmentId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.department, {
+        foreignKey: "departmentId",
+        as: 'department'
+    });
+
 export default db;

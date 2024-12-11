@@ -48,6 +48,37 @@ interface Appointment {
   undergraduate: Undergraduate;
 }
 
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  facultyId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Workshop {
+  workshopId: string;
+  careerAdvisorId: number;
+  workshopName: string;
+  workshopDescription: string;
+  workshopDate: string;
+  workshopTime: string;
+  workshopBannerFile: string;
+  facultyId: number;
+  departmentId: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  faculty: Faculty;
+  department: Department;
+}
 
 
 interface Event {
@@ -71,26 +102,7 @@ const statsData = [
   { title: "Scheduled Workshops", value: "06", isPositive: false },
 ];
 
-const bookingsData = [
-  {
-    name: "Anura Kumara",
-    faculty: "FMSC",
-    date: "15 Dec 2024",
-    time: "10:00 - 11:00",
-  },
-  {
-    name: "Mahinda Perera",
-    faculty: "FOT",
-    date: "20 Jan 2025",
-    time: "14:00 - 15:00",
-  },
-  {
-    name: "Nimal Perera",
-    faculty: "FOE",
-    date: "10 Mar 2025",
-    time: "09:00 - 10:00",
-  },
-];
+
 
 const fileDetails = [
   {
@@ -110,24 +122,7 @@ const fileDetails = [
   },
 ];
 
-const events: Event[] = [
-  {
-    title: "Resume Writing Workshop",
-    date: "2024-12-15",
-    time: "10:00 AM",
-    description:
-      "Crafting a professional resume is the first step toward making a strong impression in the job market. In this hands-on workshop, you'll learn how to create a compelling resume that highlights your skills, achievements, and experience effectively. Led by industry experts, this session will cover essential elements like formatting, tailoring your resume for specific roles, and showcasing your unique value to potential employers. Whether you're a recent graduate or a seasoned professional, this workshop will equip you with the tools and strategies to stand out in the competitive job market.",
-    image: sampleimg2,
-  },
-  {
-    title: "Career Fair 2024",
-    date: "2024-12-20",
-    time: "9:00 AM - 5:00 PM",
-    description:
-      "Step into a world of opportunities at Career Fair 2024, where the brightest minds meet top employers. This annual event serves as a dynamic platform to connect job seekers, students, and professionals with recruiters from leading companies across various industries. Explore diverse career paths, engage in meaningful conversations, and discover roles tailored to your skills and aspirations. From entry-level positions to mid-career opportunities, this fair caters to all stages of professional growth. Attend workshops, panel discussions, and networking sessions designed to enhance your job search strategies and provide valuable insights into the latest industry trends.",
-    image: sampleimg1,
-  },
-];
+
 
 const AdvisorPreview = () => {
   const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
@@ -158,6 +153,24 @@ const AdvisorPreview = () => {
 
     fetchAdvisorInfo();
   }, []);
+  const [events,setEvents] = useState<Workshop[]>([]);
+
+  const fetchWorkshops = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8070/api/workshop/findBy/careerAdvisor/${advisor?.careerAdvisorId}`, {
+      });
+      setEvents(response.data.workshops);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch workshop for advisor', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch workshop for advisor', severity: 'error' });
+      }
+    }
+  };
+  useEffect(() => {
+    fetchWorkshops();
+  } ,[advisor] );
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -343,6 +356,7 @@ const AdvisorPreview = () => {
                 </Typography>
               </Grid>
               {appointments.map((booking, index) => (
+                booking.appointmentStatus === "Pending" && (
                 <Grid item key={index}>
                   <Card
                     className="booking-card"
@@ -362,10 +376,10 @@ const AdvisorPreview = () => {
                             {booking.undergraduate.firstName} {booking.undergraduate.lastName}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Faculty: {booking.undergraduate.facultyId}
+                            Description: {booking.appointmentDescription}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Date: {booking.appointmentDate}
+                            Date: {new Date(booking.appointmentDate).toLocaleDateString()}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
                             Time: {booking.appointmentTime}
@@ -385,6 +399,7 @@ const AdvisorPreview = () => {
                     </CardContent>
                   </Card>
                 </Grid>
+                )
               ))}
               <Grid item>
                 <Box
@@ -503,19 +518,19 @@ const AdvisorPreview = () => {
                     >
                       <CardContent style={{ flex: 1, padding: 1.5 }}>
                         <Typography variant="h6" style={{ color: "#634897" }}>
-                          {event.title}
+                          {event.workshopName}
                         </Typography>
                         <Typography style={{ fontSize: "14px" }}>
-                          Date: {event.date}
+                          Date: {new Date (event.workshopDate).toLocaleDateString()}
                         </Typography>
                         <Typography style={{ fontSize: "14px" }}>
-                          Time: {event.time}
+                          Time: {new Date(`1970-01-01T${event.workshopTime}Z`).toLocaleTimeString()}
                         </Typography>
                       </CardContent>
                       <Box>
                         <img
-                          src={event.image}
-                          alt={event.title}
+                          src={getFullImageUrl(event.workshopBannerFile)}
+                          alt={event.workshopName}
                           style={{
                             width: "80px",
                             height: "80px",

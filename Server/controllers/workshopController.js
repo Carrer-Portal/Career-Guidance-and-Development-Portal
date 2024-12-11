@@ -1,6 +1,6 @@
 import db from "../controllers/index.js";
 import validations from '../utils/validations.js';
-import upload from '../utils/uploadHelper.js';
+import {upload} from '../utils/uploadHelper.js';
 import { Op } from 'sequelize';
 
 const { validateCreateWorkshop, validateUpdateWorkshop } = validations;

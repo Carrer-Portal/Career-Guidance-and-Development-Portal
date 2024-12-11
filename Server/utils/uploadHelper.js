@@ -26,4 +26,20 @@ const upload = multer({
   }
 });
 
-export default upload;
+const uploadDocuments = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const fileTypes = /pdf|doc|docx/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Only PDF and Word documents are allowed"));
+    }
+  }
+});
+
+
+export { upload, uploadDocuments };

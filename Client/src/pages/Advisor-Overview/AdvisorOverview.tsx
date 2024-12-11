@@ -5,7 +5,7 @@ import {
   Card,
   CardContent,
   Avatar,
-  Grid,
+  Grid,Snackbar,Alert
 } from "@mui/material";
 import "./AdvisorOverview.css";
 import Chathu from "../../image/Chathu.jpeg";
@@ -378,8 +378,8 @@ const AdvisorPreview = () => {
                           gap={1}
                           alignItems="center"
                         >
-                          <Button variant="outline">Decline</Button>
-                          <Button variant="contained">Accept</Button>
+                          <Button variant="outline" onClick={() => handleDecline(booking.appointmentId)}>Decline</Button>
+                          <Button variant="contained" onClick={() => handleAccept(booking.appointmentId)}>Accept</Button>
                         </Box>
                       </Box>
                     </CardContent>
@@ -545,6 +545,11 @@ const AdvisorPreview = () => {
           </Grid>
         </Grid>
       </Grid>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

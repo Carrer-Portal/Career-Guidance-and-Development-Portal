@@ -1,18 +1,15 @@
-import { Typography, Box, Grid, Card, CardContent,Snackbar,Drawer,
-  Alert, } from "@mui/material";
+import { Typography, Box, Grid, Card, CardContent, Snackbar, Drawer, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./UserDashboard.css";
 import Button from "../../Components/Button/Button";
-import Chathu from "../../image/Chathu.jpeg";
-import appointment from "../../image/appointment.png";
-import cvVector from "../../image/forms.svg";
-import chatbot from "../../image/chatbot.png";
 import axios from "axios";
 import Cookies from "js-cookie";
 import sampleimg1 from "../../image/sampleimg1.jpg";
 import sampleimg2 from "../../image/sampleimg2.jpg";
 import CloseIcon from "@mui/icons-material/Close";
+import AppoinmentImage from "../../image/appointment.png"
+import ChatBot from "../../image/chatbot.png"
 
 interface Event {
   image: string | undefined;
@@ -20,6 +17,27 @@ interface Event {
   date: string;
   time: string;
   description: string;
+}
+
+interface CareerAdvisor {
+  careerAdvisorId: number;
+  firstName: string;
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Booking {
+  appointmentId: number;
+  careerAdvisorId: number;
+  undergraduateId: number;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentStatus: string;
+  appointmentDescription: string;
+  careerAdviosr: CareerAdvisor;
 }
 
 interface Undergraduate {
@@ -35,14 +53,18 @@ interface Undergraduate {
   departmentName: string;
   facultyName: string;
 }
+
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [undergraduate, setUndergraduate] = useState<Undergraduate | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [profile, setProfile] = useState<{ advisor: CareerAdvisor | null; appointment: Booking | null }>({ advisor: null, appointment: null });
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-  
+
   useEffect(() => {
     const fetchedLoggedUser = async () => {
       const userRole = Cookies.get("userType");
@@ -67,37 +89,69 @@ const UserDashboard = () => {
 
     fetchedLoggedUser();
   }, []);
-  
-
-  const fetchAppoinments = () => {
-
-    try {
-      axios
-        .post("http://localhost:8070/api/appoinment/findByUserId")
-        .then(function (response) {
-          console.log(response);
-          if(response.status === 201) {
-            setSnackbar({ open: true, message: 'Booking Successfully Created', severity: 'success' });
-            navigate("/userDashboard");
-          }
-          else{
-            console.log(response.data.message);
-            setSnackbar({ open: true, message: response.data.message, severity: 'error' });
-          }
-          
-        })
-        .catch(function (error) {
-          console.log(error);
-          setSnackbar({ open: true, message: error.response.data.message, severity: 'error' });
-        });
-    } catch (error) {
-      setSnackbar({ open: true, message: 'Internal server error', severity: 'error' });
-    }
-  };
 
   useEffect(() => {
-    
-  },[]);
+    const fetchAppointments = async () => {
+      if (undergraduate) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/appoinment/findByUndergraduate/${undergraduate.undergraduateId}`);
+          const appointments = response.data.appointments;
+          setBookings(appointments);
+          if (appointments.length > 0) {
+            setProfile({
+              advisor: appointments[0].careerAdviosr,
+              appointment: appointments[0]
+            });
+          }
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch appointments', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch appointments', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchAppointments();
+  }, [undergraduate]);
+
+  interface Event {
+    image: string | undefined;
+    title: string;
+    date: string;
+    time: string;
+    description: string;
+  }
+
+  const [workshops, setWorkshops] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      if (undergraduate) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/workshop/findBy/faculty/${undergraduate.facultyId}/department/${undergraduate.departmentId}`);
+          const workshopsData = response.data.workshops.map((workshop: any) => ({
+            image: getFullImageUrl(workshop.workshopBannerFile),
+            title: workshop.workshopName,
+            date: new Date(workshop.workshopDate).toLocaleDateString(),
+            time: workshop.workshopTime,
+            description: workshop.workshopDescription
+          }));
+          setWorkshops(workshopsData);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch workshops', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch workshops', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchWorkshops();
+  }, [undergraduate]);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
@@ -111,18 +165,27 @@ const UserDashboard = () => {
     setSelectedEvent(null);
   };
 
-  const profile = {
-    advisor: {
-      name: "Chathurangani thennakoon",
-      image: Chathu,
-      designation: "Senior Career Advisor",
-    },
-    appointment: {
-      bookedDate: "2024-12-15",
-      timeSlot: "10:00 AM - 10:30 AM",
-      status: "Approved",
-      timeRemaining: "2 days 4 hours",
-    },
+  const getFullImageUrl = (filePath: string) => {
+    const fileName = filePath.split('\\').pop();
+    return `http://localhost:8070/files/${fileName}`;
+  };
+
+  const calculateTimeRemaining = (appointmentDate: string, appointmentTime: string) => {
+    const now = new Date();
+    const appointmentDateTime = new Date(appointmentDate);
+    const [hours, minutes, seconds] = appointmentTime.split(':').map(Number);
+    appointmentDateTime.setHours(hours, minutes, seconds);
+
+    const diff = appointmentDateTime.getTime() - now.getTime();
+    if (diff <= 0) {
+      return "Appointment time has passed";
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hoursRemaining = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutesRemaining = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${days}d ${hoursRemaining}h ${minutesRemaining}m`;
   };
 
   const fileDetails = [
@@ -130,10 +193,6 @@ const UserDashboard = () => {
       name: "Resume 01",
       status: "Approved",
     },
-    // {
-    //   name: "Resume 02",
-    //   status: "In Progress",
-    // },
     {
       name: "Resume 03",
       status: "Not Approved",
@@ -171,58 +230,64 @@ const UserDashboard = () => {
         </Typography>
       </Box>
       <Box className="appointment-status-section">
-        <Box className="appointment-adivisory-info">
-          <Typography fontWeight={600} style={{ fontSize: "16px" }}>
-            Appointment Status
-          </Typography>
-          <Box className="advisor-details">
-            <Box>
-              <img
-                src={profile.advisor.image}
-                alt="Advisor"
-                className="advisor-image"
-              />
-            </Box>
-            <Box className="advisor-details-meta">
-              <Box className="advisor-details-text">
-                <Typography variant="body2" className="advisor-name">
-                  {profile.advisor.designation}
-                </Typography>
-                <Typography
-                  fontWeight={600}
-                  style={{ fontSize: "18px" }}
-                  className="advisor-name"
-                >
-                  {profile.advisor.name}
-                </Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Booked Date: {profile.appointment.bookedDate}
-                </Typography>
-                <Typography style={{ fontSize: "14px" }}>
-                  Time Slot: {profile.appointment.timeSlot}
-                </Typography>
+        {profile.appointment && profile.advisor && (
+          <Box className="appointment-adivisory-info">
+            <Typography fontWeight={600} style={{ fontSize: "16px" }}>
+              Appointment Status
+            </Typography>
+            <Box className="advisor-details">
+              <Box>
+                <img
+                  src={getFullImageUrl(profile.advisor.filePath)}
+                  alt="Advisor"
+                  className="advisor-image"
+                />
               </Box>
-              <Box className="advisor-details-status">
-                <Typography
-                  style={{ fontSize: "14px" }}
-                  className="appointment-status"
-                >
-                  Status: {profile.appointment.status}
-                </Typography>
-                <Typography style={{ fontSize: "14px", marginTop: "4px" }}>
-                  Time Remaining:{" "}
-                  <span className="countdown-timer">
-                    {profile.appointment.timeRemaining}
-                  </span>
-                </Typography>
+              <Box className="advisor-details-meta">
+                <Box className="advisor-details-text">
+                  <Typography variant="body2" className="advisor-name">
+                    {profile.advisor.roleType}
+                  </Typography>
+                  <Typography
+                    fontWeight={600}
+                    style={{ fontSize: "18px" }}
+                    className="advisor-name"
+                  >
+                    {profile.advisor.firstName} {profile.advisor.lastName}
+                  </Typography>
+                  <Typography style={{ fontSize: "14px" }}>
+                    Booked Date: {new Date(profile.appointment.appointmentDate).toDateString()}
+                  </Typography>
+                  <Typography style={{ fontSize: "14px" }}>
+                    Time Slot: {profile.appointment.appointmentTime.substring(0, 5)}
+                  </Typography>
+                </Box>
+                  
+                <Box className="advisor-details-status">
+                <Typography style={{ fontSize: "14px" }}>
+                    Description: {profile.appointment?.appointmentDescription}
+                  </Typography>
+                  <Typography
+                    style={{ fontSize: "14px" }}
+                    className="appointment-status"
+                  >
+                    Status: {profile.appointment.appointmentStatus}
+                  </Typography>
+                  <Typography style={{ fontSize: "14px", marginTop: "4px" }}>
+                    Time Remaining:{" "}
+                    <span className="countdown-timer">
+                      {calculateTimeRemaining(profile.appointment.appointmentDate, profile.appointment.appointmentTime)}
+                    </span>
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Box>
-        </Box>
+        )}
         <Box className="appointment-create-box">
           <Box className="appointment-image-box">
             <img
-              src={appointment}
+              src={AppoinmentImage}
               alt="Advisor"
               className="appointment-image"
             />
@@ -254,7 +319,7 @@ const UserDashboard = () => {
           Upcoming Workshops and Events
         </Typography>
         <Grid container spacing={2}>
-          {events.map((event, index) => (
+          {workshops.map((event, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
                 onClick={() => handleCardClick(event)}
@@ -359,7 +424,7 @@ const UserDashboard = () => {
                       <Box className="file-card">
                         <Box className="file-icon">
                           <img
-                            src={cvVector}
+                            //src={cvVector}
                             alt="File Icon"
                             className="file-vector"
                           />
@@ -385,7 +450,9 @@ const UserDashboard = () => {
                   ))}
                 </Grid>
                 <Grid item mt={1}>
-                  <Button variant="outline" style={{ width: "100%" }}>
+                  <Button variant="outline" style={{ width: "100%" }}
+                  onClick={() => navigate("/resume-creation")}
+                  >
                     Create Your New CV
                   </Button>
                 </Grid>
@@ -395,7 +462,7 @@ const UserDashboard = () => {
         </Box>
         <Box className="appointment-create-box">
           <Box className="appointment-image-box">
-            <img src={chatbot} alt="Advisor" className="appointment-image" />
+            <img src ={ChatBot} alt="Advisor" className="appointment-image" />
           </Box>
           <Box className="appointment-content-box">
             <Typography variant="h5" className="appointment-title">

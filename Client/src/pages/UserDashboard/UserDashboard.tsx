@@ -451,7 +451,7 @@ const UserDashboard = () => {
                 </Grid>
                 <Grid item mt={1}>
                   <Button variant="outline" style={{ width: "100%" }}
-                  onClick={() => navigate("/create-resume")}
+                  onClick={() => navigate("/resume-creation")}
                   >
                     Create Your New CV
                   </Button>

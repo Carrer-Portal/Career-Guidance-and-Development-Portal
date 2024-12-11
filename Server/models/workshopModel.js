@@ -14,24 +14,40 @@ const workshopModel = (sequelize, DataTypes) => {
             careerAdvisorId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'carrerAdvisor', // name of the target model
-                    key: 'carrerAdvisorId', // key in the target model
-                }
             },
-            workshop_name: {
+            workshopName: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            workshop_date: {
+            workshopDescription: {
+                type: DataTypes.TEXT,
+                allowNull: false,
+            },
+            workshopDate: {
                 type: DataTypes.DATE,
                 allowNull: false,
                 defaultValue: DataTypes.NOW,
             },
+            workshopTime: {
+                type: DataTypes.TIME,
+                allowNull: false,
+                defaultValue: DataTypes.NOW,
+            },
+            workshopBannerFile: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            facultyId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            departmentId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             status: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: 'active',
             },
         },
         {

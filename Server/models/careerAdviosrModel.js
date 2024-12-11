@@ -2,11 +2,11 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 
-const admin = (sequelize, DataTypes) => {
-  const Admin = sequelize.define(
-    "admin",
+const careerAdvisor = (sequelize, DataTypes) => {
+  const CareerAdvisor = sequelize.define(
+    "careerAdviosr",
     {
-      adminId: {
+      careerAdvisorId: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -36,12 +36,16 @@ const admin = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      filePath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-      tableName: "admin",
+      tableName: "careerAdviosr",
       hooks: {
         beforeSync: async (options) => {
           try {
@@ -57,7 +61,7 @@ const admin = (sequelize, DataTypes) => {
     }
   );
 
-  Admin.prototype.generateAuthToken = function () {
+  CareerAdvisor.prototype.generateAuthToken = function () {
     const token = jwt.sign(
       { adminId: this.adminId },
       "CarrerHubGetInToSeceretZone",
@@ -68,7 +72,7 @@ const admin = (sequelize, DataTypes) => {
     return token;
   };
 
-  return Admin;
+  return CareerAdvisor;
 };
 
-export default admin;
+export default careerAdvisor;

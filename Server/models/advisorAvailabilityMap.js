@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 
-const appointment = (sequelize, DataTypes) => {
-    const Appointment = sequelize.define(
-        "appointment",
+const advisorAvailabilityMap = (sequelize, DataTypes) => {
+    const AdvisorAvailabilityMap = sequelize.define(
+        "advisorAvailabilityMap",
         {
             appointmentId: {
                 type: DataTypes.UUID,
@@ -14,25 +14,14 @@ const appointment = (sequelize, DataTypes) => {
             careerAdvisorId:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
-            },
-            undergraduateId:{
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
+            }
+            ,
             appointmentDate: {
                 type: DataTypes.DATE,
                 allowNull: false,
             },
             appointmentTime: {
                 type: DataTypes.TIME,
-                allowNull: false,
-            },
-            appointmentStatus: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            appointmentDescription: {
-                type: DataTypes.STRING,
                 allowNull: false,
             }
         },
@@ -43,7 +32,7 @@ const appointment = (sequelize, DataTypes) => {
             tableName: "appointment",
         }
     );
-    return Appointment;
+    return AdvisorAvailabilityMap;
 }
 
-export default appointment;
+export default advisorAvailabilityMap;

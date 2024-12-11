@@ -47,19 +47,33 @@ const validateCreateUser = (data) => {
 };
 
 const validateCreateAppointment = (data) => {
+    console.log(data);
     const schema = Joi.object({
-        date: Joi.date().iso().required().messages({
+        appointmentDate: Joi.date().iso().required().messages({
             'date.base': 'Date must be a valid date',
             'date.format': 'Date must be in ISO8601 format',
             'any.required': 'Date is required'
         }),
-        time: Joi.string().required().messages({
+        appointmentTime: Joi.string().required().messages({
             'string.base': 'Time must be a string',
             'any.required': 'Time is required'
         }),
-        description: Joi.string().required().messages({
+        appointmentDescription: Joi.string().optional().allow('').messages({
             'string.base': 'Description must be a string',
             'any.required': 'Description is required'
+        }),
+        undergraduateId: Joi.number().required().messages({
+            'number.base': 'Undergraduate ID must be a number',
+            'any.required': 'Undergraduate ID is required'
+        }),
+        careerAdvisorId: Joi.number().required().messages({
+            'number.base': 'Career Advisor ID must be a number',
+            'any.required': 'Career Advisor ID is required'
+        }),
+        appointmentStatus: Joi.string().valid('Pending', 'Confirmed', 'Cancelled').required().messages({
+            'string.base': 'Status must be a string',
+            'any.only': 'Status must be one of Pending, Confirmed, or Cancelled',
+            'any.required': 'Status is required'
         })
     });
     return schema.validate(data);
@@ -110,36 +124,85 @@ const validateUpdateNotice = (data) => {
 
 const validateCreateWorkshop = (data) => {
     const schema = Joi.object({
-        title: Joi.string().required().messages({
-            'string.base': 'Title must be a string',
-            'any.required': 'Title is required'
+        careerAdvisorId: Joi.number().integer().required().messages({
+            'number.base': 'Career Advisor ID must be a number',
+            'number.integer': 'Career Advisor ID must be an integer',
+            'any.required': 'Career Advisor ID is required'
         }),
-        description: Joi.string().required().messages({
-            'string.base': 'Description must be a string',
-            'any.required': 'Description is required'
+        workshopName: Joi.string().required().messages({
+            'string.base': 'Workshop Name must be a string',
+            'any.required': 'Workshop Name is required'
         }),
-        date: Joi.date().iso().required().messages({
-            'date.base': 'Date must be a valid date',
-            'date.format': 'Date must be in ISO8601 format',
-            'any.required': 'Date is required'
+        workshopDescription: Joi.string().required().messages({
+            'string.base': 'Workshop Description must be a string',
+            'any.required': 'Workshop Description is required'
+        }),
+        workshopDate: Joi.string().required().messages({
+            'string.base': 'Workshop Date must be a string',
+            'any.required': 'Workshop Date is required'
+        }),
+        workshopTime: Joi.string().required().messages({
+            'string.base': 'Workshop Time must be a string',
+            'any.required': 'Workshop Time is required'
+        }),
+
+        facultyId: Joi.number().integer().optional().allow(null).messages({
+            'number.base': 'Faculty ID must be a number',
+            'number.integer': 'Faculty ID must be an integer'
+        }),
+        departmentId: Joi.number().integer().optional().allow(null).messages({
+            'number.base': 'Department ID must be a number',
+            'number.integer': 'Department ID must be an integer'
+        }),
+        status: Joi.string().required().messages({
+            'string.base': 'Status must be a string',
+            'any.required': 'Status is required'
         })
     });
+
     return schema.validate(data);
 };
 
 const validateUpdateWorkshop = (data) => {
     const schema = Joi.object({
-        title: Joi.string().optional().messages({
-            'string.base': 'Title must be a string'
+        careerAdvisorId: Joi.number().integer().required().messages({
+            'number.base': 'Career Advisor ID must be a number',
+            'number.integer': 'Career Advisor ID must be an integer',
+            'any.required': 'Career Advisor ID is required'
         }),
-        description: Joi.string().optional().messages({
-            'string.base': 'Description must be a string'
+        workshopName: Joi.string().required().messages({
+            'string.base': 'Workshop Name must be a string',
+            'any.required': 'Workshop Name is required'
         }),
-        date: Joi.date().iso().optional().messages({
-            'date.base': 'Date must be a valid date',
-            'date.format': 'Date must be in ISO8601 format'
+        workshopDescription: Joi.string().required().messages({
+            'string.base': 'Workshop Description must be a string',
+            'any.required': 'Workshop Description is required'
+        }),
+        workshopDate: Joi.string().required().messages({
+            'string.base': 'Workshop Date must be a string',
+            'any.required': 'Workshop Date is required'
+        }),
+        workshopTime: Joi.string().required().messages({
+            'string.base': 'Workshop Time must be a string',
+            'any.required': 'Workshop Time is required'
+        }),
+        workshopBannerFile: Joi.string().required().allow(null).messages({
+            'string.base': 'Workshop Banner File must be a string',
+        }),
+        facultyId: Joi.number().integer().optional().allow(null).messages({
+            'number.base': 'Faculty ID must be a number',
+            'number.integer': 'Faculty ID must be an integer'
+        }),
+        departmentId: Joi.number().integer().optional().allow(null).messages({
+            'number.base': 'Department ID must be a number',
+            'number.integer': 'Department ID must be an integer'
+        }),
+        status: Joi.string().required().messages({
+            'string.base': 'Status must be a string',
+            'any.required': 'Status is required'
         })
     });
+
     return schema.validate(data);
 };
 

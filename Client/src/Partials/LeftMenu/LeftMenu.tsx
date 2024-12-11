@@ -22,9 +22,16 @@ import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
+import WorkshopIcon from "@mui/icons-material/School"; 
 import "./LeftMenu.css";
 
-const menuItems = [
+interface MenuItem {
+  path: string;
+  icon: React.ReactElement;
+  label: string;
+  subItems?: { icon: React.ReactElement; label: string }[];
+}
+const studentMenuItems: MenuItem[] = [
   {
     path: "/userDashboard",
     icon: <WidgetsIcon />,
@@ -64,9 +71,33 @@ const menuItems = [
   },
 ];
 
+const advisorMenuItems: MenuItem[] = [
+  {
+    path: "/advisor/advisorOveview",
+    icon: <WidgetsIcon />,
+    label: "Overview",
+  },
+  {
+    path: "/advisor/appointmentManagement",
+    icon: <GroupsIcon />,
+    label: "Appointment Management",
+  },
+  {
+    path: "/advisor/CVManagement",
+    icon: <TextSnippetIcon />,
+    label: "CV Management",
+  },
+  {
+    path: "/advisor/WorkshopManagement",
+    icon: <WorkshopIcon />,
+    label: "Workshop Management",
+  },
+];
+
 const LeftMenu: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [userType, setUserType] = useState<"student" | "advisor">("student"); 
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -74,6 +105,9 @@ const LeftMenu: React.FC = () => {
   const handleToggleCollapse = () => setIsCollapsed((prev) => !prev);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const menuItems =
+    userType === "student" ? studentMenuItems : advisorMenuItems;
 
   return (
     <Box className={`left-menu ${isCollapsed ? "collapsed" : ""}`}>
@@ -115,7 +149,11 @@ const LeftMenu: React.FC = () => {
                     setOpenSubmenu((prev) => (prev === item.path ? null : item.path));
                   }}
                 >
-                  {openSubmenu === item.path ? <ExpandLess sx={{ color: "#FFFFFF" }}/> : <ExpandMore sx={{ color: "#FFFFFF" }}/>}
+                  {openSubmenu === item.path ? (
+                    <ExpandLess sx={{ color: "#FFFFFF" }} />
+                  ) : (
+                    <ExpandMore sx={{ color: "#FFFFFF" }} />
+                  )}
                 </IconButton>
               )}
             </ListItem>

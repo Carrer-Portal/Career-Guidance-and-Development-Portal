@@ -9,13 +9,14 @@ import Header from "./Partials/Header/Header";
 import Footer from "./Partials/Footer/Footer";
 import Box from "@mui/material/Box";
 import LeftMenu from "./Partials/LeftMenu/LeftMenu";
-import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
+import AdvisorPreview from "./pages/Advisor-Overview/AdvisorOverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
 import ResumeCreation from "./pages/ResumeCreation/ResumeCreation";
 import Cookies from 'js-cookie';
 import ChatBot from "./pages/chatBot/chatBot";
+import AppointmentManagement from "./pages/AppoinmentManage/AppoinmentManage";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -33,13 +34,14 @@ const App: React.FC = () => {
         {showLayout && <Header />}
         <Box className="body">
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/advisor/advisorOveview" element={<AdvisorPreview />} />
+            <Route path="/advisor/appointmentManagement" element={<AppointmentManagement />} />
+            <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/passwordReset" element={<PasswordReset />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/advisorOveview" element={<AdvisorPreview />} />
-
             {/* Private Routes */}
             <Route path="/booking" element={studentToken ? <BookingPage /> : <Navigate to="/login" />} />
             <Route path="/profile" element={studentToken ? <ProfilePage /> : <Navigate to="/login" />} />

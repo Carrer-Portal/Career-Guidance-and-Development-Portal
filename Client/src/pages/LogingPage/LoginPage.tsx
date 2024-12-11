@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, Link,Snackbar,Alert,TextField} from "@mui/material";
+import { Box, Typography, Link,Snackbar,Alert,TextField} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import hiredImage from "../../image/Hired.svg";
@@ -7,6 +7,7 @@ import logo from "../../image/cgplogo.png";
 import "./loging.style.css";
 import EmailValidation from "./Partials/EmailValidation";
 import Cookies from "js-cookie";
+import Button from "../../Components/Button/Button";
 
 const LoginPage: React.FC = () => {
   const [userName, setUserName] = useState("");

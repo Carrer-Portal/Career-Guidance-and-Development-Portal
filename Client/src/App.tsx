@@ -9,7 +9,7 @@ import Header from "./Partials/Header/Header";
 import Footer from "./Partials/Footer/Footer";
 import Box from "@mui/material/Box";
 import LeftMenu from "./Partials/LeftMenu/LeftMenu";
-import AdvisorPreview from "./pages/Advisor-Overview/AdvisorPverview";
+import AdvisorPreview from "./pages/Advisor-Overview/AdvisorOverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
 import ChatBot from "./pages/chatBot/chatBot";

@@ -15,7 +15,9 @@
 }
 
 .quick-stats {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-end;
 }
 
 .stat-card {
@@ -57,20 +59,21 @@
 }
 
 .booking-card {
-  padding: 16px;
+  padding: 8px;
 }
 
 .action-buttons {
   margin-top: 8px;
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
+  justify-content: flex-end;
 }
 
 .sidebar {
   padding-left: 16px;
   padding-right: 16px;
   border-left: 1px solid #ddd;
-  background-color: #e5e5e5;
+  background-color: #f3eaf2;
   border-radius: 10px;
 }
 
@@ -79,7 +82,6 @@
   flex-direction: column;
   text-align: center;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .avatar {
@@ -118,3 +120,14 @@
 .reminder-text {
   font-size: 14px;
 }
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.bio-link {
+  font-size: 0.9rem;
+  color: gray;
+}
+

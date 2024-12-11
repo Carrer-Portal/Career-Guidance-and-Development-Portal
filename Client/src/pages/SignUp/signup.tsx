@@ -7,8 +7,9 @@ import registerImage from "../../image/Hired.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../../image/cgplogo.png";
-import { Snackbar, Alert, TextField, Button } from '@mui/material';
+import { Snackbar, Alert, TextField } from '@mui/material';
 import Joi from 'joi';
+import Button from "../../Components/Button/Button";
 
 interface Department {
   departmentId: number;

@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Box, Typography, Link,Snackbar,Alert,TextField} from "@mui/material";
+import { Box, Typography, Button, Link,Snackbar,Alert,TextField} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import hiredImage from "../../image/Hired.svg";
 import logo from "../../image/cgplogo.png";
-import "./loging.style.css";
-import EmailValidation from "./Partials/EmailValidation";
+import "./AdminLogin.css";
 import Cookies from "js-cookie";
-import Button from "../../Components/Button/Button";
 
-const LoginPage: React.FC = () => {
-  const [userName, setUserName] = useState("");
+const AdminLogin: React.FC = () => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -32,7 +30,7 @@ const LoginPage: React.FC = () => {
     setPasswordError(false);
 
     // Basic validation
-    if (!userName.includes("@")) {
+    if (!email.includes("@")) {
       setEmailError(true);
       return;
     }
@@ -42,23 +40,17 @@ const LoginPage: React.FC = () => {
       return;
     }
     // change correct data - TO DO ---- ***********
-    const data = { userName, password };
+    const data = { email, password };
     axios
-      .post("http://localhost:8070/api/user/login", data)
+      .post("http://localhost:8070/api/user/admin/login", data)
       .then(function (response) {
         console.log(response);
         
         Cookies.set('userType',response.data.userType)
-        if(response.data.userType=="Student"){
-          Cookies.set('studentToken', response.data.accessToken);
-          navigate("/userDashboard", {
+        if(response.data.userType=="Advisor"){
+          Cookies.set('adviosrToken', response.data.adviosrToken);
+          navigate("/advisorOveview", {
             state: { successMessage: "User Logged successfully!" },
-          });
-        }
-        else{
-          Cookies.set('advisorToken', response.data.accessToken);
-          navigate("/", {
-            state: { successMessage: "Advisor Logged successfully!" },
           });
         }
       })
@@ -102,9 +94,9 @@ const LoginPage: React.FC = () => {
       <Box className="header-content">
         <Box className="intro-content">
           <img src={logo} className="cgp-logo" alt="logo" />
-          <Typography variant="h3">Welcome</Typography>
+          <Typography variant="h3">Welcome CGP Admin Portal</Typography>
           <Typography variant="h6" className="subtitle">
-            Get Started your Career with Career Guidance Portal
+            Manage Your student quries in a single place
           </Typography>
         </Box>
       </Box>
@@ -128,8 +120,8 @@ const LoginPage: React.FC = () => {
                   type="email"
                   fullWidth
                   required
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   error={emailError}
                   // change correct text - TO DO ---- ***********
                   helperText={emailError ? "Invalid email address" : ""}
@@ -176,10 +168,6 @@ const LoginPage: React.FC = () => {
               Login
             </Button>
           </form>
-          <EmailValidation
-            open={openModal}
-            onClose={() => setOpenModal(false)} // Close modal handler
-          />
           <Box className="create-account">
             <Typography variant="body2">
               Don’t Have an Account?{" "}
@@ -206,4 +194,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default AdminLogin;

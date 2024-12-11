@@ -11,7 +11,8 @@ import reviewResumeModel from '../models/reviewResumeModel.js';
 import userActivityModel from '../models/userActivityModel.js';
 import chatHistoryModel from '../models/chatHistoryModel.js';
 import facultyModel from '../models/facultyModel.js';
-import adminModel from '../models/adminModel.js';
+import careerAdviosrModel from '../models/careerAdviosrModel.js';
+import advisorAvailabilityMap from '../models/advisorAvailabilityMap.js';
 
 
 const sequelize = new Sequelize(
@@ -47,15 +48,15 @@ db.sequelize = sequelize
 db.undergraduates = undergraduateModel(sequelize, DataTypes);
 db.department = departmentModel(sequelize, DataTypes);
 db.appointmentModel = appointmentModel(sequelize, DataTypes);
-db.carrerAdvisorModel = carrerAdvisorModel(sequelize, DataTypes);
-db.notice = noticeModel(sequelize, Sequelize.DataTypes);
+// db.notice = noticeModel(sequelize, Sequelize.DataTypes);
 db.workshop = workshopModel(sequelize, Sequelize.DataTypes);
-db.resume = resumeModel(sequelize, Sequelize.DataTypes);
-db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
-db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
-db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
+// db.resume = resumeModel(sequelize, Sequelize.DataTypes);
+// db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
+// db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
+// db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
-db.admin = adminModel(sequelize, Sequelize.DataTypes);
+db.careerAdviosr = careerAdviosrModel(sequelize, Sequelize.DataTypes);
+db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -82,6 +83,42 @@ db.sequelize.sync({ force: false })
     db.department.belongsTo(db.faculty, {
         foreignKey: "facultyId",
         as:'faculty'
+    });
+
+
+    db.appointmentModel.belongsTo(db.undergraduates, {
+        foreignKey: "undergraduateId",
+        as: 'undergraduate'
+    });
+    db.undergraduates.hasMany(db.appointmentModel, {
+        foreignKey: 'undergraduateId',
+        as: 'appointment'
+    });
+
+    db.careerAdviosr.hasMany(db.appointmentModel, {
+        foreignKey: "careerAdvisorId",
+        as: 'appointment'
+    });
+    db.appointmentModel.belongsTo(db.careerAdviosr, {
+        foreignKey: "careerAdvisorId",
+        as: 'careerAdviosr'
+    });
+
+    db.faculty.hasMany(db.workshop, {
+        foreignKey: "facultyId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.faculty, {
+        foreignKey: "facultyId",
+        as: 'faculty'
+    });
+    db.department.hasMany(db.workshop, {
+        foreignKey: "departmentId",
+        as: 'workshop'
+    });
+    db.workshop.belongsTo(db.department, {
+        foreignKey: "departmentId",
+        as: 'department'
     });
 
 export default db;

@@ -1,0 +1,163 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    padding: 48px 0;
+  }
+  
+  .header-content {
+    display: flex;
+    flex-direction: row;
+    height: 85%;
+  }
+  
+  .intro-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .intro-content h3 {
+    font-weight: 800;
+  }
+  
+  .intro-content h6 {
+    line-height: 1.2;
+    font-size: 16px;
+  }
+  
+  .cgp-logo {
+    width: 150px;
+    height: 50px;
+  }
+  
+  .loginbody-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .login-image {
+    width: 700px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .login-image img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .login-form {
+    width: 400px;
+    height: auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+  }
+  
+  .login-form h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .input-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .custom-label {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .form-inputs{
+    max-width: 370px;
+  }
+  
+  .custom-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .custom-input:focus {
+    border-color: #9e77ed;
+  }
+  
+  .forgot-password {
+    font-size: 10px;
+    color: #9e77ed;
+    text-decoration: none;
+    margin-bottom: 16px;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  .login-button {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px;
+    margin: 16px 0;
+    text-transform: none;
+  }
+  
+  .login-button:hover {
+    background-color: #5700d2;
+  }
+  
+  .create-account {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  
+  .create-account span {
+    color: #333;
+  }
+  
+  .create-account a {
+    color: #6200ea;
+    text-decoration: none;
+  }
+  
+  .create-account a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .login-image {
+      width: 100%;
+      padding-right: 0;
+    }
+  
+    .login-form {
+      width: 90%;
+      margin-top: 20px;
+    }
+  
+    .container {
+      flex-direction: column;
+    }
+  }
+  

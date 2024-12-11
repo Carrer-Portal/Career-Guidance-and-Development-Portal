@@ -1,8 +1,10 @@
 import db from "../controllers/index.js";
 import validations from '../utils/validations.js';
+import {upload} from '../utils/uploadHelper.js';
+import { Op } from 'sequelize';
 
 const { validateCreateWorkshop, validateUpdateWorkshop } = validations;
-const Workshop = db.workshops;
+const Workshop = db.workshop;
 
 const createWorkshop = async (req, res) => {
     try {
@@ -17,7 +19,12 @@ const createWorkshop = async (req, res) => {
                 });
         }
 
-        const workshop = await Workshop.create(req.body);
+        const workshopData = {
+            ...req.body,
+            workshopBannerFile: req.file ? req.file.path : null
+        };
+
+        const workshop = await Workshop.create(workshopData);
         res.status(201).json({ 
             message: "Workshop created successfully",
             workshop: workshop 
@@ -45,10 +52,10 @@ const updateWorkshop = async (req, res) => {
 
         const { id } = req.params;
         const [updated] = await Workshop.update(req.body, {
-            where: { id: id }
+            where: { workshopId: id }
         });
         if (updated) {
-            const updatedWorkshop = await Workshop.findOne({ where: { id: id } });
+            const updatedWorkshop = await Workshop.findOne({ where: { workshopId: id } });
             res.status(200).json({ 
                 message: "Workshop updated successfully",
                 workshop: updatedWorkshop 
@@ -68,7 +75,7 @@ const deleteWorkshop = async (req, res) => {
     try {
         const { id } = req.params;
         const deleted = await Workshop.destroy({
-            where: { id: id }
+            where: { workshopId: id }
         });
         if (deleted) {
             res.status(204).json({ message: "Workshop deleted successfully" });
@@ -87,7 +94,7 @@ const findWorkshopById = async (req, res) => {
     try {
         const { id } = req.params;
         const workshop = await Workshop.findOne({
-            where: { id: id }
+            where: { workshopId: id }
         });
         if (workshop) {
             res.status(200).json({ 
@@ -120,10 +127,41 @@ const findAllWorkshops = async (req, res) => {
     }
 };
 
+const findWorkshopsByFacultyAndDepartment = async (req, res) => {
+    try {
+        const { facultyId, departmentId } = req.params;
+        const workshops = await Workshop.findAll({
+            where: {
+                [Op.or]: [
+                    {
+                        facultyId: facultyId,
+                        departmentId: departmentId
+                    },
+                    {
+                        facultyId: 0,
+                        departmentId: 0
+                    }
+                ]
+            }
+        });
+        res.status(200).json({ 
+            message: "Workshops fetched successfully",
+            workshops: workshops 
+        });
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ error: true, message: "Internal Server Error" });
+    }
+};
+
 export {
     createWorkshop,
     updateWorkshop,
     deleteWorkshop,
     findWorkshopById,
-    findAllWorkshops
+    findAllWorkshops,
+    findWorkshopsByFacultyAndDepartment,
+    upload
 };

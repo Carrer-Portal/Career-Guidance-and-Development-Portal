@@ -1,16 +1,21 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, IconButton, Grid } from "@mui/material";
+import { Box, Typography, TextField, IconButton, Grid, CircularProgress } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import "./chatBot.css";
 import Button from "../../Components/Button/Button";
 import chatbot from "../../image/chatbot.png";
+import axios from "axios";
+
+interface Message {
+  type: "user" | "bot";
+  text: string;
+}
 
 const ChatBot = () => {
-  const [messages, setMessages] = useState<
-    { type: "user" | "bot"; text: string }[]
-  >([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [showFAQs, setShowFAQs] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const sampleFAQs = [
     {
@@ -35,24 +40,68 @@ const ChatBot = () => {
     },
   ];
 
-  const handleFAQClick = (faq: { question: string; answer: string }) => {
-    setMessages([
+  const handleFAQClick = async (faq: { question: string; answer: string }) => {
+    const newMessages: Message[] = [
       ...messages,
       { type: "user", text: faq.question },
-      { type: "bot", text: faq.answer },
-    ]);
+      { type: "bot", text: "Chat generating..." },
+    ];
+    setMessages(newMessages);
     setShowFAQs(false);
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:8070/api/chat/interactive-chat", {
+        messages: newMessages.map((msg) => ({ text: msg.text })),
+      });
+
+      const botResponse = response.data.response.response.candidates[0].content.parts[0].text;
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { type: "bot", text: botResponse },
+      ]);
+    } catch (error) {
+      console.error("Error during chat session:", error);
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { type: "bot", text: "The model is overloaded. Please try again later." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (input.trim() !== "") {
-      setMessages([
+      const newMessages: Message[] = [
         ...messages,
         { type: "user", text: input },
-        { type: "bot", text: "Thank you! I'll respond shortly." },
-      ]);
+        { type: "bot", text: "Chat generating..." },
+      ];
+      setMessages(newMessages);
       setInput("");
       setShowFAQs(false);
+      setLoading(true);
+
+      try {
+        const response = await axios.post("http://localhost:8070/api/chat/interactive-chat", {
+          messages: newMessages.map((msg) => ({ text: msg.text })),
+        });
+
+        const botResponse = response.data.response.response.candidates[0].content.parts[0].text;
+        setMessages((prevMessages) => [
+          ...prevMessages.slice(0, -1),
+          { type: "bot", text: botResponse },
+        ]);
+      } catch (error) {
+        console.error("Error during chat session:", error);
+        setMessages((prevMessages) => [
+          ...prevMessages.slice(0, -1),
+          { type: "bot", text: "The model is overloaded. Please try again later." },
+        ]);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -93,7 +142,7 @@ const ChatBot = () => {
                 Welcome to ChatBot!
               </Typography>
               <Typography variant="body2">
-              Practice mock interviews with the bot to build confidence and improve your skills.
+                Practice mock interviews with the bot to build confidence and improve your skills.
               </Typography>
             </Box>
             <Grid container spacing={2}>
@@ -114,29 +163,37 @@ const ChatBot = () => {
             </Grid>
           </>
         ) : (
-          messages.map((message, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                justifyContent:
-                  message.type === "user" ? "flex-end" : "flex-start",
-                marginBottom: 1,
-              }}
-            >
-              <Typography
+          <>
+            {messages.map((message, index) => (
+              <Box
+                key={index}
                 sx={{
-                  backgroundColor:
-                    message.type === "user" ? "#d1e7ff" : "#e9ecef",
-                  padding: 1,
-                  borderRadius: 2,
-                  maxWidth: "75%",
+                  display: "flex",
+                  justifyContent:
+                    message.type === "user" ? "flex-end" : "flex-start",
+                  marginBottom: 1,
                 }}
               >
-                {message.text}
-              </Typography>
-            </Box>
-          ))
+                <Typography
+                  sx={{
+                    backgroundColor:
+                      message.type === "user" ? "#d1e7ff" : "#e9ecef",
+                    padding: 1,
+                    borderRadius: 2,
+                    maxWidth: "75%",
+                    whiteSpace: "pre-wrap", // Ensure new lines are preserved
+                  }}
+                >
+                  {message.text}
+                </Typography>
+              </Box>
+            ))}
+            {loading && (
+              <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+                <CircularProgress />
+              </Box>
+            )}
+          </>
         )}
       </Box>
 

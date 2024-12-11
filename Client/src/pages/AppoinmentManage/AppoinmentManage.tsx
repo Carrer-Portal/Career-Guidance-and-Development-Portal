@@ -96,6 +96,7 @@ const AppointmentManagement = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
   const handleApproveClick = (appointment: Appointment) => {
     setSnackbarMessage(
@@ -111,6 +112,7 @@ const AppointmentManagement = () => {
     if (reason === "clickaway") {
       return;
     }
+    setSnackbarSeverity("success");
     setSnackbarOpen(false);
   };
 
@@ -120,6 +122,7 @@ const AppointmentManagement = () => {
     setSnackbarMessage(
       `You canceled the appointment for ${selectedAppointment.firstName}. Feedback: ${feedback}`
     );
+    setSnackbarSeverity("error");
     setSnackbarOpen(true);
     handleCloseModal();
     // Add deletion logic here
@@ -280,21 +283,7 @@ const AppointmentManagement = () => {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="error"
+          severity={snackbarSeverity}
           sx={{ width: "100%" }}
         >
           {snackbarMessage}

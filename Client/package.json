@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.0.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
+    "@mui/x-date-pickers": "^7.23.1",
     "axios": "^1.7.7",
     "joi": "^17.13.3",
     "js-cookie": "^3.0.5",

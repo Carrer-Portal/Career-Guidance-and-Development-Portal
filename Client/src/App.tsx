@@ -13,6 +13,7 @@ import AdvisorPreview from "./pages/Advisor-Overview/AdvisorOverview";
 import PasswordReset from "./pages/LogingPage/Partials/PasswordReset";
 import UserDashboard from "./pages/UserDashboard/UserDashboard";
 import ChatBot from "./pages/chatBot/chatBot";
+import AppointmentManagement from "./pages/AppoinmentManage/AppoinmentManage";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -28,7 +29,8 @@ const App: React.FC = () => {
         {showLayout && <Header />}
         <Box className="body">
           <Routes>
-            <Route path="/advisorOveview" element={<AdvisorPreview />} />
+            <Route path="/advisor/advisorOveview" element={<AdvisorPreview />} />
+            <Route path="/advisor/appointmentManagement" element={<AppointmentManagement />} />
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />

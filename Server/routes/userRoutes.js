@@ -1,7 +1,7 @@
 import express from 'express';
 import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword, updateUndegratuatePassword,updateUndegratuateUser} from '../controllers/userController.js';
 import { createAdminAccount, adminLogin, updateAdmin, findAdminById,getAllCareerAdvisors } from "../controllers/userController.js";
-import upload from "../utils/uploadHelper.js";
+import {upload} from "../utils/uploadHelper.js";
 const router = express.Router();
 
 //register route undergraduate

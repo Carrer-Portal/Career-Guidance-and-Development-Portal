@@ -63,7 +63,7 @@ const careerAdvisor = (sequelize, DataTypes) => {
 
   CareerAdvisor.prototype.generateAuthToken = function () {
     const token = jwt.sign(
-      { adminId: this.adminId },
+      { careerAdvisorId: this.careerAdvisorId },
       "CarrerHubGetInToSeceretZone",
       {
         expiresIn: "7d",

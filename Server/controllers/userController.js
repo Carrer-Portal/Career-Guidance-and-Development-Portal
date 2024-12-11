@@ -421,7 +421,38 @@ const getAllCareerAdvisors = async (req, res) => {
 
 
 
+const whoAmIAdmin = async (req, res) => {
+  try {
+
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: true, message: 'Access Denied. No token provided.' });
+    }
+
+    const decoded = jwt.verify(token, "CarrerHubGetInToSeceretZone");
+    const careerAdvisorId = decoded.careerAdvisorId;
+
+    const user = await CarrerAdviosr.findOne(
+      { where: { careerAdvisorId: careerAdvisorId } ,
+      }
+      
+    );
+
+    res.status(200).json({
+      message: "User fetched successfully",
+      user: user,
+    });
+  } catch (error) {
+
+    return res
+      .status(500)
+      .json({ error: true,  message: error.message || 'Internal Server Error'});
+  }
+};
+
+
+
 
 export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword,
-  adminLogin, createAdminAccount, updateAdmin, findAdminById,getAllCareerAdvisors
+  whoAmIAdmin,adminLogin, createAdminAccount, updateAdmin, findAdminById,getAllCareerAdvisors
  };

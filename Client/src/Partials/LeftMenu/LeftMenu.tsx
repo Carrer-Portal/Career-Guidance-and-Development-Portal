@@ -36,20 +36,12 @@ const menuItems = [
     label: "Appointment",
   },
   {
-    path: "/resume-manage",
+    path: "/resumeManage",
     icon: <TextSnippetIcon />,
     label: "Resume Manage",
     subItems: [
-      { 
-        path: "/resume-creation",
-        icon: <EditNoteIcon />, 
-        label: "Create CV" 
-      },
-      { 
-        path: "/resume-manage",
-        icon: <DesignServicesIcon />, 
-        label: "Manage CV" 
-      },
+      { icon: <EditNoteIcon />, label: "Create CV" },
+      { icon: <DesignServicesIcon />, label: "Manage CV" },
     ],
   },
   {
@@ -81,16 +73,10 @@ const LeftMenu: React.FC = () => {
         {menuItems.map((item) => (
           <React.Fragment key={item.label}>
             <ListItem
-              onClick={() => {
-                if (!item.subItems) {
-                  navigate(item.path);
-                } else {
-                  setOpenSubmenu((prev) => (prev === item.path ? null : item.path));
-                }
-              }}
+              onClick={() => !item.subItems && navigate(item.path)}
               sx={{
                 backgroundColor: isActive(item.path) ? "#e9deed" : "inherit",
-                cursor: "pointer",
+                cursor: item.subItems ? "default" : "pointer",
               }}
             >
               <ListItemIcon
@@ -110,10 +96,11 @@ const LeftMenu: React.FC = () => {
               )}
               {!isCollapsed && item.subItems && (
                 <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenSubmenu((prev) => (prev === item.path ? null : item.path));
-                  }}
+                  onClick={() =>
+                    setOpenSubmenu((prev) =>
+                      prev === item.path ? null : item.path
+                    )
+                  }
                 >
                   {openSubmenu === item.path ? <ExpandLess sx={{ color: "#FFFFFF" }}/> : <ExpandMore sx={{ color: "#FFFFFF" }}/>}
                 </IconButton>
@@ -129,8 +116,7 @@ const LeftMenu: React.FC = () => {
                   {item.subItems.map((subItem) => (
                     <ListItem
                       key={subItem.label}
-                      onClick={() => navigate(subItem.path)}
-                      sx={{ paddingLeft: "32px", cursor: "pointer" }}
+                      sx={{ paddingLeft: "32px", cursor: "default" }}
                     >
                       <ListItemIcon sx={{ color: "#d2c6e6" }}>
                         {subItem.icon}

@@ -1,6 +1,6 @@
 import express from 'express';
 import {undergraduateRegister,undergraduatelogin,whoAmI, forgetPassword, updateUndegratuatePassword,updateUndegratuateUser} from '../controllers/userController.js';
-import { createAdminAccount, adminLogin, updateAdmin, findAdminById,getAllCareerAdvisors } from "../controllers/userController.js";
+import { whoAmIAdmin, createAdminAccount, adminLogin, updateAdmin, findAdminById,getAllCareerAdvisors } from "../controllers/userController.js";
 import {upload} from "../utils/uploadHelper.js";
 const router = express.Router();
 
@@ -22,5 +22,6 @@ router.post("/admin/login", adminLogin);
 router.put("/admin/update/:adminId", updateAdmin);
 router.get("/admin/:adminId", findAdminById);
 router.get("/advisors", getAllCareerAdvisors);
+router.get("/admin", whoAmIAdmin);
 
 export default router;

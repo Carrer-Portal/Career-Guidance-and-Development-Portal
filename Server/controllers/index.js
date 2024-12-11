@@ -56,7 +56,7 @@ db.workshop = workshopModel(sequelize, Sequelize.DataTypes);
 // db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
 db.careerAdviosr = careerAdviosrModel(sequelize, Sequelize.DataTypes);
-// db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
+db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {

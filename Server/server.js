@@ -5,6 +5,7 @@ import userRoutes from './routes/userRoutes.js';
 import appoinmentRoutes from './routes/appoinmentRoutes.js';
 import chatRoutes from './routes/chatRoutes.js'
 import facultyDepartmentRoutes from './routes/facultyDepartmentRoutes.js';
+import workshopRoutes from './routes/workshopRoutes.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/appoinment", appoinmentRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/data",facultyDepartmentRoutes);
+app.use("/api/workshop",workshopRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

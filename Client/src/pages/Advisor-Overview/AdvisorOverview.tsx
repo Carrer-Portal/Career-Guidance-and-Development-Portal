@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import {
   Box,
   Typography,
@@ -13,6 +13,42 @@ import Button from "../../Components/Button/Button";
 import cvVector from "../../image/forms.svg";
 import sampleimg1 from "../../image/sampleimg1.jpg";
 import sampleimg2 from "../../image/sampleimg2.jpg";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+interface CareerAdvisor {
+  careerAdvisorId: number;
+  firstName: string;
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: number;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+}
+
+interface Appointment {
+  appointmentId: string;
+  careerAdvisorId: number;
+  undergraduateId: number;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentStatus: string;
+  appointmentDescription: string;
+  undergraduate: Undergraduate;
+}
+
+
 
 interface Event {
   image: string | undefined;
@@ -94,6 +130,105 @@ const events: Event[] = [
 ];
 
 const AdvisorPreview = () => {
+  const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  useEffect(() => {
+    const fetchAdvisorInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/user/admin", {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+          }
+        });
+        setAdvisor(response.data.user);
+      } catch (error: any) {
+        if (error.response) {
+          setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch advisor info', severity: 'error' });
+        } else {
+          setSnackbar({ open: true, message: 'Failed to fetch advisor info', severity: 'error' });
+        }
+      }
+    };
+
+    fetchAdvisorInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (advisor) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/appoinment/findByCareerAdvisor/${advisor.careerAdvisorId}`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+            }
+          });
+          setAppointments(response.data.appointments);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch appointments', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch appointments', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchAppointments();
+  }, [advisor]);
+
+  const handleAccept = async (appointmentId: string) => {
+    try {
+      const response = await axios.put(`http://localhost:8070/api/appoinment/accept/${appointmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setSnackbar({ open: true, message: response.data.message, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === appointmentId ? { ...appointment, appointmentStatus: 'Accepted' } : appointment
+      ));
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to accept appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to accept appointment', severity: 'error' });
+      }
+    }
+  };
+
+  const handleDecline = async (appointmentId: string) => {
+    try {
+      const response = await axios.put(`http://localhost:8070/api/appoinment/decline/${appointmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setSnackbar({ open: true, message: response.data.message, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === appointmentId ? { ...appointment, appointmentStatus: 'Declined' } : appointment
+      ));
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to decline appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to decline appointment', severity: 'error' });
+      }
+    }
+  };
+
+  const getFullImageUrl = (filePath: string) => {
+    const fileName = filePath.split('\\').pop();
+    return `http://localhost:8070/files/${fileName}`;
+  };
+
+
+
   return (
     <Box className="advisor-preview">
       <Grid container spacing={2}>
@@ -128,19 +263,23 @@ const AdvisorPreview = () => {
                 borderRadius: "10px",
               }}
             >
-              <Avatar
-                src={profileData.image}
+             {advisor &&(
+              <>
+                <Avatar
+                src= {getFullImageUrl(advisor.filePath)}
                 className="profile-avatar"
                 sx={{ width: 80, height: 80, marginRight: 5 }}
               />
               <Box>
                 <Typography variant="h6" fontWeight={600}>
-                  Hello, {profileData.name}
+                  Hello, {advisor.firstName} {advisor.lastName}
                 </Typography>
                 <Typography className="bio-link">
-                  {profileData.email}
+                  {advisor.email}
                 </Typography>
               </Box>
+              </>
+              )}
             </Box>
 
             <Box sx={{ width: "70%" }}>
@@ -203,7 +342,7 @@ const AdvisorPreview = () => {
                   Appointment Summary
                 </Typography>
               </Grid>
-              {bookingsData.map((booking, index) => (
+              {appointments.map((booking, index) => (
                 <Grid item key={index}>
                   <Card
                     className="booking-card"
@@ -220,16 +359,16 @@ const AdvisorPreview = () => {
                             variant="h6"
                             sx={{ fontSize: 16, fontWeight: 600 }}
                           >
-                            {booking.name}
+                            {booking.undergraduate.firstName} {booking.undergraduate.lastName}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Faculty: {booking.faculty}
+                            Faculty: {booking.undergraduate.facultyId}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Date: {booking.date}
+                            Date: {booking.appointmentDate}
                           </Typography>
                           <Typography sx={{ fontSize: 14 }}>
-                            Time: {booking.time}
+                            Time: {booking.appointmentTime}
                           </Typography>
                         </Box>
                         <Box

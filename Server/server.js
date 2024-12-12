@@ -8,6 +8,7 @@ import facultyDepartmentRoutes from './routes/facultyDepartmentRoutes.js';
 import workshopRoutes from './routes/workshopRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import resumeReviewRoutes from './routes/resumeReviewRoutes.js';
+import dashboardRoutes from './routes/dashboadRoutes.js';
 
 const app = express();
 
@@ -25,7 +26,8 @@ app.use("/api/data",facultyDepartmentRoutes);
 app.use("/api/workshop",workshopRoutes);
 app.use("/api/resume",resumeRoutes);
 app.use("/api/review-resumes",resumeReviewRoutes);
-
+app.use("/api/review-resumes",resumeReviewRoutes);
+app.use("/api/dashboad",dashboardRoutes);
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

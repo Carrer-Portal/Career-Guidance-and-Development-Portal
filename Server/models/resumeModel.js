@@ -14,13 +14,9 @@ const resumeModel = (sequelize, DataTypes) => {
             undergraduateId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'undergraduates', // name of the target model
-                    key: 'undergraduateId', // key in the target model
-                }
             },
-            resume_file: {
-                type: DataTypes.BLOB('long'),
+            resumeFilePath: {
+                type: DataTypes.STRING,
                 allowNull: false,
             }
         },

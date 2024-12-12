@@ -291,6 +291,41 @@ const ProfilePage = () => {
   };
 
   const relevantDepartments = departments.filter(dept => dept.facultyId === parseInt(profile.faculty));
+  const [showCareerStatusDialog, setShowCareerStatusDialog] = useState(false);
+const [careerStatus, setCareerStatus] = useState('');
+const [jobPreference, setJobPreference] = useState('');
+const [currentJob, setCurrentJob] = useState('');
+const [currentCompany, setCurrentCompany] = useState('');
+
+const toggleCareerStatusDialog = () => {
+  setShowCareerStatusDialog(!showCareerStatusDialog);
+};
+
+const saveCareerStatus = async () => {
+  const payload = {
+    undergraduateId: undergraduate?.undergraduateId,
+    careerStatus,
+    jobPreference,
+    currentJob,
+    currentCompany
+  };
+  // Logic to save career status
+  try {
+    await axios.post(`http://localhost:8070/api/job-profile/create`, payload);
+    toggleCareerStatusDialog();
+    setOpenSnackbar(true);
+    setErrorSeverity('success');
+    setErrorMessage('Career status updated successfully');
+  } catch (error: any) {
+    if (error.response) {
+      setErrorSeverity('error');
+      setErrorMessage(error.response.data.message||error.response.message || 'An error occurred');
+      setOpenSnackbar(true);
+      console.log(error.response.data);
+    }
+  }
+  
+};
 
   return (
     <Box className="profile-container">
@@ -523,6 +558,68 @@ const ProfilePage = () => {
                 <Button variant="outlined" onClick={toggleEdit}>Edit</Button>
               )}
             </Box>
+            <Typography variant="body1" style={{ cursor: 'pointer', color: 'blue', paddingLeft: 10 }} onClick={toggleCareerStatusDialog}>
+      Change Career Status
+    </Typography>
+    <Dialog open={showCareerStatusDialog} onClose={toggleCareerStatusDialog}>
+      <DialogTitle>Change Career Status</DialogTitle>
+      <DialogContent>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Career Status</InputLabel>
+          <Select
+            name="careerStatus"
+            value={careerStatus}
+            onChange={(e) => setCareerStatus(e.target.value)}
+          >
+            <MenuItem value="Internship Seeker">Internship Seeker</MenuItem>
+            <MenuItem value="Secured Internship">Secured Internship</MenuItem>
+          </Select>
+        </FormControl>
+        {careerStatus === 'Internship Seeker' && (
+          <TextField
+            fullWidth
+            label="Job Preference"
+            name="jobPreference"
+            value={jobPreference}
+            onChange={(e) => setJobPreference(e.target.value)}
+            margin="normal"
+          />
+        )}
+        {careerStatus === 'Secured Internship' && (
+          <>
+            <TextField
+              fullWidth
+              label="Current Job"
+              name="currentJob"
+              value={currentJob}
+              onChange={(e) => setCurrentJob(e.target.value)}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Current Company"
+              name="currentCompany"
+              value={currentCompany}
+              onChange={(e) => setCurrentCompany(e.target.value)}
+              margin="normal"
+            />
+          </>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button
+          sx={{
+            backgroundColor: '#6200ea',
+            '&:hover': {
+              backgroundColor: '#3700B3'
+            }
+          }}
+          variant="contained"
+          onClick={saveCareerStatus}>
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
           </form>
         </Paper>
       </Box>

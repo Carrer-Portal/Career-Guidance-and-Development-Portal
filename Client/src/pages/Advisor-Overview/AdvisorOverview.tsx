@@ -8,6 +8,7 @@ import {
   Grid,Snackbar,Alert
 } from "@mui/material";
 import "./AdvisorOverview.css";
+import { useNavigate } from "react-router-dom";
 import Chathu from "../../image/Chathu.jpeg";
 import Button from "../../Components/Button/Button";
 import cvVector from "../../image/forms.svg";
@@ -80,58 +81,46 @@ interface Workshop {
   department: Department;
 }
 
-
-interface Event {
-  image: string | undefined;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
+interface ReviewRequest {
+  reviewId: string;
+  resumeId: string;
+  undergraduateId: number;
+  careerAdvisorId: number;
+  reviewstatus: string;
+  reviewdate: string;
+  reviewRatings: string;
+  reviewfeedback: string;
+  resume: Resume;
+  created_at: string;
 }
 
-const profileData = {
-  name: "Mr. Chathurangani",
-  email: "chathu@sjp.ac.lk",
-  image: Chathu,
-};
+interface Resume {
+  resumeId: string;
+  resumeFilePath: string;
+  undergraduate: Undergraduate;
+}
 
-const statsData = [
-  { title: "Total Appointments", value: "28" },
-  { title: "Upcoming Appointments", value: "12" },
-  { title: "Reviewed CVs", value: "19", isPositive: true },
-  { title: "Scheduled Workshops", value: "06", isPositive: false },
-];
-
-
-
-const fileDetails = [
-  {
-    name: "Kamal Srinath",
-    status: "Approved",
-    date: "20 Jan 2025",
-  },
-  {
-    name: "Nimali Silva",
-    status: "In Progress",
-    date: "10 Mar 2025",
-  },
-  {
-    name: "Nki Perera",
-    status: "Not Approved",
-    date: "15 Dec 2024",
-  },
-];
-
+interface Dashboad{
+  numberOfUsers : number,
+  numberOfResumeRequests:number,
+  numberOfResumeRequestsAccepted:number,
+  upcomingWorkshopsCount:number,
+  upcomingAppointmentsCount:number,
+  numberOfResumeRequestsForAdvisor:number,
+  numberOfResumeRequestsAcceptedForAdvisor:number
+}
 
 
 const AdvisorPreview = () => {
+  const navigate = useNavigate();
   const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
-
+  const [reviewRequests, setReviewRequests] = useState<ReviewRequest[]>([]);
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
+  const [dashboard, setDashboard] = useState<Dashboad | null>(null);
 
   useEffect(() => {
     const fetchAdvisorInfo = async () => {
@@ -215,6 +204,25 @@ const AdvisorPreview = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchReviewRequests = async () => {
+      if (advisor) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/review-resumes/advisor/${advisor.careerAdvisorId}`);
+          setReviewRequests(response.data);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch review requests', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch review requests', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchReviewRequests();
+  }, [advisor]);
+
   const handleDecline = async (appointmentId: string) => {
     try {
       const response = await axios.put(`http://localhost:8070/api/appoinment/decline/${appointmentId}`, {}, {
@@ -240,6 +248,33 @@ const AdvisorPreview = () => {
     return `http://localhost:8070/files/${fileName}`;
   };
 
+  useEffect(() => {
+    const fetchDashboad = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/dashboad/stats`,{
+            params: {
+              careerAdvisorId: advisor?.careerAdvisorId
+            }
+          });
+          setDashboard(response.data);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch review requests', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch review requests', severity: 'error' });
+          }
+      }
+    };
+
+    fetchDashboad();
+  }, []);
+
+  const statsData = [
+  { title: "Total Student Users", value: dashboard?.numberOfUsers },
+  { title: "Upcoming Appointments", value: dashboard?.upcomingAppointmentsCount },
+  { title: "Reviewed CVs", value: dashboard?.numberOfResumeRequestsAcceptedForAdvisor },
+  { title: "Scheduled Workshops", value: dashboard?.upcomingWorkshopsCount },
+];
 
 
   return (
@@ -315,7 +350,7 @@ const AdvisorPreview = () => {
                         variant="h4"
                         fontWeight={600}
                         className={`stat-value ${
-                          stat.isPositive ? "positive" : "negative"
+                          stat.value ? "positive" : "negative"
                         }`}
                       >
                         {stat.value}
@@ -409,7 +444,7 @@ const AdvisorPreview = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Button variant="outline">
+                  <Button variant="outline"onClick={() => navigate("/advisor/appointmentManagement")}>
                     See More & Manage All Bookings
                   </Button>
                 </Box>
@@ -437,7 +472,7 @@ const AdvisorPreview = () => {
                 spacing={2}
                 sx={{ paddingLeft: "12px", paddingTop: "10px" }}
               >
-                {fileDetails.map((file, index) => (
+                {reviewRequests.map((resumeRequest, index) => (
                   <Grid item xs={12} sm={6} md={6} key={index}>
                     <Box className="file-card">
                       <Box className="file-icon">
@@ -448,22 +483,22 @@ const AdvisorPreview = () => {
                         />
                       </Box>
                       <Box className="file-details">
-                        <Typography>{file.name}</Typography>
+                        <Typography>{resumeRequest.resume.undergraduate.regNo+" "+resumeRequest.resume.undergraduate.firstName}</Typography>
                         <Typography sx={{ fontSize: 14 }}>
-                          Date: {file.date}
+                          Date: {new Date(resumeRequest.reviewdate).toLocaleDateString()}
                         </Typography>
                         <Typography
                           variant="body1"
                           style={{ fontSize: "12px" }}
                           className={`file-status ${
-                            file.status === "Approved"
+                            resumeRequest.reviewstatus === "Approved"
                               ? "status-approved"
-                              : file.status === "In Progress"
+                              : resumeRequest.reviewstatus === "In Progress"
                               ? "status-in-progress"
                               : "status-not-approved"
                           }`}
                         >
-                          {file.status}
+                          {resumeRequest.reviewstatus}
                         </Typography>
                       </Box>
                     </Box>
@@ -478,7 +513,7 @@ const AdvisorPreview = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Button variant="outline">See More & Manage All CVs</Button>
+                  <Button variant="outline" onClick={() => navigate("/advisor/CVManagement")}>See More & Manage All CVs</Button>
                 </Box>
               </Grid>
             </Grid>
@@ -551,7 +586,7 @@ const AdvisorPreview = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={() => navigate("/advisor/WorkshopManagement")}>
                     See More & Manage All Workshops
                   </Button>
                 </Box>

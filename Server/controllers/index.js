@@ -13,6 +13,7 @@ import chatHistoryModel from '../models/chatHistoryModel.js';
 import facultyModel from '../models/facultyModel.js';
 import careerAdviosrModel from '../models/careerAdviosrModel.js';
 import advisorAvailabilityMap from '../models/advisorAvailabilityMap.js';
+import undergraduateJobProfile from '../models/undergraduateJobProfileModel.js';
 
 
 const sequelize = new Sequelize(
@@ -57,6 +58,7 @@ db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
 db.careerAdviosr = careerAdviosrModel(sequelize, Sequelize.DataTypes);
 db.AdvisorAvailabilityMap = advisorAvailabilityMap(sequelize, Sequelize.DataTypes);
+db.undergraduateJobProfile = undergraduateJobProfile(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -84,6 +86,8 @@ db.sequelize.sync({ force: false })
         foreignKey: "facultyId",
         as:'faculty'
     });
+
+
 
 
     db.appointmentModel.belongsTo(db.undergraduates, {
@@ -136,6 +140,23 @@ db.sequelize.sync({ force: false })
     db.resume.hasMany(db.reviewResume, {
         foreignKey: "resumeId",
         as: 'reviewResume'
+    });
+    db.undergraduates.hasOne(db.undergraduateJobProfile, {
+        foreignKey: "undergraduateId",
+        as: 'jobProfile'
+    });
+    db.undergraduateJobProfile.belongsTo(db.undergraduates, {
+        foreignKey: "undergraduateId",
+        as: 'undergraduate'
+    });
+
+    db.undergraduates.hasMany(db.reviewResume, {
+        foreignKey: "undergraduateId",
+        as: 'reviewResume'
+    });
+    db.reviewResume.belongsTo(db.undergraduates, {
+        foreignKey: "undergraduateId",
+        as: 'undergraduate'
     });
     
 

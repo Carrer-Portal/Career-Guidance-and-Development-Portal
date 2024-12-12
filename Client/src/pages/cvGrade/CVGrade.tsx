@@ -291,11 +291,11 @@ const CVManagement = () => {
                         />
                       </Box>
                     </TableCell>
-                    <TableCell>{resumeRequest.resume.resumeFilePath}</TableCell>
+                    <TableCell>{resumeRequest.resume.resumeFilePath.replace(/^files\\/, '')}</TableCell>
                     <TableCell>{resumeRequest.resume.undergraduate.firstName}</TableCell>
                     <TableCell>{resumeRequest.resume.undergraduate.department.faculty.facultyName}</TableCell>
                     <TableCell>{resumeRequest.resume.undergraduate.contactNumber}</TableCell>
-                    <TableCell>{resumeRequest.created_at}</TableCell>
+                    <TableCell>{new Date(resumeRequest.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>{renderStatus(resumeRequest.reviewstatus)}</TableCell>
                     <TableCell>
                       <Rating value={parseFloat(resumeRequest.reviewRatings)} readOnly />

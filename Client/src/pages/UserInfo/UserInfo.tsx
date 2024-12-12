@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,132 +10,104 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
+import axios from "axios";
 
-type Student = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-  address: string;
-  status: string;
-  condition: string;
-  tasks: { title: string; Status: string; dueDate: string }[];
-};
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-const students: Student[] = [
-  {
-    id: 1,
-    name: "Nuwan Perera",
-    username: "N.Perera",
-    email: "nuwan@example.com",
-    phone: "071-234-5678",
-    address: "123 Temple Road, Colombo, Sri Lanka",
-    status: "Intern",
-    condition: "Online",
-    tasks: [
-      {
-        title: "Appoinment 01",
-        dueDate: "Feb 15, 2024",
-        Status: "Pending",
-      },
-      {
-        title: "Appoinment 02",
-        dueDate: "Feb 20, 2024",
-        Status: "Done",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Sanduni Fernando",
-    username: "S.Fernando",
-    email: "sanduni@example.com",
-    phone: "077-987-6543",
-    address: "456 Beach Road, Galle, Sri Lanka",
-    status: "Finding Job",
-    condition: "Offline",
-    tasks: [
-      {
-        title: "Appoinment 01",
-        dueDate: "Feb 15, 2024",
-        Status: "Done",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Ruwan Wijesinghe",
-    username: "R.Wijesinghe",
-    email: "ruwan@example.com",
-    phone: "076-345-6789",
-    address: "789 Lake Road, Kandy, Sri Lanka",
-    status: "Do Job",
-    condition: "Online",
-    tasks: [
-      {
-        title: "Appoinment 01",
-        dueDate: "Feb 15, 2024",
-        Status: "Done",
-      },
-      {
-        title: "Appoinment 02",
-        dueDate: "Feb 20, 2024",
-        Status: "Cancel",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Kavindi Jayasinghe",
-    username: "K.Jayasinghe",
-    email: "kavindi@example.com",
-    phone: "078-123-4567",
-    address: "321 Hill View, Nuwara Eliya, Sri Lanka",
-    status: "Finding Job",
-    condition: "Offline",
-    tasks: [
-      {
-        title: "Appoinment 01",
-        dueDate: "Feb 15, 2024",
-        Status: "Cancel",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Tharindu Silva",
-    username: "T.Silva",
-    email: "tharindu@example.com",
-    phone: "072-987-6543",
-    address: "654 Forest Lane, Anuradhapura, Sri Lanka",
-    status: "Student",
-    condition: "Online",
-    tasks: [
-      {
-        title: "Appoinment 01",
-        dueDate: "Feb 15, 2024",
-        Status: "Cancel",
-      },
-      {
-        title: "Appoinment 02",
-        dueDate: "Feb 20, 2024",
-        Status: "Done",
-      },
-    ],
-  },
-];
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  facultyId: number;
+  createdAt: string;
+  updatedAt: string;
+  faculty: Faculty;
+}
+
+interface Appointment {
+  appointmentId: string;
+  careerAdvisorId: number;
+  undergraduateId: number;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentStatus: string;
+  appointmentDescription: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ReviewRequest {
+  reviewId: string;
+  resumeId: string;
+  undergraduateId: number;
+  careerAdvisorId: number;
+  reviewstatus: string;
+  reviewdate: string;
+  reviewRatings: string;
+  reviewfeedback: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface JobProfile {
+  undergraduateJobProfileId: string;
+  undergraduateId: number;
+  careerStatus: string | null;
+  jobPreference: string | null;
+  currentJob: string | null;
+  currentCompany: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: number;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  password: string;
+  created_at: string;
+  updated_at: string;
+  department: Department;
+  appointment: Appointment[];
+  reviewResume: ReviewRequest[];
+  jobProfile: JobProfile | null;
+}
 
 const UserInfo = () => {
   const [searchText, setSearchText] = useState<string>("");
-  const [selectedStudent, setSelectedStudent] = useState<Student>(students[0]);
+  const [selectedUndergraduate, setSelectedUndergraduate] = useState<Undergraduate | null>(null);
+  const [undergraduates, setUndergraduates] = useState<Undergraduate[]>([]);
 
-  const handleStudentClick = (student: Student) => {
-    setSelectedStudent(student);
+  useEffect(() => {
+    const fetchedUserDetails = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/user/manageUser");
+        setUndergraduates(response.data.undergraduateDetails);
+      } catch (error: any) {
+        if (error.response) {
+          console.log(error.response.data);
+        }
+      }
+    };
+    fetchedUserDetails();
+  }, []);
+
+  const handleUndergraduateClick = (undergraduate: Undergraduate) => {
+    setSelectedUndergraduate(undergraduate);
   };
 
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredUndergraduates = undergraduates.filter((undergraduate) =>
+    undergraduate.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+    undergraduate.lastName.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
@@ -166,7 +138,11 @@ const UserInfo = () => {
             Students & Access List
           </Typography>
           <Box
-            sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}
+            sx={{ 
+              display: "flex", 
+              width: "100%", 
+              justifyContent: "flex-end" 
+            }}
           >
             <TextField
               fullWidth
@@ -178,10 +154,10 @@ const UserInfo = () => {
             />
           </Box>
           <List>
-            {filteredStudents.map((student) => (
-              <React.Fragment key={student.id}>
+            {filteredUndergraduates.map((undergraduate) => (
+              <React.Fragment key={undergraduate.undergraduateId}>
                 <ListItem
-                  onClick={() => handleStudentClick(student)}
+                  onClick={() => handleUndergraduateClick(undergraduate)}
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -190,24 +166,18 @@ const UserInfo = () => {
                 >
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <ListItemAvatar>
-                      <Avatar alt={student.name} />
+                      <Avatar alt={undergraduate.firstName} />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={student.name}
-                      secondary={student.username}
+                      primary={`${undergraduate.firstName} ${undergraduate.lastName}`}
+                      secondary={undergraduate.universityEmail}
                     />
                   </Box>
                   <Typography
                     variant="body2"
-                    color={
-                      student.status === "Intern" || student.status === "Do Job"
-                        ? "green"
-                        : student.status === "Finding Job"
-                        ? "red"
-                        : "blue"
-                    }
+                    color={undergraduate.jobProfile?.careerStatus === "Secured Internship" ? "green" : undergraduate.jobProfile?.careerStatus==="Internship Seeker" ? "red" : "blue"}
                   >
-                    {student.status}
+                    {undergraduate.jobProfile?.careerStatus || "Student"}
                   </Typography>
                 </ListItem>
                 <Divider />
@@ -219,70 +189,124 @@ const UserInfo = () => {
           sx={{ width: "40%", padding: 5 }}
           className="pending-appointment-content"
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: 2,
-              backgroundColor: "#eae6f2",
-              padding: "10px",
-              borderRadius: "10px",
-            }}
-          >
-            <Avatar
-              alt={selectedStudent.name}
-              sx={{ width: 64, height: 64, marginRight: 2 }}
-            />
-            <Box>
-              <Typography variant="h6">{selectedStudent.name}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                {selectedStudent.username}
+          {selectedUndergraduate && (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: 2,
+                  backgroundColor: "#eae6f2",
+                  padding: "10px",
+                  borderRadius: "10px",
+                }}
+              >
+                <Avatar
+                  alt={selectedUndergraduate.firstName}
+                  sx={{ width: 64, height: 64, marginRight: 2 }}
+                />
+                <Box>
+                  <Typography variant="h6">{selectedUndergraduate.firstName} {selectedUndergraduate.lastName}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {selectedUndergraduate.universityEmail}
+                  </Typography>
+                </Box>
+              </Box>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                Contact Information
               </Typography>
-            </Box>
-          </Box>
-          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Contact Information
-          </Typography>
-          <Typography variant="body2">
-            E-mail: {selectedStudent.email}
-          </Typography>
-          <Typography variant="body2">
-            Phone: {selectedStudent.phone}
-          </Typography>
-          <Typography variant="body2">
-            Address: {selectedStudent.address}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            fontWeight="bold"
-            sx={{ marginTop: 2 }}
-          >
-            Appoinment Details
-          </Typography>
-          {selectedStudent.tasks.map((task, index) => (
-            <Box key={index} sx={{ marginBottom: 1 }}>
-              <Typography variant="body2">{task.title}</Typography>
               <Typography variant="body2">
-                <span style={{ color: "black" }}>Task Status:</span>{" "}
-                <span
-                  style={{
-                    color:
-                      task.Status === "Done"
-                        ? "green"
-                        : task.Status === "Pending"
-                        ? "blue"
-                        : "red",
-                  }}
-                >
-                  {task.Status}
-                </span>
+                E-mail: {selectedUndergraduate.universityEmail}
+              </Typography>
+              <Typography variant="body2">
+                Phone: {selectedUndergraduate.contactNumber}
+              </Typography>
+              <Typography variant="body2">
+                Address: {selectedUndergraduate.department.departmentName}, {selectedUndergraduate.department.faculty.facultyName}
               </Typography>
               <Typography
-                variant="caption"
-                color="textSecondary"
-              >{`Date: ${task.dueDate}`}</Typography>
-            </Box>
-          ))}
+                variant="subtitle1"
+                fontWeight="bold"
+                sx={{ marginTop: 2 }}
+              >
+                Appointment Details
+              </Typography>
+              {selectedUndergraduate.appointment.map((appointment, index) => (
+                <Box key={index} sx={{ marginBottom: 1 }}>
+                  <Typography variant="body2">{appointment.appointmentDescription}</Typography>
+                  <Typography variant="body2">
+                    <span style={{ color: "black" }}>Status:</span>{" "}
+                    <span
+                      style={{
+                        color:
+                          appointment.appointmentStatus === "Done"
+                            ? "green"
+                            : appointment.appointmentStatus === "Pending"
+                            ? "blue"
+                            : "red",
+                      }}
+                    >
+                      {appointment.appointmentStatus}
+                    </span>
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                  >{`Date: ${appointment.appointmentDate}`}</Typography>
+                </Box>
+              ))}
+              <Typography
+                variant="subtitle1"
+                fontWeight="bold"
+                sx={{ marginTop: 2 }}
+              >
+                Review Resume
+              </Typography>
+              {selectedUndergraduate.reviewResume.map((review, index) => (
+                <Box key={index} sx={{ marginBottom: 1 }}>
+                  <Typography variant="body2">{review.reviewfeedback}</Typography>
+                  <Typography variant="body2">
+                    <span style={{ color: "black" }}>Status:</span>{" "}
+                    <span
+                      style={{
+                        color:
+                          review.reviewstatus === "Approved"
+                            ? "green"
+                            : review.reviewstatus === "Pending"
+                            ? "blue"
+                            : "red",
+                      }}
+                    >
+                      {review.reviewstatus}
+                    </span>
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                  >{`Date: ${review.reviewdate}`}</Typography>
+                </Box>
+              ))}
+              <Typography
+                variant="subtitle1"
+                fontWeight="bold"
+                sx={{ marginTop: 2 }}
+              >
+                Job Profile
+              </Typography>
+              <Typography variant="body2">
+                Career Status: {selectedUndergraduate.jobProfile?.careerStatus || ""}
+              </Typography>
+              <Typography variant="body2">
+                Job Preference: {selectedUndergraduate.jobProfile?.jobPreference || ""}
+              </Typography>
+              <Typography variant="body2">
+                Current Job: {selectedUndergraduate.jobProfile?.currentJob || ""}
+              </Typography>
+              <Typography variant="body2">
+                Current Company: {selectedUndergraduate.jobProfile?.currentCompany || ""}
+              </Typography>
+            </>
+          )}
         </Box>
       </Box>
     </Box>

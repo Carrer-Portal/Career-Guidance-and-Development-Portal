@@ -82,6 +82,7 @@ const UserDashboard = () => {
   const [reviewRequests, setReviewRequests] = useState<ReviewRequest[]>([]);
 
 
+
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -468,7 +469,7 @@ const UserDashboard = () => {
                           />
                         </Box>
                         <Box className="file-details">
-                          <Typography>{reviewRequest.resume.resumeFilePath.replace(/^files\\/, '')}</Typography>
+                          <Typography>{reviewRequest.resume.resumeFilePath.replace(/^files\\\d+-/, '')}</Typography>
                           <Typography
                             variant="body1"
                             style={{ fontSize: "12px" }}
@@ -489,7 +490,7 @@ const UserDashboard = () => {
                             </Typography>
                             {reviewRequest.reviewstatus != "Reject" && (
                             <Typography style={{ fontSize: "14px" }}>
-                              Review Comment: {reviewRequest.reviewfeedback}
+                              Comment: {reviewRequest.reviewfeedback}
                             </Typography>
                             )}
                             </>
@@ -505,7 +506,7 @@ const UserDashboard = () => {
                   >
                     Create Your New CV
                   </Button>
-                  <Button variant="outline" style={{ width: "100%" }}>
+                  <Button variant="outline" style={{ width: "100%" }} onClick={() => navigate("/CVReviewRequest")}>
                     Send CV Review Request
                   </Button>
                 </Grid>

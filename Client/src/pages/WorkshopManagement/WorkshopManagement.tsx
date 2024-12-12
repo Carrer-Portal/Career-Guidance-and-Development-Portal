@@ -327,7 +327,7 @@ const WorkshopManagement = () => {
           <CardContent>
             <Typography variant="h6">{workshop.workshopName}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {workshop.workshopDate} | {workshop.workshopTime}
+              {new Date(workshop.workshopDate).toLocaleDateString()} | {workshop.workshopTime}
             </Typography>
             <Typography variant="body2">{workshop.status === "Upcoming" ? "Upcoming" : "Passed Event"}</Typography>
           </CardContent>

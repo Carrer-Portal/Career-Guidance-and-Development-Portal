@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 router.post('/new', upload.single('workshopBannerFile'), createWorkshop);
-router.put('/update/:id', updateWorkshop);
+router.put('/update/:id',upload.single('workshopBannerFile'), updateWorkshop);
 router.delete('/delete/:id', deleteWorkshop);
 router.get('/findById/:id', findWorkshopById);
 router.get('/findAll', findAllWorkshops);

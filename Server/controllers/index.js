@@ -137,6 +137,7 @@ db.sequelize.sync({ force: false })
         foreignKey: "resumeId",
         as: 'reviewResume'
     });
+    
 
 
 export default db;

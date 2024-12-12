@@ -40,6 +40,7 @@ const createWorkshop = async (req, res) => {
     }
 };
 
+
 const updateWorkshop = async (req, res) => {
     try {
         const { error } = validateUpdateWorkshop(req.body);
@@ -47,21 +48,26 @@ const updateWorkshop = async (req, res) => {
             console.log(error);
             return res
                 .status(400)
-                .json({ 
-                    error: true, 
-                    message: error.details[0].message 
+                .json({
+                    error: true,
+                    message: error.details[0].message
                 });
         }
 
         const { id } = req.params;
-        const [updated] = await Workshop.update(req.body, {
+        const workshopData = {
+            ...req.body,
+            workshopBannerFile: req.file ? req.file.path : req.body.workshopBannerFile
+        };
+
+        const [updated] = await Workshop.update(workshopData, {
             where: { workshopId: id }
         });
         if (updated) {
             const updatedWorkshop = await Workshop.findOne({ where: { workshopId: id } });
-            res.status(200).json({ 
+            res.status(200).json({
                 message: "Workshop updated successfully",
-                workshop: updatedWorkshop 
+                workshop: updatedWorkshop
             });
         } else {
             res.status(404).json({ error: true, message: 'Workshop not found' });

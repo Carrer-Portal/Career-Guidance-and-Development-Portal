@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -18,72 +18,72 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "../../Components/Button/Button";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-type Appointment = {
-  id: number;
+interface CareerAdvisor {
+  careerAdvisorId: number;
   firstName: string;
-  faculty: string;
-  phoneNumber: string;
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: number;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  department: Department;
+}
+
+interface Appointment {
+  appointmentId: string;
+  careerAdvisorId: number;
+  undergraduateId: number;
   appointmentDate: string;
   appointmentTime: string;
-  status: string;
-};
+  appointmentStatus: string;
+  appointmentDescription: string;
+  undergraduate: Undergraduate;
+ 
+}
+
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  facultyId: number;
+  createdAt: string;
+  updatedAt: string;
+  faculty: Faculty;
+}
 
 const AppointmentManagement = () => {
-  const appointments = [
-    {
-      id: 1,
-      firstName: "Nimal Perera",
-      faculty: "FOT",
-      phoneNumber: "+91 9876543210",
-      appointmentDate: "13-Aug-2023",
-      appointmentTime: "10:00 AM",
-      status: "Open",
-    },
-    {
-      id: 2,
-      firstName: "Saman Kumara",
-      faculty: "FAS",
-      phoneNumber: "+91 9876543210",
-      appointmentDate: "13-Aug-2023",
-      appointmentTime: "10:00 AM",
-      status: "Cancel",
-    },
-    {
-      id: 3,
-      firstName: "Anura Kumara",
-      faculty: "FMS",
-      phoneNumber: "+91 9876543210",
-      appointmentDate: "13-Aug-2023",
-      appointmentTime: "10:00 AM",
-      status: "Completed",
-    },
-    {
-      id: 4,
-      firstName: "Nethmi Sansala",
-      faculty: "FOT",
-      phoneNumber: "+91 9876543210",
-      appointmentDate: "13-Aug-2023",
-      appointmentTime: "10:00 AM",
-      status: "Open",
-    },
-  ];
-
+  const [appointments,setAppointments]=useState<Appointment[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   const [search, setSearch] = useState("");
-
-  const filteredData = appointments.filter(
-    (appointment) =>
-      appointment.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.faculty.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.phoneNumber.includes(search)
-  );
-
   const [openModal, setOpenModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =useState<Appointment | null>(null);
   const [feedback, setFeedback] = useState("");
+  const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
 
-  const handleDeleteClick = (appointment: Appointment) => {
+  const handleDeleteClick = async (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setOpenModal(true);
   };
@@ -93,16 +93,72 @@ const AppointmentManagement = () => {
     setFeedback("");
     setSelectedAppointment(null);
   };
+  
+  useEffect(() => {
+    const fetchAdvisorInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/user/admin", {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+          }
+        });
+        setAdvisor(response.data.user);
+      } catch (error: any) {
+        if (error.response) {
+          setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch advisor info', severity: 'error' });
+        } else {
+          setSnackbar({ open: true, message: 'Failed to fetch advisor info', severity: 'error' });
+        }
+      }
+    };
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+    fetchAdvisorInfo();
+  }, []);
 
-  const handleApproveClick = (appointment: Appointment) => {
-    setSnackbarMessage(
-      `You approved the appointment for ${appointment.firstName}`
-    );
-    setSnackbarOpen(true);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (advisor) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/appoinment/findByCareerAdvisor/${advisor.careerAdvisorId}`, {
+            headers: {
+              Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+            }
+          });
+          setAppointments(response.data.appointments);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch appointments', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch appointments', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchAppointments();
+  }, [advisor]);
+
+  const handleApproveClick = async (appointment: Appointment) => {
+    try {
+      const approveAppoinmentId = appointment.appointmentId;
+      const response = await axios.put(`http://localhost:8070/api/appoinment/accept/${approveAppoinmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setSnackbar({ open: true, message: `You accepted the appointment for ${appointment.undergraduate.firstName}. Feedback: ${feedback}`, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === approveAppoinmentId ? { ...appointment, appointmentStatus: 'Accepted' } : appointment
+      ));
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to accept appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to accept appointment', severity: 'error' });
+      }
+    }
+    
   };
 
   const handleSnackbarClose = (
@@ -116,28 +172,52 @@ const AppointmentManagement = () => {
     setSnackbarOpen(false);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
+    console.log(selectedAppointment);
     if (!selectedAppointment) return;
+    try {
+      const approveAppoinmentId = selectedAppointment.appointmentId;
+      const response = await axios.put(`http://localhost:8070/api/appoinment/decline/${approveAppoinmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      
+      setSnackbar({ open: true, message: `You canceled the appointment for ${selectedAppointment.undergraduate.firstName}. Feedback: ${feedback}`, severity: 'success' });
+      setAppointments(appointments.map(appointment => 
+        appointment.appointmentId === approveAppoinmentId ? { ...appointment, appointmentStatus: 'Declined' } : appointment
+      ));
+     
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to decline appointment', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to decline appointment', severity: 'error' });
+      }
+    }
 
     setSnackbarMessage(
-      `You canceled the appointment for ${selectedAppointment.firstName}. Feedback: ${feedback}`
+      `You canceled the appointment for ${selectedAppointment.undergraduate.firstName}. Feedback: ${feedback}`
     );
     setSnackbarSeverity("error");
     setSnackbarOpen(true);
     handleCloseModal();
     // Add deletion logic here
   };
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const renderStatus = (status: string) => {
     let color = "";
     switch (status) {
-      case "Open":
+      case "Pending":
         color = "#ff9800";
         break;
-      case "Cancel":
+      case "Declined":
         color = "#f44336";
         break;
-      case "Completed":
+      case "Accepted":
         color = "#4caf50";
         break;
       default:
@@ -159,6 +239,12 @@ const AppointmentManagement = () => {
       </Box>
     );
   };
+
+  const filteredAppointments = appointments.filter(
+    (appointment) =>
+      appointment.undergraduate.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      appointment.undergraduate.lastName.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <Box p={3}>
@@ -196,20 +282,20 @@ const AppointmentManagement = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((appointment) => (
-              <TableRow key={appointment.id}>
-                <TableCell>{appointment.firstName}</TableCell>
-                <TableCell>{appointment.faculty}</TableCell>
-                <TableCell>{appointment.phoneNumber}</TableCell>
-                <TableCell>{appointment.appointmentDate}</TableCell>
-                <TableCell>{appointment.appointmentTime}</TableCell>
-                <TableCell>{renderStatus(appointment.status)}</TableCell>
+            {filteredAppointments.map((appointment) => (
+              <TableRow key={appointment.appointmentId}>
+                <TableCell>{appointment.undergraduate.firstName}</TableCell>
+                <TableCell>{appointment.undergraduate.department.faculty.facultyName}</TableCell>
+                <TableCell>{appointment.undergraduate.contactNumber}</TableCell>
+                <TableCell>{new Date(appointment.appointmentDate).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(`1970-01-01T${appointment.appointmentTime}Z`).toLocaleTimeString().slice(0,-3)}</TableCell>
+                <TableCell>{renderStatus(appointment.appointmentStatus)}</TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"
                     disabled={
-                      appointment.status === "Completed" ||
-                      appointment.status === "Cancel"
+                      appointment.appointmentStatus === "Accepted" ||
+                      appointment.appointmentStatus === "Declined"
                     }
                     sx={{ mr: 1 }}
                     onClick={() => handleApproveClick(appointment)}
@@ -287,6 +373,11 @@ const AppointmentManagement = () => {
           sx={{ width: "100%" }}
         >
           {snackbarMessage}
+        </Alert>
+      </Snackbar>.
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </Box>

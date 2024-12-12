@@ -14,17 +14,17 @@ const Department = db.department;
 // Submit Review Resume Request
 const submitReviewResumeRequest = async (req, res) => {
   const { resumeId, undergraduateId, careerAdvisorId, reviewstatus } = req.body;
-  const currentReviewResume = await ReviewResume.findOne(
-    { where: { undergraduateId: undergraduateId,
-        appointmentStatus: {
-            [Op]: 'Pending'
-        }
-     } },
-    
-);
-if (currentReviewResume) {
-      return res.status(400).json({ error: 'Undergraduate has already submitted a review request,untill its reviewed you are not allowed to submit' });
-}
+  const currentReviewResume = await ReviewResume.findOne({
+    where: {
+      undergraduateId: undergraduateId,
+      reviewstatus: {
+        [Op.eq]: "Pending",
+      },
+    },
+  });
+  if (currentReviewResume) {
+        return res.status(400).json({ error: 'Undergraduate has already submitted a review request,untill its reviewed you are not allowed to submit' });
+  }
   try {
     const newReviewResume = await ReviewResume.create({
       reviewId: uuidv4(),

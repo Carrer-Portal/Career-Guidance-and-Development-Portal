@@ -25,7 +25,7 @@ import UserInfo from "./pages/UserInfo/UserInfo";
 const App: React.FC = () => {
   const location = useLocation();
 
-  const showLayout = !["/login", "/SignUp", "/passwordReset", "/admin-login"].includes(
+  const showLayout = !["/login","/", "/SignUp", "/passwordReset", "/admin-login"].includes(
     location.pathname
   );
 

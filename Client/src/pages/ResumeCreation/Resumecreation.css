@@ -45,8 +45,8 @@
 }
 
 .backButtonStyle button {
-    background-color: rgb(99, 72, 151);
-    color: white;
+    /* background-color: rgb(99, 72, 151); */
+    color: rgb(21, 20, 20);
     border: none;
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;

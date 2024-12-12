@@ -384,13 +384,12 @@ const ResumeCreation: React.FC = () => {
 
   return (
     <div className="resumecreation">
-      <div className="resumecreationtitle">
         <div className="backButtonStyle">
           <button className="btn btn-light back" onClick={() => navigate(-1)}>
           <ArrowLeftShort fontSize={20} />Back
           </button>
         </div>
-      </div>
+
       <div className="body resumecreation">
         <div className="left">
           <div className="navbarresume">

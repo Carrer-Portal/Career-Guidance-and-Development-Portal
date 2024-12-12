@@ -8,7 +8,6 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  Button as MuiButton,
   Snackbar,
   Alert,
   IconButton,
@@ -135,14 +134,15 @@ const CVReviewRequest = () => {
           Authorization: `Bearer ${Cookies.get('studentToken')}`
         }
       });
+     
       const message = `Request sent for ${selectedCV} with advisor ${selectedAdvisor}`;
       setSnackbarMessage(message);
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
       navigate("/userDashboard");
     } catch (error: any) {
-      console.error("Failed to submit resume review request", error);
-      setSnackbarMessage("Failed to submit resume review request, try again");
+      console.error("Failed to submit resume review request", error.response.data.error);
+      setSnackbarMessage(error.response.data.error||"Failed to submit resume review request, try again");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
@@ -263,20 +263,20 @@ const CVReviewRequest = () => {
                       />
                     </Box>
                     <Box className="file-details">
-                      <Typography>{file.resumeFilePath}</Typography>
+                      <Typography>{file.resumeFilePath.replace(/^files\\\d+-/, '')}</Typography>
                       <FormControlLabel
                         value={file.resumeId}
                         control={<Radio />}
                         label="Select"
                         name={file.resumeFilePath}
                       />
-                      <MuiButton
-                        variant="outlined"
+                      <Button
+                        variant="outline"
                         onClick={() => handleViewResume(file.resumeFilePath)}
                         sx={{ marginTop: 1 }}
                       >
                         View Resume
-                      </MuiButton>
+                      </Button>
                       <IconButton
                         aria-label="delete"
                         onClick={() => handleDeleteResume(file.resumeId)}
@@ -291,7 +291,7 @@ const CVReviewRequest = () => {
             </Grid>
           </RadioGroup>
         </FormControl>
-        <MuiButton
+        <Button
           variant="contained"
           component="label"
           sx={{ marginTop: 2 }}
@@ -303,7 +303,7 @@ const CVReviewRequest = () => {
             accept=".pdf"
             onChange={handleFileUpload}
           />
-        </MuiButton>
+        </Button>
       </Box>
       <Box className="pending-appointment-content" sx={{ marginBottom: 4 }}>
         <Typography

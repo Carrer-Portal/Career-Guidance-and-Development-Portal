@@ -60,9 +60,7 @@ interface ComponentToPrintProps {
   fontFamily: string;
 }
 
-export class ComponentToPrint extends React.PureComponent<
-  ComponentToPrintProps
-> {
+export class ComponentToPrint extends React.PureComponent<ComponentToPrintProps> {
   render() {
     const {
       photourl,
@@ -94,14 +92,14 @@ export class ComponentToPrint extends React.PureComponent<
     } = this.props;
 
     return (
-      <div className="resume" style={{ fontFamily }}>
+      <div className="resume" style={{ fontFamily,}}>
         {/* Basic Info */}
         <div className="info">
           {photourl && <img src={photourl} alt="" width="100" />}
           <div className="main-info">
-            <h1 style={{ color: primary }}>{name}</h1>
-            <h3>{subtitle}</h3>
-            <p>{userdesc}</p>
+            <h1 style={{ color: "#1c1a1a" , marginTop: 6, marginBottom:0 }}>{name}</h1>
+            <h3 style={{  margin: 0 }}>{subtitle}</h3>
+            <p style={{  marginTop: 12 }}>{userdesc}</p>
           </div>
         </div>
 
@@ -110,32 +108,32 @@ export class ComponentToPrint extends React.PureComponent<
           <div className="extrainfo">
             {email && (
               <a href={`mailto:${email}`}>
-                <EmailIcon style={{ color: primary }} /> {email}
+                <EmailIcon style={{ color: "#1c1a1a" }} /> {email}
               </a>
             )}
             {contact && (
               <a href={`tel:${contact}`}>
-                <PhoneIcon style={{ color: primary }} /> {contact}
+                <PhoneIcon style={{ color: "#1c1a1a" }} /> {contact}
               </a>
             )}
             {address && (
               <a href={`https://maps.google.com/?q=${address}`}>
-                <LocationOnIcon style={{ color: primary }} /> {address}
+                <LocationOnIcon style={{ color: "#1c1a1a" }} /> {address}
               </a>
             )}
             {github && (
               <a href={github}>
-                <GitHubIcon style={{ color: primary }} /> {github}
+                <GitHubIcon style={{ color: "#1c1a1a" }} /> {github}
               </a>
             )}
             {linkedin && (
               <a href={linkedin}>
-                <LinkedInIcon style={{ color: primary }} /> {linkedin}
+                <LinkedInIcon style={{ color: "#1c1a1a" }} /> {linkedin}
               </a>
             )}
             {portfolio && (
               <a href={portfolio}>
-                <LanguageIcon style={{ color: primary }} /> {portfolio}
+                <LanguageIcon style={{ color: "#1c1a1a" }} /> {portfolio}
               </a>
             )}
           </div>
@@ -149,18 +147,31 @@ export class ComponentToPrint extends React.PureComponent<
               (item) => item.postname
             ) && (
               <div className="experiences">
-                <h2 className="section-heading" style={{ color: primary }}>
+                <h2
+                  className="section-heading"
+                  style={{
+                    color: "#1c1a1a",
+                    fontSize: "24px",
+                    backgroundColor: "#e2dede",
+                  }}
+                >
                   Experience
                 </h2>
                 {[exp, exp2, exp3, exp4, exp5, exp6].map(
                   (experience, index) =>
                     experience.postname && (
                       <div className="div" key={index}>
-                        <h2 style={{ color: secondary }}>
+                        <h2
+                          style={{ color: "#1c1a1a", fontSize: 18, margin: 0 }}
+                        >
                           {experience.postname}
                         </h2>
-                        <h2>{experience.company}</h2>
-                        <p>
+                        <h2
+                          style={{ fontSize: 16, margin: 0, fontWeight: 600 }}
+                        >
+                          {experience.company}
+                        </h2>
+                        <p style={{ fontSize: 12, marginTop: 2 }}>
                           {experience.from} - {experience.to}
                         </p>
                         <p>{experience.expdesc}</p>
@@ -173,7 +184,14 @@ export class ComponentToPrint extends React.PureComponent<
             {/* Education Section */}
             {Object.keys(edu).some((key) => edu[key].school) && (
               <div className="education">
-                <h2 className="section-heading" style={{ color: primary }}>
+                <h2
+                  className="section-heading"
+                  style={{
+                    color: "#1c1a1a",
+                    fontSize: "24px",
+                    backgroundColor: "#e2dede",
+                  }}
+                >
                   Education
                 </h2>
                 {Object.keys(edu).map((key, index) => {
@@ -181,8 +199,17 @@ export class ComponentToPrint extends React.PureComponent<
                   return (
                     education.school && (
                       <div key={index}>
-                        <h2>{education.school}</h2>
-                        <p>
+                        <h2
+                          style={{ color: "#1c1a1a", fontSize: 18, margin: 0 }}
+                        >
+                          {education.school}
+                        </h2>
+                        <h2
+                          style={{ fontSize: 16, margin: 0, fontWeight: 600 }}
+                        >
+                          {education.course}
+                        </h2>
+                        <p style={{ fontSize: 12, marginTop: 2 }}>
                           {education.from} - {education.to}
                         </p>
                         <p>{education.ach}</p>
@@ -199,11 +226,21 @@ export class ComponentToPrint extends React.PureComponent<
             {/* Skills */}
             {skills.length > 0 && (
               <div className="skills">
-                <h2 className="section-heading" style={{ color: primary }}>
+                <h2
+                  className="section-heading"
+                  style={{
+                    color: "#1c1a1a",
+                    fontSize: "24px",
+                    backgroundColor: "#e2dede",
+                  }}
+                >
                   Skills
                 </h2>
                 {skills.map((skill, index) => (
-                  <p key={index}>{skill}</p>
+                  <p key={index}>
+                    <span style={{ marginRight: "8px" }}>•</span>
+                    {skill}
+                  </p>
                 ))}
               </div>
             )}
@@ -213,14 +250,28 @@ export class ComponentToPrint extends React.PureComponent<
               (item) => item.name
             ) && (
               <div className="projects">
-                <h2 className="section-heading" style={{ color: primary }}>
+                <h2
+                  className="section-heading"
+                  style={{
+                    color: "#1c1a1a",
+                    fontSize: "24px",
+                    backgroundColor: "#e2dede",
+                  }}
+                >
                   Projects
                 </h2>
                 {[project, project2, project3, project4].map(
                   (proj, index) =>
                     proj.name && (
                       <div key={index}>
-                        <h2>{proj.name}</h2>
+                        <h2
+                          style={{ color: "#1c1a1a", fontSize: 18, margin: 0, marginBottom: 2 }}
+                        >
+                          {proj.name}
+                        </h2>
+                        <a href={github} style={{ color: "#1c1a1a", fontSize: 10,}}>
+                          <GitHubIcon style={{ color: "#1c1a1a", fontSize: 10 }} /> {proj.link}
+                        </a>
                         <p>{proj.desc}</p>
                       </div>
                     )
@@ -231,7 +282,14 @@ export class ComponentToPrint extends React.PureComponent<
             {/* Achievements */}
             {achlist.length > 0 && (
               <div className="achievements">
-                <h2 className="section-heading" style={{ color: primary }}>
+                <h2
+                  className="section-heading"
+                  style={{
+                    color: "#1c1a1a",
+                    fontSize: "24px",
+                    backgroundColor: "#e2dede",
+                  }}
+                >
                   Achievements
                 </h2>
                 {achlist.map((item, index) => (

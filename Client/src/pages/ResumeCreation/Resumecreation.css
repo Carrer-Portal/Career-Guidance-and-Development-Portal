@@ -1,65 +1,60 @@
-.resumecreationtitle{
-    margin: 7rem 3rem 0rem 3rem;
-   
+
+.resumecreation {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0rem;
+}
+.resumecreationData {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+.resumecreation .left {
+  margin-top: rem;
+  width: 85vh;
+  margin-right: 1rem;
+}
+.resumecreation .right {
+  width: 80vh;
+}
+.resumecreation .right button {
+  align-items: center;
+}
+.resumecreation .right .up {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+.resume-preview {
+  margin-top: 2rem;
+  border: 1px solid #17053f;
+  border-radius: 0.5rem;
+  box-shadow: #170243 0px 0px 5px;
 }
 
-.resumecreation{
-    height: 100vh;
-    display: flex;
-   
-    margin: 2rem 0rem;
-}
-.resumecreation .left{
-    margin-top: rem;
-    width: 85vh;
-    margin-right: 1rem;
-}
-.resumecreation .right{
-    width: 80vh;
-
-}
-.resumecreation .right button{
-    align-items: center;
-   
-}
-.resumecreation .right .up{
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-}
-.resume-preview{
-    margin-top: 2rem;
-    border: 1px solid #17053f;
-    border-radius: 0.5rem;
-    box-shadow: #170243 0px 0px 5px;
-}
-
-.buttons .remove-button{
-    color:aliceblue;
-    border-radius: 0.5rem;
-    border: none;
-    background-color: #e42f2f;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
+.buttons .remove-button {
+  color: aliceblue;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #e42f2f;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .backButtonStyle button {
-    /* background-color: rgb(99, 72, 151); */
-    color: rgb(21, 20, 20);
-    border: none;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    margin-right: 1rem;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    width: auto; 
+  color: rgb(75, 9, 64);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  width: auto;
 }
 
 .backButtonStyle .icon {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
-
-
-

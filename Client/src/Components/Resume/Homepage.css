@@ -11,7 +11,7 @@
 .navbarresume{
     display: flex;
     /* height: 7%; */
-    background: #07213f;
+    background-color: #2d165c;
     border: 1px solid rgb(0, 0, 0);
     border-radius: 0.5rem;
     justify-content: center;
@@ -32,7 +32,9 @@
 }
 .navbarresume .active{
     background-color: white;
-    color: #000000;
+    color: #2d165c;
+    border:1px solid #2d165c;
+    border-radius: 0.5rem;
 }
 #main .maincomponent .right{
     flex: 0.60;
@@ -57,10 +59,12 @@
     position: absolute;
     width: 10%;
     height: 3px;
-    background-color: #58a6ff;
+    background-color: #6945b1;
     left: 3.2%;
     top: 100%;
 }
+
+
 .form .input-box{
     display: flex;
     margin: 6px 0;
@@ -76,7 +80,7 @@
     height: 7rem;
 
     font-weight: 300;
-    border: 1px solid #58a6ff;
+    border: 1px solid #6945b1;
     outline: none;
     font-size: 14px;
     padding: 7px 10px;
@@ -97,7 +101,7 @@
     height: 2rem;
 
     font-weight: 300;
-    border-bottom: 1px solid #58a6ff;
+    border-bottom: 1px solid #6945b1;
     outline: none;
     font-size: 14px;
 }
@@ -164,7 +168,7 @@
     position: absolute;
     width: 10%;
     height: 1px;
-    background-color: #58a6ff;
+    background-color: #6945b1;
     left: 0.2%;
     top: 100%;
 }
@@ -251,7 +255,7 @@
     border-radius: 0.5rem;
     -webkit-appearance: none;
     appearance: none;
-    background-color: #000000;
+    background-color: #2d165c;
     color: white;
     text-decoration: none;
     margin-bottom: 1rem;
@@ -332,7 +336,8 @@
 .navbarresume {
         display: flex;
         height: 13%;
-        background: #07213f;
+        background: #2d165c;
+};
       
     }
     #main .maincomponent .left {
@@ -341,7 +346,7 @@
     .footer {
     margin-top: 15px;
     }
-  }
+  
 .navbarresume li {
     color: white;
     list-style: none;

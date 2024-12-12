@@ -50,7 +50,7 @@ const studentMenuItems: MenuItem[] = [
     label: "Resume Manage",
     subItems: [
       { path: "/resume-creation", icon: <EditNoteIcon />, label: "Create CV" },
-      { path: "/resumeManage/manageCV", icon: <DesignServicesIcon />, label: "Manage CV" },
+      { path: "/CVReviewRequest", icon: <DesignServicesIcon />, label: "Manage CV" },
     ],
   },
   {
@@ -91,10 +91,11 @@ const advisorMenuItems: MenuItem[] = [
 const LeftMenu: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const [userType, setUserType] = useState<"Student" | "Advisor">("Student");
+  const [userType, setUserType] = useState<"Student" | "Advisor">();
 
   useEffect(() => {
-    const roleType = Cookies.get("roleType");
+    const roleType = Cookies.get("userType");
+    console.log(roleType=="Student" ? "Student" : "Advisor");
     setUserType(roleType=="Student" ? "Student" : "Advisor");
   }, []);
 
@@ -109,7 +110,8 @@ const LeftMenu: React.FC = () => {
     setOpenSubmenu((prev) => (prev === label ? null : label));
   };
 
-  const menuItems = userType === "Student" ? studentMenuItems : advisorMenuItems;
+  const menuItems = userType == "Student" ? studentMenuItems : advisorMenuItems;
+
 
   return (
     <Box className={`left-menu ${isCollapsed ? "collapsed" : ""}`}>

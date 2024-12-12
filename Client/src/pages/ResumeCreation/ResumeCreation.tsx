@@ -387,7 +387,7 @@ const ResumeCreation: React.FC = () => {
       <div className="resumecreationtitle">
         <div className="backButtonStyle">
           <button className="btn btn-light back" onClick={() => navigate(-1)}>
-            <ArrowLeftShort /> Back
+          <ArrowLeftShort fontSize={20} />Back
           </button>
         </div>
       </div>

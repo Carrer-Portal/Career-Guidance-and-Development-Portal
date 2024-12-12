@@ -450,7 +450,7 @@ const UserDashboard = () => {
                   ))}
                 </Grid>
                 <Grid item mt={1} style={{ display: "flex", gap:"16px"}}>
-                  <Button variant="outline" style={{ width: "100%" }}>
+                  <Button variant="outline" style={{ width: "100%" }}
                   onClick={() => navigate("/resume-creation")}
                   >
                     Create Your New CV

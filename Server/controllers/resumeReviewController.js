@@ -6,6 +6,10 @@ import { Op } from 'sequelize';
 // Initialize the ReviewResume model
 const ReviewResume = db.reviewResume;
 const Resume = db.resume;
+const Undergraduate = db.undergraduates;
+const Faculty = db.faculty;
+const CareerAdvisor = db.careerAdviosr;
+const Department = db.department;
 
 // Submit Review Resume Request
 const submitReviewResumeRequest = async (req, res) => {
@@ -66,6 +70,32 @@ const getReviewResumesForCareerAdvisor = async (req, res) => {
   try {
     const reviewResumes = await ReviewResume.findAll({
       where: { careerAdvisorId },
+      include: [
+        {
+          model: Resume,
+          as: 'resume',
+          include: [
+            {
+              model: Undergraduate,
+              as: 'undergraduate',
+              include: [
+                {
+                  model: Department,
+                  as: 'department',
+                  include: [
+                    {
+                      model: Faculty,
+                      as: 'faculty',
+                    },
+                  ],
+                },
+
+              ],
+              
+            } 
+          ]
+        },
+      ],
     });
 
     res.status(200).json(reviewResumes);

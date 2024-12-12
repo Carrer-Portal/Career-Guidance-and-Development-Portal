@@ -23,6 +23,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import WorkshopIcon from "@mui/icons-material/School";
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import "./LeftMenu.css";
 import Cookies from "js-cookie";
 
@@ -41,7 +42,7 @@ const studentMenuItems: MenuItem[] = [
   },
   {
     path: "/booking",
-    icon: <GroupsIcon />,
+    icon: <AccessAlarmIcon />,
     label: "Appointment",
   },
   {
@@ -73,7 +74,7 @@ const advisorMenuItems: MenuItem[] = [
   },
   {
     path: "/advisor/appointmentManagement",
-    icon: <GroupsIcon />,
+    icon: <AccessAlarmIcon />,
     label: "Appointment Management",
   },
   {
@@ -85,6 +86,11 @@ const advisorMenuItems: MenuItem[] = [
     path: "/advisor/WorkshopManagement",
     icon: <WorkshopIcon />,
     label: "Workshop Management",
+  },
+  {
+    path: "/advisor/UserInfo",
+    icon: <GroupsIcon />,
+    label: "Settings",
   },
 ];
 

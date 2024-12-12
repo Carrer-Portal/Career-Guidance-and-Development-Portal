@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -14,140 +14,174 @@ import {
   Pagination,
   Snackbar,
   Alert,
-  Modal,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Button from "../../Components/Button/Button";
 import cvVector from "../../image/forms.svg";
 import { Rating } from "@mui/material";
-import { Document, Page } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-type Appointment = {
-  id: number;
-  fileName: string;
+interface CareerAdvisor {
+  careerAdvisorId: number;
   firstName: string;
-  faculty: string;
-  phoneNumber: string;
-  uploadedDate: string;
-  status: string;
-  rate: number;
-  fileUrl: string;
-};
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Undergraduate {
+  undergraduateId: number;
+  departmentId: number;
+  facultyId: number;
+  regNo: string;
+  universityEmail: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  department: Department;
+}
+
+interface ReviewRequest {
+  reviewId: string;
+  resumeId: string;
+  undergraduateId: number;
+  careerAdvisorId: number;
+  reviewstatus: string;
+  reviewdate: string;
+  reviewRatings: string;
+  reviewfeedback: string;
+  resume: Resume;
+  created_at: string;
+}
+
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  faculty: Faculty;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Resume {
+  resumeId: string;
+  resumeFilePath: string;
+  undergraduate: Undergraduate;
+}
 
 const CVManagement = () => {
-  const appointments = [
-    {
-      id: 1,
-      fileName: "NimalCV.pdf",
-      firstName: "Nimal Perera",
-      faculty: "FOT",
-      phoneNumber: "+91 9876543210",
-      uploadedDate: "13-Aug-2023",
-      status: "Open",
-      fileUrl:
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-      rate: 0,
-    },
-    {
-      id: 2,
-      fileName: "Untitled.pdf",
-      firstName: "Saman Kumara",
-      faculty: "FAS",
-      phoneNumber: "+91 9876543210",
-      uploadedDate: "13-Aug-2023",
-      status: "NotApproved",
-      fileUrl:
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-      rate: 2,
-    },
-    {
-      id: 3,
-      fileName: "NimalCV.docs",
-      firstName: "Anura Kumara",
-      faculty: "FMS",
-      phoneNumber: "+91 9876543210",
-      uploadedDate: "13-Aug-2023",
-      status: "Approved",
-      rate: 5,
-      fileUrl:
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    },
-    {
-      id: 4,
-      fileName: "cv.pdf",
-      firstName: "Nethmi Sansala",
-      faculty: "FOT",
-      phoneNumber: "+91 9876543210",
-      uploadedDate: "13-Aug-2023",
-      status: "Approved",
-      rate: 3,
-      fileUrl:
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    },
-  ];
-
+  const [advisor, setAdvisor] = useState<CareerAdvisor | null>(null);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+  const [reviewRequests, setReviewRequests] = useState<ReviewRequest[]>([]);
   const [search, setSearch] = useState("");
-
-  const filteredData = appointments.filter(
-    (appointment) =>
-      appointment.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.faculty.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.phoneNumber.includes(search)
-  );
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
-
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [numPages, setNumPages] = useState<number | null>(null);
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
-
-  const handleOpenFile = (appointment: Appointment) => {
-    setSelectedFile(appointment.fileUrl);
-    setSelectedAppointment(appointment);
-  };
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
-
-  const handleApproveClick = (appointment: Appointment) => {
-    setSnackbarMessage(`You approved the CV of ${appointment.firstName}`);
-    setSnackbarSeverity("success");
-    setSnackbarOpen(true);
-  };
-
-  const handleNotApproveClick = (appointment: Appointment) => {
-    setSnackbarMessage(`You Not approved the CV of ${appointment.firstName}`);
-    setSnackbarSeverity("error");
-    setSnackbarOpen(true);
-  };
-
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [selectedReviewResume, setSelectedReviewResume] = useState<ReviewRequest | null>(null);
   const [feedbackInput, setFeedbackInput] = useState("");
+  const [ratingInput, setRatingInput] = useState<string | null>(null);
+  const [action, setAction] = useState<string>("");
+  const [ratingError, setRatingError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
 
-  const handleOpenFeedbackModal = () => {
-    setIsFeedbackModalOpen(true);
-    setFeedbackInput("");
+  useEffect(() => {
+    const fetchAdvisorInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/user/admin", {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+          }
+        });
+        setAdvisor(response.data.user);
+      } catch (error: any) {
+        if (error.response) {
+          setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch advisor info', severity: 'error' });
+        } else {
+          setSnackbar({ open: true, message: 'Failed to fetch advisor info', severity: 'error' });
+        }
+      }
+    };
+
+    fetchAdvisorInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchReviewRequests = async () => {
+      if (advisor) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/review-resumes/advisor/${advisor.careerAdvisorId}`);
+          setReviewRequests(response.data);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch review requests', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch review requests', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchReviewRequests();
+  }, [advisor]);
+
+  const filteredData = reviewRequests.filter(
+    (reviewRequest) =>
+      reviewRequest.resume.undergraduate.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      reviewRequest.resume.undergraduate.lastName.toLowerCase().includes(search.toLowerCase()) ||
+      reviewRequest.resume.undergraduate.contactNumber.includes(search)
+  );
+
+  const handleOpenFile = (resumeReview: ReviewRequest) => {
+    setSelectedFile(resumeReview.resume.resumeFilePath);
+    setSelectedReviewResume(resumeReview);
   };
 
-  const handleCloseFeedbackModal = () => {
-    setIsFeedbackModalOpen(false);
-  };
+  const handleSubmitReview = async () => {
+    let valid = true;
 
-  const handleSendFeedback = () => {
-    if (selectedAppointment) {
-      console.log(
-        `Feedback for ${selectedAppointment.firstName}:`,
-        feedbackInput
-      );
+    if (!ratingInput || parseFloat(ratingInput) < 1 || parseFloat(ratingInput) > 5) {
+      setRatingError("Please enter a valid rating between 1 and 5.");
+      valid = false;
     }
-    setIsFeedbackModalOpen(false);
+
+    if (!action) {
+      setActionError("Please select an action.");
+      valid = false;
+    }
+
+    if (!feedbackInput) {
+      setFeedbackError("Please enter feedback.");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    if (selectedReviewResume) {
+      try {
+        await axios.put(`http://localhost:8070/api/review-resumes/update/${selectedReviewResume.reviewId}`, {
+          reviewstatus: action,
+          reviewRatings: action === "Approved" ? ratingInput : null,
+          reviewfeedback: feedbackInput,
+        });
+        setSnackbar({ open: true, message: `You ${action === "Approved" ? "approved" : "rejected"} the CV of ${selectedReviewResume.resume.undergraduate.firstName}`, severity: action === "Approved" ? 'success' : 'error' });
+      } catch (error) {
+        console.error(`Failed to ${action === "Approved" ? "approve" : "reject"} CV`, error);
+      }
+    }
+    setSelectedFile(null);
+    window.location.reload();
   };
 
   const handleSnackbarClose = (
@@ -157,27 +191,7 @@ const CVManagement = () => {
     if (reason === "clickaway") {
       return;
     }
-    setSnackbarOpen(false);
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ratingInput, setRatingInput] = useState<number | null>(null);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-    if (selectedAppointment) setRatingInput(selectedAppointment.rate);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleRateCV = () => {
-    if (selectedAppointment) {
-      selectedAppointment.rate = ratingInput || 0;
-      setSelectedAppointment({ ...selectedAppointment });
-    }
-    setIsModalOpen(false);
+    setSnackbar({ ...snackbar, open: false });
   };
 
   const renderStatus = (status: string) => {
@@ -211,6 +225,12 @@ const CVManagement = () => {
       </Box>
     );
   };
+
+  const getFullPdfUrl = (filePath: string) => {
+    const fileName = filePath.split('\\').pop();
+    return `http://localhost:8070/files/${fileName}`;
+  };
+
   return (
     <Box p={3}>
       {!selectedFile ? (
@@ -260,8 +280,8 @@ const CVManagement = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredData.map((appointment) => (
-                  <TableRow key={appointment.id}>
+                {filteredData.map((resumeRequest) => (
+                  <TableRow key={resumeRequest.reviewId}>
                     <TableCell>
                       <Box className="file-icon">
                         <img
@@ -271,45 +291,20 @@ const CVManagement = () => {
                         />
                       </Box>
                     </TableCell>
-                    <TableCell>{appointment.fileName}</TableCell>
-                    <TableCell>{appointment.firstName}</TableCell>
-                    <TableCell>{appointment.faculty}</TableCell>
-                    <TableCell>{appointment.phoneNumber}</TableCell>
-                    <TableCell>{appointment.uploadedDate}</TableCell>
-                    <TableCell>{renderStatus(appointment.status)}</TableCell>
+                    <TableCell>{resumeRequest.resume.resumeFilePath}</TableCell>
+                    <TableCell>{resumeRequest.resume.undergraduate.firstName}</TableCell>
+                    <TableCell>{resumeRequest.resume.undergraduate.department.faculty.facultyName}</TableCell>
+                    <TableCell>{resumeRequest.resume.undergraduate.contactNumber}</TableCell>
+                    <TableCell>{resumeRequest.created_at}</TableCell>
+                    <TableCell>{renderStatus(resumeRequest.reviewstatus)}</TableCell>
                     <TableCell>
-                      <Rating value={appointment.rate} readOnly />
+                      <Rating value={parseFloat(resumeRequest.reviewRatings)} readOnly />
                     </TableCell>
                     <TableCell align="right">
-                      <Button
-                        variant="contained"
-                        disabled={
-                          appointment.status === "Approved" ||
-                          appointment.status === "NotApproved"
-                        }
-                        sx={{ mr: 1 }}
-                        onClick={() => handleApproveClick(appointment)}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="contained"
-                        disabled={
-                          appointment.status === "Approved" ||
-                          appointment.status === "NotApproved"
-                        }
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          handleOpenFeedbackModal();
-                        }}
-                      >
-                        Not Approve
-                      </Button>
                       <IconButton
                         color="secondary"
                         sx={{ mr: 1 }}
-                        onClick={() => handleOpenFile(appointment)}
+                        onClick={() => handleOpenFile(resumeRequest)}
                       >
                         <OpenInNewIcon />
                       </IconButton>
@@ -322,142 +317,89 @@ const CVManagement = () => {
           <Box mt={2} display="flex" justifyContent="center">
             <Pagination count={3} color="primary" />
           </Box>
-          <Snackbar
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}
-          >
-            <Alert
-              onClose={handleSnackbarClose}
-              severity={snackbarSeverity}
-              sx={{ width: "100%" }}
-            >
-              {snackbarMessage}
+          <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+              {snackbar.message}
             </Alert>
           </Snackbar>
-          <Modal open={isFeedbackModalOpen} onClose={handleCloseFeedbackModal}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: 400,
-                bgcolor: "background.paper",
-                boxShadow: 24,
-                p: 4,
-                borderRadius: 2,
-              }}
-            >
-              <Typography fontWeight={600} mb={2}>
-                Provide Feedback for {selectedAppointment?.firstName}
-              </Typography>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                label="Enter Feedback"
-                variant="outlined"
-                value={feedbackInput}
-                onChange={(e) => setFeedbackInput(e.target.value)}
-              />
-              <Box display="flex" justifyContent="flex-end" mt={2} gap={2}>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    if (selectedAppointment) {
-                      handleNotApproveClick(selectedAppointment);
-                      handleSendFeedback();
-                    }
-                  }}
-                >
-                  Send Feedback
-                </Button>
-                <Button variant="outline" onClick={handleCloseFeedbackModal}>
-                  Back
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
         </>
       ) : (
-        <Box>
-          {selectedAppointment && (
-            <Typography fontWeight={600} style={{ fontSize: "28px" }} mb={2}>
-              Review CV of {selectedAppointment.firstName}
-            </Typography>
-          )}
-          <Box
-            sx={{
-              height: "75vh",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              overflow: "auto",
-            }}
-          >
-            <Document
-              file={selectedFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              error="Unable to display PDF"
-            >
-              {Array.from(new Array(numPages), (el, index) => (
-                <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-              ))}
-            </Document>
-          </Box>
-          <Box style={{ display: "flex", gap: 10 }}>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={() => setSelectedFile(null)}
-            >
-              Back to List
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={handleOpenModal}
-            >
-              Rate this CV
-            </Button>
-          </Box>
-          <Modal open={isModalOpen} onClose={handleCloseModal}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: 400,
-                bgcolor: "background.paper",
-                boxShadow: 24,
-                p: 4,
-                borderRadius: 2,
-              }}
-            >
-              <Typography fontWeight={600} mb={2}>
-                Rate CV of {selectedAppointment?.firstName}
+        <Box display="flex" gap={2}>
+          <Box flex={1} display="flex" flexDirection="column" gap={2}>
+            {selectedReviewResume && (
+              <Typography fontWeight={600} style={{ fontSize: "28px" }} mb={2}>
+                Review CV of {selectedReviewResume.resume.undergraduate.firstName}
               </Typography>
-              <TextField
-                fullWidth
-                type="number"
-                label="Enter Rating"
-                variant="outlined"
-                value={ratingInput || ""}
-                helperText="Please rate from 1 to 5."
-                onChange={(e) => setRatingInput(Number(e.target.value))}
-              />
-              <Box display="flex" justifyContent="flex-end" mt={2} gap={1}>
-                <Button variant="contained" onClick={handleRateCV}>
-                  Rate
-                </Button>
-                <Button variant="outline" onClick={handleCloseModal}>
-                  Back
-                </Button>
-              </Box>
+            )}
+            {selectedReviewResume?.reviewstatus=="Pending" && (
+              <>
+            <TextField
+              fullWidth
+              type="number"
+              label="Enter Rating"
+              variant="outlined"
+              value={ratingInput || ""}
+              helperText="Please rate from 1 to 5."
+              onChange={(e) => {
+                setRatingInput(e.target.value);
+                setRatingError(null);
+              }}
+              error={!!ratingError}
+             
+            />
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              label="Enter Feedback"
+              variant="outlined"
+              value={feedbackInput}
+              onChange={(e) => {
+                setFeedbackInput(e.target.value);
+                setFeedbackError(null);
+              }}
+              error={!!feedbackError}
+              helperText={feedbackError || "Please enter feedback."}
+            />
+            <FormControl fullWidth error={!!actionError}>
+              <InputLabel>Action</InputLabel>
+              <Select
+                value={action}
+                label="Action"
+                onChange={(e) => {
+                  setAction(e.target.value as string);
+                  setActionError(null);
+                }}
+              >
+                <MenuItem value="Approved">Approve</MenuItem>
+                <MenuItem value="NotApproved">Reject</MenuItem>
+              </Select>
+              {actionError && <Typography color="error">{actionError}</Typography>}
+            </FormControl>
+            <Box display="flex" justifyContent="space-between" mt={2}>
+              <Button
+                variant="contained"
+                onClick={handleSubmitReview}
+              >
+                Submit
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => setSelectedFile(null)}
+              >
+                Back to List
+              </Button>
             </Box>
-          </Modal>
+            </>)}
+          </Box>
+          <Box flex={2} sx={{ height: "75vh", border: "1px solid #ccc", borderRadius: "8px", overflow: "auto" }}>
+            <iframe
+              src={getFullPdfUrl(selectedReviewResume?.resume.resumeFilePath || "")}
+              width="100%"
+              height="100%"
+              title="Resume PDF"
+            />
+          </Box>
         </Box>
       )}
     </Box>

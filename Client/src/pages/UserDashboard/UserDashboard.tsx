@@ -239,25 +239,6 @@ const UserDashboard = () => {
     },
   ];
 
-  const events: Event[] = [
-    {
-      title: "Resume Writing Workshop",
-      date: "2024-12-15",
-      time: "10:00 AM",
-      description:
-        "Crafting a professional resume is the first step toward making a strong impression in the job market. In this hands-on workshop, you'll learn how to create a compelling resume that highlights your skills, achievements, and experience effectively. Led by industry experts, this session will cover essential elements like formatting, tailoring your resume for specific roles, and showcasing your unique value to potential employers. Whether you're a recent graduate or a seasoned professional, this workshop will equip you with the tools and strategies to stand out in the competitive job market.",
-      image: sampleimg2,
-    },
-    {
-      title: "Career Fair 2024",
-      date: "2024-12-20",
-      time: "9:00 AM - 5:00 PM",
-      description:
-        "Step into a world of opportunities at Career Fair 2024, where the brightest minds meet top employers. This annual event serves as a dynamic platform to connect job seekers, students, and professionals with recruiters from leading companies across various industries. Explore diverse career paths, engage in meaningful conversations, and discover roles tailored to your skills and aspirations. From entry-level positions to mid-career opportunities, this fair caters to all stages of professional growth. Attend workshops, panel discussions, and networking sessions designed to enhance your job search strategies and provide valuable insights into the latest industry trends.",
-      image: sampleimg1,
-    },
-  ];
-
   const handleViewResume = (resumeFilePath: string) => {
     window.open(`http://localhost:8070/${resumeFilePath}`, "_blank");
   };

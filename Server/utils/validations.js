@@ -186,9 +186,7 @@ const validateUpdateWorkshop = (data) => {
             'string.base': 'Workshop Time must be a string',
             'any.required': 'Workshop Time is required'
         }),
-        workshopBannerFile: Joi.string().required().allow(null).messages({
-            'string.base': 'Workshop Banner File must be a string',
-        }),
+ 
         facultyId: Joi.number().integer().optional().allow(null).messages({
             'number.base': 'Faculty ID must be a number',
             'number.integer': 'Faculty ID must be an integer'

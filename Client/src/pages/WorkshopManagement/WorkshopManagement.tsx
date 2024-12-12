@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -8,105 +8,298 @@ import {
   IconButton,
   Drawer,
   TextField,
+  MenuItem,Snackbar,Alert
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import sampleimg1 from "../../image/sampleimg1.jpg";
-import sampleimg2 from "../../image/sampleimg2.jpg";
 import Button from "../../Components/Button/Button";
+import axios from "axios";
+import Cookies from 'js-cookie';
+
+interface CareerAdvisor {
+  careerAdvisorId: number;
+  firstName: string;
+  lastName: string;
+  roleType: string;
+  contactNumber: string;
+  email: string;
+  filePath: string;
+}
+
+interface Workshop {
+  workshopId: string;
+  careerAdvisorId: number;
+  workshopName: string;
+  workshopDescription: string;
+  workshopDate: string;
+  workshopTime: string;
+  workshopBannerFile: string | File | null;
+  facultyId: number;
+  departmentId: number;
+  status: string;
+}
+
+interface Faculty {
+  facultyId: number;
+  facultyName: string;
+}
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  facultyId: number;
+}
 
 const WorkshopManagement = () => {
-  const [events, setEvents] = useState([
-    {
-      title: "Resume Writing Workshop",
-      date: "2024-12-15",
-      time: "10:00 AM",
-      description:
-        "Crafting a professional resume is the first step toward making a strong impression in the job market...",
-      image: sampleimg2,
-    },
-    {
-      title: "Career Fair 2024",
-      date: "2024-12-20",
-      time: "9:00 AM - 5:00 PM",
-      description:
-        "Step into a world of opportunities at Career Fair 2024, where the brightest minds meet top employers...",
-      image: sampleimg1,
-    },
-  ]);
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isEditMode, setEditMode] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [newEvent, setNewEvent] = useState({
-    title: "",
-    date: "",
-    time: "",
-    description: "",
-    image: "",
+  const [newWorkshop, setNewWorkShop] = useState<Workshop>({
+    workshopName: "",
+    workshopDate: "",
+    workshopTime: "",
+    workshopDescription: "",
+    workshopBannerFile: null,
+    facultyId: 0,
+    departmentId: 0,
+    status: "Upcoming",
+    careerAdvisorId: 0,
+    workshopId: ""
   });
+
+  const [careerAdvisor, setCareerAdvisor] = useState<CareerAdvisor | null>(null);
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+  const fetchCareerAdvisorDetails = async () => {
+    try {
+      const response = await axios.get("http://localhost:8070/api/user/admin", {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('adviosrToken')}`
+        }
+      });
+      setCareerAdvisor(response.data.user);
+      console.log(response.data);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch career advisor details', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch career advisor details', severity: 'error' });
+      }
+    }
+  };
+
+  const fetchFaculties = async () => {
+    try {
+      const response = await axios.get("http://localhost:8070/api/data/getAllfaculties");
+      setFaculties(response.data);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch faculties', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch faculties', severity: 'error' });
+      }
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get("http://localhost:8070/api/data/getAlldepartments");
+      setDepartments(response.data);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch departments', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch departments', severity: 'error' });
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCareerAdvisorDetails();
+    fetchFaculties();
+    fetchDepartments();
+  }, []);
+
+  const fetchWorkshops = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8070/api/workshop/findBy/careerAdvisor/${careerAdvisor?.careerAdvisorId}`);
+      setWorkshops(response.data.workshops);
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch workshops', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to fetch workshops', severity: 'error' });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (careerAdvisor) {
+      fetchWorkshops();
+    }
+  }, [careerAdvisor]);
 
   const openDrawerForEdit = (index: number) => {
     setEditMode(true);
     setEditIndex(index);
-    setNewEvent(events[index]);
+    setNewWorkShop(workshops[index]);
     setDrawerOpen(true);
   };
 
   const openDrawerForCreate = () => {
     setEditMode(false);
-    setNewEvent({ title: "", date: "", time: "", description: "", image: "" });
+    setNewWorkShop({
+      workshopName: "",
+      workshopDate: "",
+      workshopTime: "",
+      workshopDescription: "",
+      workshopBannerFile: null,
+      facultyId: 0,
+      departmentId: 0,
+      status: "Upcoming",
+      careerAdvisorId: careerAdvisor?.careerAdvisorId || 0,
+      workshopId: ""
+    });
     setDrawerOpen(true);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (
-      !newEvent.title ||
-      !newEvent.date ||
-      !newEvent.time ||
-      !newEvent.description ||
-      !newEvent.image
+      !newWorkshop.workshopName ||
+      !newWorkshop.workshopDate ||
+      !newWorkshop.workshopTime ||
+      !newWorkshop.workshopDescription ||
+      !newWorkshop.workshopBannerFile
     ) {
       alert("Please fill out all fields and upload an image.");
       return;
     }
-    setEvents([...events, newEvent]);
-    setDrawerOpen(false);
-    setNewEvent({ title: "", date: "", time: "", description: "", image: "" });
+
+    const formData = new FormData();
+    formData.append("workshopName", newWorkshop.workshopName);
+    formData.append("workshopDate", newWorkshop.workshopDate);
+    formData.append("workshopTime", newWorkshop.workshopTime);
+    formData.append("workshopDescription", newWorkshop.workshopDescription);
+    formData.append("careerAdvisorId", careerAdvisor?.careerAdvisorId.toString() || "");
+    formData.append("workshopBannerFile", newWorkshop.workshopBannerFile as File);
+    formData.append("facultyId", newWorkshop.facultyId.toString());
+    formData.append("departmentId", newWorkshop.departmentId.toString());
+    formData.append("status", newWorkshop.status);
+
+    try {
+      const response = await axios.post("http://localhost:8070/api/workshop/new", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setWorkshops([...workshops, response.data.workshop]);
+      setDrawerOpen(false);
+      setNewWorkShop({
+        workshopName: "",
+        workshopDate: "",
+        workshopTime: "",
+        workshopDescription: "",
+        workshopBannerFile: null,
+        facultyId: 0,
+        departmentId: 0,
+        status: "Upcoming",
+        careerAdvisorId: careerAdvisor?.careerAdvisorId || 0,
+        workshopId: ""
+      });
+      setSnackbar({ open: true, message: "Workshop created successfully", severity: "success" });
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to create workshop', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to create workshop', severity: 'error' });
+      }
+    }
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (
-      !newEvent.title ||
-      !newEvent.date ||
-      !newEvent.time ||
-      !newEvent.description ||
-      !newEvent.image
+      !newWorkshop.workshopName ||
+      !newWorkshop.workshopDate ||
+      !newWorkshop.workshopTime ||
+      !newWorkshop.workshopDescription
     ) {
-      alert("Please fill out all fields and upload an image.");
+      alert("Please fill out all fields.");
       return;
     }
 
-    if (editIndex !== null) {
-      const updatedEvents = [...events];
-      updatedEvents[editIndex] = newEvent;
-      setEvents(updatedEvents);
+    const formData = new FormData();
+    formData.append("workshopName", newWorkshop.workshopName);
+    formData.append("workshopDate", newWorkshop.workshopDate);
+    formData.append("workshopTime", newWorkshop.workshopTime);
+    formData.append("workshopDescription", newWorkshop.workshopDescription);
+    formData.append("careerAdvisorId", careerAdvisor?.careerAdvisorId.toString() || "");
+    if (newWorkshop.workshopBannerFile instanceof File) {
+      formData.append("workshopBannerFile", newWorkshop.workshopBannerFile);
+    }
+    formData.append("facultyId", newWorkshop.facultyId.toString());
+    formData.append("departmentId", newWorkshop.departmentId.toString());
+    formData.append("status", newWorkshop.status);
+
+    try {
+      const response = await axios.put(`http://localhost:8070/api/workshop/update/${newWorkshop.workshopId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const updatedWorkshops = [...workshops];
+      updatedWorkshops[editIndex!] = response.data.workshop;
+      setWorkshops(updatedWorkshops);
       setDrawerOpen(false);
       setEditMode(false);
       setEditIndex(null);
-      setNewEvent({
-        title: "",
-        date: "",
-        time: "",
-        description: "",
-        image: "",
+      setNewWorkShop({
+        workshopName: "",
+        workshopDate: "",
+        workshopTime: "",
+        workshopDescription: "",
+        workshopBannerFile: null,
+        facultyId: 0,
+        departmentId: 0,
+        status: "Upcoming",
+        careerAdvisorId: careerAdvisor?.careerAdvisorId || 0,
+        workshopId: ""
       });
+      setSnackbar({ open: true, message: "Workshop updated successfully", severity: "success" });
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to update workshop', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to update workshop', severity: 'error' });
+      }
     }
   };
 
-  const handleDelete = (index: number) => {
-    setEvents(events.filter((_, i) => i !== index));
+  const handleDelete = async (index: number) => {
+    try {
+      await axios.delete(`http://localhost:8070/api/workshop/delete/${workshops[index].workshopId}`);
+      setWorkshops(workshops.filter((_, i) => i !== index));
+      setSnackbar({ open: true, message: "Workshop deleted successfully", severity: "success" });
+    } catch (error: any) {
+      if (error.response) {
+        setSnackbar({ open: true, message: error.response.data.message || 'Failed to delete workshop', severity: 'error' });
+      } else {
+        setSnackbar({ open: true, message: 'Failed to delete workshop', severity: 'error' });
+      }
+    }
   };
+
+  const getFullImageUrl = (filePath: string) => {
+    const fileName = filePath.split('\\').pop();
+    return `http://localhost:8070/files/${fileName}`;
+  };
+
 
   return (
     <Box p={3} display="flex" flexDirection="column" gap={2}>
@@ -120,7 +313,7 @@ const WorkshopManagement = () => {
           aspirations!
         </Typography>
       </Box>
-      {events.map((event, index) => (
+      {workshops.map((workshop, index) => (
         <Card
           key={index}
           sx={{ display: "flex", alignItems: "center", gap: 2 }}
@@ -128,15 +321,15 @@ const WorkshopManagement = () => {
           <CardMedia
             component="img"
             sx={{ width: 120, height: 120 }}
-            image={event.image}
-            alt={event.title}
+            image={getFullImageUrl(workshop.workshopBannerFile as string)}
+            alt={workshop.workshopName}
           />
           <CardContent>
-            <Typography variant="h6">{event.title}</Typography>
+            <Typography variant="h6">{workshop.workshopName}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {event.date} | {event.time}
+              {workshop.workshopDate} | {workshop.workshopTime}
             </Typography>
-            <Typography variant="body2">{event.description}</Typography>
+            <Typography variant="body2">{workshop.status === "Upcoming" ? "Upcoming" : "Passed Event"}</Typography>
           </CardContent>
           <Box ml="auto" mr={3}>
             <IconButton
@@ -181,58 +374,84 @@ const WorkshopManagement = () => {
         <TextField
           fullWidth
           label="Title"
-          value={newEvent.title}
-          onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+          value={newWorkshop.workshopName}
+          onChange={(e) => setNewWorkShop({ ...newWorkshop, workshopName: e.target.value })}
           margin="normal"
         />
         <TextField
           fullWidth
+          type="date"
           label="Date"
-          value={newEvent.date}
-          onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+          value={newWorkshop.workshopDate}
+          onChange={(e) => setNewWorkShop({ ...newWorkshop, workshopDate: e.target.value })}
           margin="normal"
+          InputLabelProps={{ shrink: true }}
         />
         <TextField
           fullWidth
+          type="time"
           label="Time"
-          value={newEvent.time}
-          onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+          value={newWorkshop.workshopTime}
+          onChange={(e) => setNewWorkShop({ ...newWorkshop, workshopTime: e.target.value })}
           margin="normal"
+          InputLabelProps={{ shrink: true }}
         />
         <TextField
           fullWidth
           label="Description"
-          value={newEvent.description}
+          value={newWorkshop.workshopDescription}
           onChange={(e) =>
-            setNewEvent({ ...newEvent, description: e.target.value })
+            setNewWorkShop({ ...newWorkshop, workshopDescription: e.target.value })
           }
           margin="normal"
           multiline
           rows={4}
         />
-        <Box sx={{display: "flex", backgroundColor: "#ebe8f2", padding:"8px", borderRadius: "8px"}}>
-          <Typography mt={2} ml={2} sx={{width:"150px"}}>Add your Flyer</Typography>
+        <TextField
+          select
+          fullWidth
+          label="Faculty"
+          value={newWorkshop.facultyId}
+          onChange={(e) => setNewWorkShop({ ...newWorkshop, facultyId: parseInt(e.target.value) })}
+          margin="normal"
+        >
+          {faculties.map((faculty) => (
+            <MenuItem key={faculty.facultyId} value={faculty.facultyId}>
+              {faculty.facultyName}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          fullWidth
+          label="Department"
+          value={newWorkshop.departmentId}
+          onChange={(e) => setNewWorkShop({ ...newWorkshop, departmentId: parseInt(e.target.value) })}
+          margin="normal"
+        >
+          {departments.map((department) => (
+            <MenuItem key={department.departmentId} value={department.departmentId}>
+              {department.departmentName}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Box sx={{ display: "flex", backgroundColor: "#ebe8f2", padding: "8px", borderRadius: "8px" }}>
+          <Typography mt={2} ml={2} sx={{ width: "150px" }}>Add your Flyer</Typography>
           <input
             type="file"
             accept="image/jpeg,image/png,image/svg+xml"
             onChange={(e) => {
               const file = e.target?.files?.[0];
               if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                  if (event.target && typeof event.target.result === "string") {
-                    setNewEvent({ ...newEvent, image: event.target.result });
-                  }
-                };
-                reader.readAsDataURL(file);
+                setNewWorkShop({ ...newWorkshop, workshopBannerFile: file });
               }
             }}
             style={{ margin: "16px 0", width: "100%" }}
           />
         </Box>
-        {newEvent.image && (
+        {newWorkshop.workshopBannerFile && (
           <img
-            src={newEvent.image}
+            src={newWorkshop.workshopBannerFile instanceof File ? URL.createObjectURL(newWorkshop.workshopBannerFile) : getFullImageUrl(newWorkshop.workshopBannerFile)}
             alt="Preview"
             style={{ width: "60%", marginTop: "16px" }}
           />
@@ -253,7 +472,13 @@ const WorkshopManagement = () => {
           )}
         </Box>
       </Drawer>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
+    
   );
 };
 

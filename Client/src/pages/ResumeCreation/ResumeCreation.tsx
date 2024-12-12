@@ -36,7 +36,7 @@ interface ProjectData {
 
 const ResumeCreation: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
@@ -270,7 +270,12 @@ const ResumeCreation: React.FC = () => {
     ) {
       return false;
     }
-    if (input.length || skills.length > 0 || ach.length > 0 || list.length > 0) {
+    if (
+      input.length ||
+      skills.length > 0 ||
+      ach.length > 0 ||
+      list.length > 0
+    ) {
       return false;
     }
     const dummyExp: ExperienceData = {
@@ -322,21 +327,75 @@ const ResumeCreation: React.FC = () => {
     setGithub(localStorage.getItem("github") || "");
     setLinkedin(localStorage.getItem("linkedin") || "");
     setPortfolio(localStorage.getItem("portfolio") || "");
-    setSkills(localStorage.getItem("skills") ? JSON.parse(localStorage.getItem("skills")!) : []);
-    setList(localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")!) : []);
-    setEdu(localStorage.getItem("edu") ? JSON.parse(localStorage.getItem("edu")!) : eduObject);
-    setProject(localStorage.getItem("project") ? JSON.parse(localStorage.getItem("project")!)[0] : projectObject);
-    setProject2(localStorage.getItem("project") ? JSON.parse(localStorage.getItem("project")!)[1] : projectObject);
-    setProject3(localStorage.getItem("project") ? JSON.parse(localStorage.getItem("project")!)[2] : projectObject);
-    setProject4(localStorage.getItem("project") ? JSON.parse(localStorage.getItem("project")!)[3] : projectObject);
-    setExp(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[0] : exp);
-    setExp2(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[1] : exp2);
-    setExp3(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[2] : exp3);
-    setExp4(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[3] : exp4);
-    setExp5(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[4] : exp5);
-    setExp6(localStorage.getItem("exp") ? JSON.parse(localStorage.getItem("exp")!)[5] : exp6);
+    setSkills(
+      localStorage.getItem("skills")
+        ? JSON.parse(localStorage.getItem("skills")!)
+        : []
+    );
+    setList(
+      localStorage.getItem("list")
+        ? JSON.parse(localStorage.getItem("list")!)
+        : []
+    );
+    setEdu(
+      localStorage.getItem("edu")
+        ? JSON.parse(localStorage.getItem("edu")!)
+        : eduObject
+    );
+    setProject(
+      localStorage.getItem("project")
+        ? JSON.parse(localStorage.getItem("project")!)[0]
+        : projectObject
+    );
+    setProject2(
+      localStorage.getItem("project")
+        ? JSON.parse(localStorage.getItem("project")!)[1]
+        : projectObject
+    );
+    setProject3(
+      localStorage.getItem("project")
+        ? JSON.parse(localStorage.getItem("project")!)[2]
+        : projectObject
+    );
+    setProject4(
+      localStorage.getItem("project")
+        ? JSON.parse(localStorage.getItem("project")!)[3]
+        : projectObject
+    );
+    setExp(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[0]
+        : exp
+    );
+    setExp2(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[1]
+        : exp2
+    );
+    setExp3(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[2]
+        : exp3
+    );
+    setExp4(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[3]
+        : exp4
+    );
+    setExp5(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[4]
+        : exp5
+    );
+    setExp6(
+      localStorage.getItem("exp")
+        ? JSON.parse(localStorage.getItem("exp")!)[5]
+        : exp6
+    );
     setPrimary(localStorage.getItem("theme_primary") || "#34678c");
-    setSecondary(localStorage.getItem("theme_secondary") || "rgb(242, 100, 100)");
+    setSecondary(
+      localStorage.getItem("theme_secondary") || "rgb(242, 100, 100)"
+    );
   }, []);
 
   useEffect(() => {
@@ -353,8 +412,14 @@ const ResumeCreation: React.FC = () => {
     localStorage.setItem("skills", JSON.stringify(skills));
     localStorage.setItem("list", JSON.stringify(list));
     localStorage.setItem("edu", JSON.stringify(edu));
-    localStorage.setItem("project", JSON.stringify([project, project2, project3, project4]));
-    localStorage.setItem("exp", JSON.stringify([exp, exp2, exp3, exp4, exp5, exp6]));
+    localStorage.setItem(
+      "project",
+      JSON.stringify([project, project2, project3, project4])
+    );
+    localStorage.setItem(
+      "exp",
+      JSON.stringify([exp, exp2, exp3, exp4, exp5, exp6])
+    );
   }, [
     name,
     subtitle,
@@ -384,32 +449,50 @@ const ResumeCreation: React.FC = () => {
 
   return (
     <div className="resumecreation">
-      <div className="resumecreationtitle">
-        <div className="backButtonStyle">
-          <button className="btn btn-light back" onClick={() => navigate(-1)}>
-          <ArrowLeftShort fontSize={20} />Back
-          </button>
-        </div>
+      <div className="backButtonStyle">
+        <button className="btn btn-light back" onClick={() => navigate(-1)}>
+          <ArrowLeftShort fontSize={20} />
+          Back
+        </button>
       </div>
-      <div className="body resumecreation">
+      <div className="body resumecreationData">
         <div className="left">
           <div className="navbarresume">
-            <li className={nav === "info" ? "active" : ""} onClick={() => setNav("info")}>
+            <li
+              className={nav === "info" ? "active" : ""}
+              onClick={() => setNav("info")}
+            >
               Info
             </li>
-            <li className={nav === "Experience" ? "active" : ""} onClick={() => setNav("Experience")}>
+            <li
+              className={nav === "Experience" ? "active" : ""}
+              onClick={() => setNav("Experience")}
+            >
               Experience
             </li>
-            <li className={nav === "Education" ? "active" : ""} onClick={() => setNav("Education")}>
+            <li
+              className={nav === "Education" ? "active" : ""}
+              onClick={() => setNav("Education")}
+            >
               Education
             </li>
-            <li className={nav === "Skills" ? "active" : ""} onClick={() => setNav("Skills")}>
+            <li
+              className={nav === "Skills" ? "active" : ""}
+              onClick={() => setNav("Skills")}
+            >
               Skills
             </li>
-            <li className={nav === "Projects" ? "active" : ""} onClick={() => setNav("Projects")}>
+            <li
+              className={nav === "Projects" ? "active" : ""}
+              onClick={() => setNav("Projects")}
+            >
               Projects
             </li>
-            <li className={nav === "Achievements" ? "active" : ""} onClick={() => setNav("Achievements")} style={{ width: "25%" }}>
+            <li
+              className={nav === "Achievements" ? "active" : ""}
+              onClick={() => setNav("Achievements")}
+              style={{ width: "25%" }}
+            >
               Achievements
             </li>
           </div>

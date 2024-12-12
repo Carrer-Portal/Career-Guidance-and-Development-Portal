@@ -33,14 +33,32 @@
     border-radius: 0.5rem;
     box-shadow: #170243 0px 0px 5px;
 }
-.buttons .print-button{
-    background-color: #170243;
-}
+
 .buttons .remove-button{
     color:aliceblue;
     border-radius: 0.5rem;
     border: none;
     background-color: #e42f2f;
     font-size: 14px;
+    display: flex;
+    align-items: center;
 }
+
+.backButtonStyle button {
+    background-color: #2d165c;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: auto; 
+}
+
+.backButtonStyle .icon {
+    font-size: 1.5rem;
+}
+
 

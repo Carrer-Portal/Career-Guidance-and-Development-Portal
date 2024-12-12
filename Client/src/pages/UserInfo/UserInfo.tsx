@@ -222,7 +222,7 @@ const UserInfo = () => {
                 Phone: {selectedUndergraduate.contactNumber}
               </Typography>
               <Typography variant="body2">
-                Address: {selectedUndergraduate.department.departmentName}, {selectedUndergraduate.department.faculty.facultyName}
+                Department & Faculty: {selectedUndergraduate.department.departmentName}, {selectedUndergraduate.department.faculty.facultyName}
               </Typography>
               <Typography
                 variant="subtitle1"

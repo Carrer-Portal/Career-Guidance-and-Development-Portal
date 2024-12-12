@@ -12,6 +12,9 @@ const undergraduate = db.undergraduates;
 const department = db.department;
 const faculty = db.faculty;
 const CarrerAdviosr = db.careerAdviosr;
+const UndergraduateJobProfile = db.undergraduateJobProfile;
+const Appointment = db.appointmentModel;
+const ReviewResume = db.reviewResume;
 
 
 
@@ -450,9 +453,49 @@ const whoAmIAdmin = async (req, res) => {
   }
 };
 
+const getUndergraduateManagement = async (req, res) => {
 
+  try {
+    const undergraduateDetails = await undergraduate.findAll({
+      include: [
+        {
+          model: department,
+          as: 'department',
+          include: [
+            {
+              model: faculty,
+              as: 'faculty'
+            }
+          ]
+        },
+        {
+          model: Appointment,
+          as: 'appointment'
+        },
+        {
+          model: ReviewResume,
+          as: 'reviewResume'
+        }
+        ,
+        {
+          model: UndergraduateJobProfile,
+          as: 'jobProfile'
+        }
+      ]
+    });
+
+    if (!undergraduateDetails) {
+      return res.status(404).json({ error: true, message: 'Undergraduate not found' });
+    }
+
+    res.status(200).json({ undergraduateDetails });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: true, message: 'Internal Server Error' });
+  }
+};
 
 
 export { undergraduatelogin, undergraduateRegister, whoAmI, forgetPassword, updateUndegratuateUser, updateUndegratuatePassword,
-  whoAmIAdmin,adminLogin, createAdminAccount, updateAdmin, findAdminById,getAllCareerAdvisors
+  whoAmIAdmin,adminLogin, createAdminAccount, updateAdmin, findAdminById,getAllCareerAdvisors,getUndergraduateManagement
  };

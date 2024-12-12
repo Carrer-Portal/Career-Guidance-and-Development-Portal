@@ -9,6 +9,8 @@ import workshopRoutes from './routes/workshopRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import resumeReviewRoutes from './routes/resumeReviewRoutes.js';
 import dashboardRoutes from './routes/dashboadRoutes.js';
+import undergraduateRoutes from './routes/undergraduateJobProfileRoutes.js';
+
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use("/api/resume",resumeRoutes);
 app.use("/api/review-resumes",resumeReviewRoutes);
 app.use("/api/review-resumes",resumeReviewRoutes);
 app.use("/api/dashboad",dashboardRoutes);
+app.use("/api/job-profile",undergraduateRoutes);
+
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

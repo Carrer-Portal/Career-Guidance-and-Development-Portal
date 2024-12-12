@@ -449,11 +449,14 @@ const UserDashboard = () => {
                     </Grid>
                   ))}
                 </Grid>
-                <Grid item mt={1}>
-                  <Button variant="outline" style={{ width: "100%" }}
+                <Grid item mt={1} style={{ display: "flex", gap:"16px"}}>
+                  <Button variant="outline" style={{ width: "100%" }}>
                   onClick={() => navigate("/resume-creation")}
                   >
                     Create Your New CV
+                  </Button>
+                  <Button variant="outline" style={{ width: "100%" }}>
+                    Send CV Review Request
                   </Button>
                 </Grid>
               </Box>
@@ -476,7 +479,9 @@ const UserDashboard = () => {
               Prepare for your next big opportunity with personalized feedback
               and practice.
             </Typography>
-            <Button variant="contained" onClick={() => navigate("/aiChatBot")}>Do Mock Interview With Bot</Button>
+            <Button variant="contained" onClick={() => navigate("/aiChatBot")}>
+              Do Mock Interview With Bot
+            </Button>
           </Box>
         </Box>
       </Box>

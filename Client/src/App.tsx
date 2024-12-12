@@ -19,6 +19,8 @@ import ChatBot from "./pages/chatBot/chatBot";
 import AppointmentManagement from "./pages/AppoinmentManage/AppoinmentManage";
 import CVManagement from "./pages/cvGrade/CVGrade";
 import WorkshopManagement from "./pages/WorkshopManagement/WorkshopManagement";
+import CVReviewRequest from "./pages/SendCVRevReq/SendCVRevReq";
+import UserInfo from "./pages/UserInfo/UserInfo";
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -38,6 +40,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/advisor/advisorOveview" element={<AdvisorPreview />} />
             <Route path="/advisor/appointmentManagement" element={<AppointmentManagement />} />
+            <Route path="/advisor/UserInfo" element={<UserInfo />} />
+            <Route path="/CVReviewRequest" element={<CVReviewRequest />} />
             <Route path="/advisor/WorkshopManagement" element={<WorkshopManagement />} />
             <Route path="/advisor/CVManagement" element={<CVManagement />} />
             <Route path="/booking" element={<BookingPage />} />

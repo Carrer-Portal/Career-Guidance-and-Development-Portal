@@ -7,6 +7,8 @@ const { validateCreateAppointment, validateUpdateAppointment } = validations;
 const Appointment = db.appointmentModel;
 const careerAdviosr = db.careerAdviosr;
 const Undergraduate = db.undergraduates;
+const Faculty = db.faculty;
+const Department = db.department;
 
 const createAppointment = async (req, res) => {
     try {
@@ -27,6 +29,9 @@ const createAppointment = async (req, res) => {
                 undergraduateId: req.body.undergraduateId,
                 appointmentStatus: {
                     [Op.ne]: 'Closed'
+                },
+                appointmentStatus: {
+                    [Op.ne]: 'Declined'
                 },
                 [Op.or]: [
                     {
@@ -181,7 +186,20 @@ const findAppointmentsByCareerAdvisorId = async (req, res) => {
             include: [
                 {
                     model: Undergraduate,
-                    as: 'undergraduate'
+                    as: 'undergraduate',
+            
+                include: [
+                    {
+                        model: Department,
+                        as: 'department',
+                    include:[
+                        {
+                            model: Faculty,
+                            as: 'faculty'
+                        }
+                    ]
+                    }  
+                ]
                 }
             ]
         });

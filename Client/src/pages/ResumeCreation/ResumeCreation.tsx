@@ -192,7 +192,68 @@ const ResumeCreation: React.FC = () => {
     setList((olditem) => olditem.filter((_, index) => id !== index));
   };
 
-  const removeall = () => window.location.reload();
+  const removeall = () => {
+    setPhotourl("");
+    setName("");
+    setSubtitle("");
+    setUserdesc("");
+    setEmail("");
+    setContact("");
+    setAddress("");
+    setGithub("");
+    setLinkedin("");
+    setPortfolio("");
+    setSkills([]);
+    setList([]);
+    setEdu(eduObject);
+    setProject(projectObject);
+    setProject2(projectObject);
+    setProject3(projectObject);
+    setProject4(projectObject);
+    setExp({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    setExp2({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    setExp3({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    setExp4({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    setExp5({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    setExp6({
+      postname: "",
+      company: "",
+      from: "",
+      to: "",
+      expdesc: "",
+    });
+    localStorage.clear();
+  };
 
   const isEmpty = () => {
     if (

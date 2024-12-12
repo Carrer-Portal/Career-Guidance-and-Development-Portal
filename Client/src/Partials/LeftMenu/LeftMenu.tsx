@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   List,
@@ -22,15 +22,17 @@ import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
-import WorkshopIcon from "@mui/icons-material/School"; 
+import WorkshopIcon from "@mui/icons-material/School";
 import "./LeftMenu.css";
+import Cookies from "js-cookie";
 
 interface MenuItem {
-  path: string;
+  path?: string;
   icon: React.ReactElement;
   label: string;
-  subItems?: { icon: React.ReactElement; label: string }[];
+  subItems?: { path: string; icon: React.ReactElement; label: string }[];
 }
+
 const studentMenuItems: MenuItem[] = [
   {
     path: "/userDashboard",
@@ -47,8 +49,8 @@ const studentMenuItems: MenuItem[] = [
     icon: <TextSnippetIcon />,
     label: "Resume Manage",
     subItems: [
-      { icon: <EditNoteIcon />, label: "Create CV" },
-      { icon: <DesignServicesIcon />, label: "Manage CV" },
+      { path: "/resume-creation", icon: <EditNoteIcon />, label: "Create CV" },
+      { path: "/resumeManage/manageCV", icon: <DesignServicesIcon />, label: "Manage CV" },
     ],
   },
   {
@@ -89,7 +91,12 @@ const advisorMenuItems: MenuItem[] = [
 const LeftMenu: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const [userType, setUserType] = useState<"student" | "advisor">("student"); 
+  const [userType, setUserType] = useState<"Student" | "Advisor">("Student");
+
+  useEffect(() => {
+    const roleType = Cookies.get("roleType");
+    setUserType(roleType=="Student" ? "Student" : "Advisor");
+  }, []);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -98,8 +105,11 @@ const LeftMenu: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const menuItems =
-    userType === "student" ? studentMenuItems : advisorMenuItems;
+  const handleSubmenuClick = (label: string) => {
+    setOpenSubmenu((prev) => (prev === label ? null : label));
+  };
+
+  const menuItems = userType === "Student" ? studentMenuItems : advisorMenuItems;
 
   return (
     <Box className={`left-menu ${isCollapsed ? "collapsed" : ""}`}>
@@ -107,15 +117,21 @@ const LeftMenu: React.FC = () => {
         {menuItems.map((item) => (
           <React.Fragment key={item.label}>
             <ListItem
-              onClick={() => !item.subItems && navigate(item.path)}
+              onClick={() => {
+                if (item.subItems) {
+                  handleSubmenuClick(item.label);
+                } else if (item.path) {
+                  navigate(item.path);
+                }
+              }}
               sx={{
-                backgroundColor: isActive(item.path) ? "#e9deed" : "inherit",
+                backgroundColor: isActive(item.path || '') ? "#e9deed" : "inherit",
                 cursor: item.subItems ? "default" : "pointer",
               }}
             >
               <ListItemIcon
                 sx={{
-                  color: isActive(item.path) ? "#673ab7" : "#d2c6e6",
+                  color: isActive(item.path || '') ? "#673ab7" : "#d2c6e6",
                 }}
               >
                 {item.icon}
@@ -124,7 +140,7 @@ const LeftMenu: React.FC = () => {
                 <ListItemText
                   primary={item.label}
                   sx={{
-                    color: isActive(item.path) ? "#673ab7" : "#FFFFFF",
+                    color: isActive(item.path || '') ? "#673ab7" : "#FFFFFF",
                   }}
                 />
               )}
@@ -132,11 +148,11 @@ const LeftMenu: React.FC = () => {
                 <IconButton
                   onClick={() =>
                     setOpenSubmenu((prev) =>
-                      prev === item.path ? null : item.path
+                      prev === item.label ? null : item.label
                     )
                   }
                 >
-                  {openSubmenu === item.path ? (
+                  {openSubmenu === item.label ? (
                     <ExpandLess sx={{ color: "#FFFFFF" }} />
                   ) : (
                     <ExpandMore sx={{ color: "#FFFFFF" }} />
@@ -146,7 +162,7 @@ const LeftMenu: React.FC = () => {
             </ListItem>
             {item.subItems && (
               <Collapse
-                in={openSubmenu === item.path}
+                in={openSubmenu === item.label}
                 timeout="auto"
                 unmountOnExit
               >
@@ -154,7 +170,8 @@ const LeftMenu: React.FC = () => {
                   {item.subItems.map((subItem) => (
                     <ListItem
                       key={subItem.label}
-                      sx={{ paddingLeft: "32px", cursor: "default" }}
+                      onClick={() => navigate(subItem.path)}
+                      sx={{ paddingLeft: "32px", cursor: "pointer" }}
                     >
                       <ListItemIcon sx={{ color: "#d2c6e6" }}>
                         {subItem.icon}

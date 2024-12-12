@@ -258,7 +258,7 @@ const ProfilePage = () => {
     } catch (error: any) {
       if (error.response) {
         setErrorSeverity('error');
-        setErrorMessage(error.response.data.message || 'An error occurred');
+        setErrorMessage(error.response.data.message||error.response.message || 'An error occurred');
         setOpenSnackbar(true);
         console.log(error.response.data);
       }

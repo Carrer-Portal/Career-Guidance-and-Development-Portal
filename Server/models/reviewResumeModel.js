@@ -14,35 +14,33 @@ const reviewResumeModel = (sequelize, DataTypes) => {
             resumeId: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: 'Resume', // name of the target model
-                    key: 'resumeId', // key in the target model
-                }
             },
             undergraduateId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'undergraduates', // name of the target model
-                    key: 'undergraduateId', // key in the target model
-                }
+                
             },
             careerAdvisorId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'carrerAdvisor', // name of the target model
-                    key: 'carrerAdvisorId', // key in the target model
-                }
+               
             },
-            review_date: {
-                type: DataTypes.DATE,
+            reviewstatus: {
+                type: DataTypes.STRING,
                 allowNull: false,
+            },
+            reviewdate: {
+                type: DataTypes.DATE,
+                allowNull: true,
                 defaultValue: DataTypes.NOW,
             },
-            review_feedback: {
+            reviewRatings: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            reviewfeedback: {
                 type: DataTypes.TEXT,
-                allowNull: false,
+                allowNull: true,
             },
         },
         {

@@ -1,97 +1,75 @@
+import { uploadDocuments } from '../utils/uploadHelper.js';
 import db from "../controllers/index.js";
-import validations from '../utils/validations.js';
+import fs from 'fs';
+import path from 'path';
 
-const { validateSaveResume } = validations;
-const Resume = db.resumes;
+// Initialize the Resume model
+const Resume = db.resume;
 
-const saveResume = async (req, res) => {
-    try {
-        const { error } = validateSaveResume(req.body);
-        if (error) {
-            console.log(error);
-            return res
-                .status(400)
-                .json({ 
-                    error: true, 
-                    message: error.details[0].message 
-                });
-        }
-
-        const resume = await Resume.create(req.body);
-        res.status(201).json({ 
-            message: "Resume saved successfully",
-            resume: resume 
-        });
-    } catch (error) {
-        console.log(error);
-        return res
-            .status(500)
-            .json({ error: true, message: "Internal Server Error" });
+// Upload Resume Controller
+const uploadResume = (req, res) => {
+  uploadDocuments.single('resume')(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
     }
+
+    const { undergraduateId } = req.body;
+    const resumeFilePath = req.file.path;
+
+    try {
+      const newResume = await Resume.create({
+        undergraduateId,
+        resumeFilePath,
+      });
+
+      res.status(201).json(newResume);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to upload resume' });
+    }
+  });
 };
 
+// Delete Resume Controller
 const deleteResume = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deleted = await Resume.destroy({
-            where: { id: id }
-        });
-        if (deleted) {
-            res.status(204).json({ message: "Resume deleted successfully" });
-        } else {
-            res.status(404).json({ error: true, message: 'Resume not found' });
-        }
-    } catch (error) {
-        console.log(error);
-        return res
-            .status(500)
-            .json({ error: true, message: "Internal Server Error" });
+  const { resumeId } = req.params;
+
+  try {
+    const resume = await Resume.findByPk(resumeId);
+
+    if (!resume) {
+      return res.status(404).json({ error: 'Resume not found' });
     }
+
+    fs.unlink(path.resolve(resume.resumeFilePath), async (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to delete file' });
+      }
+
+      await resume.destroy();
+      res.status(200).json({ message: 'Resume deleted successfully' });
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete resume' });
+  }
 };
 
-const findResumeById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const resume = await Resume.findOne({
-            where: { id: id }
-        });
-        if (resume) {
-            res.status(200).json({ 
-                message: "Resume fetched successfully",
-                resume: resume 
-            });
-        } else {
-            res.status(404).json({ error: true, message: 'Resume not found' });
-        }
-    } catch (error) {
-        console.log(error);
-        return res
-            .status(500)
-            .json({ error: true, message: "Internal Server Error" });
+// Find Resume by Undergraduate ID Controller
+const findResumeByUndergraduateId = async (req, res) => {
+  const { undergraduateId } = req.params;
+
+  try {
+    const resumes = await Resume.findAll({
+      where: { undergraduateId },
+    });
+
+    if (resumes.length === 0) {
+      return res.status(404).json({ error: 'No resumes found for this undergraduate ID' });
     }
+
+    res.status(200).json(resumes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve resumes' });
+  }
 };
 
-const findAllResumesByUserId = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const resumes = await Resume.findAll({
-            where: { userId: userId }
-        });
-        res.status(200).json({ 
-            message: "Resumes fetched successfully",
-            resumes: resumes 
-        });
-    } catch (error) {
-        console.log(error);
-        return res
-            .status(500)
-            .json({ error: true, message: "Internal Server Error" });
-    }
-};
-
-export {
-    saveResume,
-    deleteResume,
-    findResumeById,
-    findAllResumesByUserId
-};
+export { uploadResume, deleteResume, findResumeByUndergraduateId };

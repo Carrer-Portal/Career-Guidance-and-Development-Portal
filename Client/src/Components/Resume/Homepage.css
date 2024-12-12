@@ -153,8 +153,8 @@
     color: rgb(255, 255, 255);
     background-color: #060331;
     width: auto;
-    height: 2rem;
-    border: 1px solid #ffffff;
+
+    border: 1px solid #6945b1;
 }
 .form > h2{
     float: left;
@@ -255,7 +255,7 @@
     border-radius: 0.5rem;
     -webkit-appearance: none;
     appearance: none;
-    background-color: #2d165c;
+    background-color: rgb(99, 72, 151);
     color: white;
     text-decoration: none;
     margin-bottom: 1rem;

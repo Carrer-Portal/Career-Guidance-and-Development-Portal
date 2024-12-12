@@ -50,8 +50,8 @@ db.department = departmentModel(sequelize, DataTypes);
 db.appointmentModel = appointmentModel(sequelize, DataTypes);
 // db.notice = noticeModel(sequelize, Sequelize.DataTypes);
 db.workshop = workshopModel(sequelize, Sequelize.DataTypes);
-// db.resume = resumeModel(sequelize, Sequelize.DataTypes);
-// db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
+db.resume = resumeModel(sequelize, Sequelize.DataTypes);
+db.reviewResume = reviewResumeModel(sequelize, Sequelize.DataTypes);
 // db.userActivity = userActivityModel(sequelize, Sequelize.DataTypes);
 // db.chatHistory = chatHistoryModel(sequelize, Sequelize.DataTypes);
 db.faculty = facultyModel(sequelize, Sequelize.DataTypes);
@@ -120,5 +120,23 @@ db.sequelize.sync({ force: false })
         foreignKey: "departmentId",
         as: 'department'
     });
+    db.resume.belongsTo(db.undergraduates, {
+        foreignKey: "undergraduateId",
+        as: 'undergraduate'
+    });
+    db.undergraduates.hasMany(db.resume, {
+        foreignKey: "undergraduateId",
+        as: 'resume'
+    });
+
+    db.reviewResume.belongsTo(db.resume, {
+        foreignKey: "resumeId",
+        as: 'resume'
+    });
+    db.resume.hasMany(db.reviewResume, {
+        foreignKey: "resumeId",
+        as: 'reviewResume'
+    });
+
 
 export default db;

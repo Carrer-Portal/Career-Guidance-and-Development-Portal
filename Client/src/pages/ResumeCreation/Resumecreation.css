@@ -45,7 +45,7 @@
 }
 
 .backButtonStyle button {
-    background-color: #2d165c;
+    background-color: rgb(99, 72, 151);
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -60,5 +60,6 @@
 .backButtonStyle .icon {
     font-size: 1.5rem;
 }
+
 
 

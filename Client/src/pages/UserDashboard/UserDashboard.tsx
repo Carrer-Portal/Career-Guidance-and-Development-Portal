@@ -10,6 +10,8 @@ import sampleimg2 from "../../image/sampleimg2.jpg";
 import CloseIcon from "@mui/icons-material/Close";
 import AppoinmentImage from "../../image/appointment.png"
 import ChatBot from "../../image/chatbot.png"
+import cvVector from "../../image/forms.svg";
+
 
 interface Event {
   image: string | undefined;
@@ -54,12 +56,31 @@ interface Undergraduate {
   facultyName: string;
 }
 
+interface ReviewRequest {
+  reviewId: string;
+  resumeId: string;
+  undergraduateId: number;
+  careerAdvisorId: number;
+  reviewstatus: string;
+  reviewdate: string;
+  reviewRatings: string;
+  reviewfeedback: string;
+  resume: Resume;
+}
+
+interface Resume {
+  resumeId : string;
+  resumeFilePath:string;
+}
+
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [undergraduate, setUndergraduate] = useState<Undergraduate | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [profile, setProfile] = useState<{ advisor: CareerAdvisor | null; appointment: Booking | null }>({ advisor: null, appointment: null });
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "error" | "warning" | "info" | "success" }>({ open: false, message: "", severity: "success" });
+  const [reviewRequests, setReviewRequests] = useState<ReviewRequest[]>([]);
+
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -89,6 +110,25 @@ const UserDashboard = () => {
 
     fetchedLoggedUser();
   }, []);
+
+  useEffect(() => {
+    const fetchReviewRequests = async () => {
+      if (undergraduate) {
+        try {
+          const response = await axios.get(`http://localhost:8070/api/review-resumes/undergraduate/${undergraduate.undergraduateId}`);
+          setReviewRequests(response.data);
+        } catch (error: any) {
+          if (error.response) {
+            setSnackbar({ open: true, message: error.response.data.message || 'Failed to fetch review requests', severity: 'error' });
+          } else {
+            setSnackbar({ open: true, message: 'Failed to fetch review requests', severity: 'error' });
+          }
+        }
+      }
+    };
+
+    fetchReviewRequests();
+  }, [undergraduate]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -218,6 +258,22 @@ const UserDashboard = () => {
     },
   ];
 
+  const handleViewResume = (resumeFilePath: string) => {
+    window.open(`http://localhost:8070/${resumeFilePath}`, "_blank");
+  };
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Accepted":
+        return "green";
+      case "Pending":
+        return "orange";
+      case "Declined":
+        return "red";
+      default:
+        return "black";
+    }
+  };
+
   return (
     <Box className="dashboard-container">
       <Box className="dashboard-title-container">
@@ -264,14 +320,15 @@ const UserDashboard = () => {
                 </Box>
                   
                 <Box className="advisor-details-status">
-                <Typography style={{ fontSize: "14px" }}>
+                <Typography style={{ fontSize: "14px" , }}>
                     Description: {profile.appointment?.appointmentDescription}
                   </Typography>
                   <Typography
-                    style={{ fontSize: "14px" }}
-                    className="appointment-status"
+                    style={{ fontSize: "14px",}}
                   >
-                    Status: {profile.appointment.appointmentStatus}
+                     Status: 
+                    <span className="appointment-status" style={ {color: getStatusColor(profile.appointment.appointmentStatus) }}>{profile.appointment.appointmentStatus}</span>
+                   
                   </Typography>
                   <Typography style={{ fontSize: "14px", marginTop: "4px" }}>
                     Time Remaining:{" "}
@@ -419,31 +476,43 @@ const UserDashboard = () => {
             <Grid item xs={12} md={12}>
               <Box className="uploadcv-section">
                 <Grid container spacing={2}>
-                  {fileDetails.map((file, index) => (
+                  {reviewRequests.map((reviewRequest, index) => (
                     <Grid item xs={12} sm={4} md={4} key={index}>
                       <Box className="file-card">
-                        <Box className="file-icon">
+                        <Box className="file-icon" onClick={() => handleViewResume(reviewRequest.resume.resumeFilePath)}>
                           <img
-                            //src={cvVector}
+                            src={cvVector}
                             alt="File Icon"
                             className="file-vector"
                           />
                         </Box>
                         <Box className="file-details">
-                          <Typography>{file.name}</Typography>
+                          <Typography>{reviewRequest.resume.resumeFilePath.replace(/^files\\/, '')}</Typography>
                           <Typography
                             variant="body1"
                             style={{ fontSize: "12px" }}
                             className={`file-status ${
-                              file.status === "Approved"
+                              reviewRequest.reviewstatus === "Approved"
                                 ? "status-approved"
-                                : file.status === "In Progress"
+                                : reviewRequest.reviewstatus === "Pending"
                                 ? "status-in-progress"
                                 : "status-not-approved"
                             }`}
                           >
-                            {file.status}
+                            {reviewRequest.reviewstatus}
                           </Typography>
+                          {reviewRequest.reviewstatus != "Pending" && (
+                            <>
+                              <Typography style={{ fontSize: "14px" }}>
+                              Review Rating: {reviewRequest.reviewRatings}
+                            </Typography>
+                            {reviewRequest.reviewstatus != "Reject" && (
+                            <Typography style={{ fontSize: "14px" }}>
+                              Review Comment: {reviewRequest.reviewfeedback}
+                            </Typography>
+                            )}
+                            </>
+                          )}
                         </Box>
                       </Box>
                     </Grid>

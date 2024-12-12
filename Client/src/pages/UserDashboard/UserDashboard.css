@@ -99,7 +99,7 @@
 
 .appointment-status {
   font-weight: bold;
-  color: #4caf50; /* Green for Approved, change as needed */
+  color: #4caf50;
 }
 
 .countdown-timer {
@@ -223,4 +223,7 @@
 
 .appointment-button {
   margin-top: 12px;
+}
+.file-icon:hover {
+  cursor: pointer;
 }

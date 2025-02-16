@@ -239,10 +239,10 @@ const UserInfo = () => {
                     <span
                       style={{
                         color:
-                          appointment.appointmentStatus === "Done"
+                          appointment.appointmentStatus === "Accepted"
                             ? "green"
                             : appointment.appointmentStatus === "Pending"
-                            ? "blue"
+                            ? "orange"
                             : "red",
                       }}
                     >
@@ -252,7 +252,7 @@ const UserInfo = () => {
                   <Typography
                     variant="caption"
                     color="textSecondary"
-                  >{`Date: ${appointment.appointmentDate}`}</Typography>
+                  >{`Date: ${new Date(appointment.appointmentDate).toLocaleDateString()}`}</Typography>
                 </Box>
               ))}
               <Typography

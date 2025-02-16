@@ -45,7 +45,7 @@ const schema = Joi.object({
     'date.base': 'Please select a valid date',
     'any.required': 'Date is required'
   }),
-  timeSlot: Joi.string().required().messages({
+  timeSlots: Joi.string().required().messages({
     'string.base': 'Please select a valid time slot',
     'any.required': 'Time slot is required'
   }),
@@ -215,10 +215,11 @@ const BookingPage = () => {
             Choose a Date
           </Typography>
           <Calendar
-            value={date}
-            onChange={(date) => setDate(date as Date)}
-            className="date-picker"
-          />
+          value={date}
+          onChange={(date) => setDate(date as Date)}
+          className="date-picker"
+          minDate={new Date()} 
+          />  
           <Typography
             variant="h6"
             className="section-title"

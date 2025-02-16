@@ -195,14 +195,7 @@ const AppointmentManagement = () => {
         setSnackbar({ open: true, message: 'Failed to decline appointment', severity: 'error' });
       }
     }
-
-    setSnackbarMessage(
-      `You canceled the appointment for ${selectedAppointment.undergraduate.firstName}. Feedback: ${feedback}`
-    );
-    setSnackbarSeverity("error");
-    setSnackbarOpen(true);
     handleCloseModal();
-    // Add deletion logic here
   };
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });

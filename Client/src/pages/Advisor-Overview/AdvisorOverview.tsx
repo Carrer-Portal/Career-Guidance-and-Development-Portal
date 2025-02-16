@@ -107,7 +107,8 @@ interface Dashboad{
   upcomingWorkshopsCount:number,
   upcomingAppointmentsCount:number,
   numberOfResumeRequestsForAdvisor:number,
-  numberOfResumeRequestsAcceptedForAdvisor:number
+  numberOfResumeRequestsAcceptedForAdvisor:number,
+  upcomingWorkshopCountForAdviosr:number
 }
 
 
@@ -145,8 +146,9 @@ const AdvisorPreview = () => {
   const [events,setEvents] = useState<Workshop[]>([]);
 
   const fetchWorkshops = async () => {
+    if (advisor) {
     try {
-      const response = await axios.get(`http://localhost:8070/api/workshop/findBy/careerAdvisor/${advisor?.careerAdvisorId}`, {
+      const response = await axios.get(`http://localhost:8070/api/workshop/findBy/careerAdvisor/${advisor.careerAdvisorId}`, {
       });
       setEvents(response.data.workshops);
     } catch (error: any) {
@@ -156,6 +158,7 @@ const AdvisorPreview = () => {
         setSnackbar({ open: true, message: 'Failed to fetch workshop for advisor', severity: 'error' });
       }
     }
+  }
   };
   useEffect(() => {
     fetchWorkshops();
@@ -164,6 +167,7 @@ const AdvisorPreview = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       if (advisor) {
+        console.log(advisor.careerAdvisorId);
         try {
           const response = await axios.get(`http://localhost:8070/api/appoinment/findByCareerAdvisor/${advisor.careerAdvisorId}`, {
             headers: {
@@ -205,6 +209,7 @@ const AdvisorPreview = () => {
   };
 
   useEffect(() => {
+    console.log(advisor)
     const fetchReviewRequests = async () => {
       if (advisor) {
         try {
@@ -251,11 +256,7 @@ const AdvisorPreview = () => {
   useEffect(() => {
     const fetchDashboad = async () => {
         try {
-          const response = await axios.get(`http://localhost:8070/api/dashboad/stats`,{
-            params: {
-              careerAdvisorId: advisor?.careerAdvisorId
-            }
-          });
+          const response = await axios.get(`http://localhost:8070/api/dashboad/stats/${advisor?.careerAdvisorId}`);
           setDashboard(response.data);
         } catch (error: any) {
           if (error.response) {
@@ -267,13 +268,13 @@ const AdvisorPreview = () => {
     };
 
     fetchDashboad();
-  }, []);
+  }, [advisor]);
 
   const statsData = [
   { title: "Total Student Users", value: dashboard?.numberOfUsers },
   { title: "Upcoming Appointments", value: dashboard?.upcomingAppointmentsCount },
-  { title: "Reviewed CVs", value: dashboard?.numberOfResumeRequestsAcceptedForAdvisor },
-  { title: "Scheduled Workshops", value: dashboard?.upcomingWorkshopsCount },
+  { title: "CV's To Review", value: dashboard?.numberOfResumeRequestsAccepted },
+  { title: "Scheduled Workshops", value: dashboard?.upcomingWorkshopCountForAdviosr },
 ];
 
 

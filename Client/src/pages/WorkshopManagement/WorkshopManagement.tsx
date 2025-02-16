@@ -386,6 +386,7 @@ const WorkshopManagement = () => {
           onChange={(e) => setNewWorkShop({ ...newWorkshop, workshopDate: e.target.value })}
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ min: new Date().toISOString().split('T')[0] }}
         />
         <TextField
           fullWidth

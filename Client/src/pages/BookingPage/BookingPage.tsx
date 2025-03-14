@@ -45,7 +45,7 @@ const schema = Joi.object({
     'date.base': 'Please select a valid date',
     'any.required': 'Date is required'
   }),
-  timeSlots: Joi.string().required().messages({
+  timeSlot: Joi.string().required().messages({
     'string.base': 'Please select a valid time slot',
     'any.required': 'Time slot is required'
   }),
